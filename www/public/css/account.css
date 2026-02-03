@@ -23,16 +23,16 @@ body {
   font-family: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;
   color: white;
   overflow-y: auto; 
-  /* UPDATED: Deep Black Base */
-  background-color: #000;
+  /* UPDATED: Deep Navy Base */
+  background-color: #020b14;
 }
 
 /* Container with Dark Overlay */
 #profile-container {
   width: 100%; 
   min-height: 100vh; 
-  /* UPDATED: Heavy Dark Overlay to make Gold pop */
-  background: rgba(5, 5, 5, 0.9); 
+  /* UPDATED: Deep Navy Gradient Overlay */
+  background: linear-gradient(to bottom, rgba(2, 12, 27, 0.9), rgba(4, 20, 45, 0.92)); 
   display: flex; flex-direction: column;
   padding: 20px 40px; 
 }
@@ -41,18 +41,19 @@ body {
 .page-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 20px;
-  /* UPDATED: Separator line to faint Gold */
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  /* UPDATED: Separator line to faint Electric Blue */
+  border-bottom: 1px solid rgba(0, 243, 255, 0.2);
   padding-bottom: 15px;
 }
 
-/* UPDATED: Title color to Gold */
+/* UPDATED: Title color to Electric Blue */
 .page-header h1 { 
   font-size: 1.5rem; 
   letter-spacing: 1px; 
-  color: #D4AF37; 
+  color: #00f3ff; 
   font-weight: 500; 
   text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
 #clock { font-size: 1rem; color: #fff; font-weight: bold; opacity: 0.8; }
@@ -67,16 +68,16 @@ body {
 
 /* Glass Panel Style (Cards) */
 .glass-panel {
-  /* UPDATED: Card Background to Dark Smoky Black */
-  background: rgba(20, 20, 20, 0.85); 
+  /* UPDATED: Card Background to Dark Navy Glass */
+  background: rgba(16, 33, 58, 0.75); 
   backdrop-filter: blur(12px); 
   -webkit-backdrop-filter: blur(12px);
-  /* UPDATED: Border to faint Gold */
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  /* UPDATED: Border to faint Electric Blue */
+  border: 1px solid rgba(0, 243, 255, 0.2);
   border-radius: 16px;
   padding: 25px;
-  /* UPDATED: Deep Shadow */
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  /* UPDATED: Deep Cool Shadow */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* Left Column: User Card */
@@ -91,10 +92,10 @@ body {
   width: 100px; height: 100px;
   margin-bottom: 15px;
   border-radius: 50%; 
-  /* UPDATED: Avatar Border to Solid Gold */
-  border: 3px solid #D4AF37;
+  /* UPDATED: Avatar Border to Electric Blue */
+  border: 3px solid #00f3ff;
   padding: 4px;
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
 }
 
 .user-card h2 { font-size: 1.4rem; margin-bottom: 10px; text-align: center; color: #fff; }
@@ -105,12 +106,12 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   font-size: 0.85rem;
-  /* UPDATED: VIP Look - Gold text on dark bg */
-  color: #D4AF37;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #D4AF37; 
+  /* UPDATED: Electric Look - Cyan text on navy bg */
+  color: #00f3ff;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #00f3ff; 
   letter-spacing: 1.5px;
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
 }
 
 /* Right Column: Info List */
@@ -122,14 +123,14 @@ body {
 
 .info-row {
   display: flex; justify-content: space-between;
-  /* UPDATED: Separator line to very faint Gold */
-  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  /* UPDATED: Separator line to very faint Blue */
+  border-bottom: 1px solid rgba(0, 243, 255, 0.1);
   padding: 14px 0;
   font-size: 1rem;
 }
 .info-row:last-child { border-bottom: none; }
 
-.label { color: #888; font-weight: 400; }
+.label { color: #8faecb; font-weight: 400; }
 .value { font-weight: 600; color: #fff; text-align: right; }
 
 /* --- Footer Actions --- */
@@ -140,10 +141,10 @@ body {
 }
 
 .glass-btn {
-  /* UPDATED: Subtle Gold tint on background */
-  background: rgba(212, 175, 55, 0.05);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: #D4AF37;
+  /* UPDATED: Subtle Blue tint on background */
+  background: rgba(0, 243, 255, 0.05);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  color: #00f3ff;
   font-size: 1rem;
   padding: 12px 30px;
   border-radius: 12px;
@@ -156,28 +157,27 @@ body {
 
 /* Danger Button Style (Logout) */
 .btn-danger {
-  /* Keep distinct, but darker red to match premium feel */
-  background: rgba(100, 0, 0, 0.3);
-  border-color: rgba(200, 50, 50, 0.4);
-  color: #ff8888;
+  background: rgba(255, 59, 48, 0.1);
+  border-color: rgba(255, 59, 48, 0.4);
+  color: #ff6b6b;
 }
 
 /* --- ACTIVE STATE (Touch) --- */
 .glass-btn:active {
     transform: scale(0.98);
-    /* UPDATED: Active state becomes Solid Gold with Black Text */
-    background: #D4AF37;
-    border-color: #D4AF37;
-    color: #000;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    /* UPDATED: Active state becomes Electric Blue Gradient with White Text */
+    background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
+    border-color: #00f3ff;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
 }
 
 /* Exception for danger button active state */
 .btn-danger:active {
-    background: #8b0000;
-    border-color: #ff0000;
+    background: #ff3b30;
+    border-color: #ff3b30;
     color: white;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.4);
 }
 
 /* --- MOBILE OPTIMIZATION --- */
@@ -196,7 +196,7 @@ body {
     .user-card { 
         min-height: auto; 
         padding: 20px; 
-        flex-direction: row; /* Side by side on mobile */
+        flex-direction: row; 
         justify-content: flex-start;
         gap: 20px;
     }

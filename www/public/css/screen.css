@@ -17,16 +17,16 @@ body {
   font-family: 'Roboto', 'Segoe UI', sans-serif;
   color: white;
   overflow-y: auto; 
-  /* UPDATED: Deep Black Base */
-  background-color: #000;
+  /* UPDATED: Deep Navy Base */
+  background-color: #020b14;
 }
 
 /* Dark Overlay */
 #app-container {
   width: 100%; 
   min-height: 100vh; 
-  /* UPDATED: Vignette Effect (Dark Center -> Pure Black Edges) */
-  background: radial-gradient(circle at center, rgba(30, 30, 30, 0.7) 0%, rgba(0, 0, 0, 0.95) 100%);
+  /* UPDATED: Navy Vignette (Dark Blue Center -> Deep Black Edges) */
+  background: radial-gradient(circle at center, rgba(16, 33, 58, 0.4) 0%, rgba(2, 11, 20, 0.95) 100%);
   display: flex; flex-direction: column;
   padding: 20px 40px;
   transition: filter 0.3s;
@@ -45,25 +45,25 @@ body.modal-open #app-container {
   margin-bottom: 30px;
 }
 
-/* UPDATED: Gold drop shadow for Logo */
+/* UPDATED: Blue/Cyan drop shadow for Logo */
 .logo { 
   height: 60px; 
   object-fit: contain; 
-  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.3)); 
+  filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); 
 }
 
 #date-time { 
   font-size: 1.1rem; 
-  /* UPDATED: Gold Text */
-  color: #D4AF37;
+  /* UPDATED: Electric Blue Text */
+  color: #00f3ff;
   font-weight: 600;
-  /* UPDATED: Dark Background + Gold Border */
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid #D4AF37;
+  /* UPDATED: Dark Navy Background + Blue Border */
+  background: rgba(4, 20, 45, 0.8);
+  border: 1px solid rgba(0, 243, 255, 0.5);
   padding: 8px 20px;
   border-radius: 30px;
-  /* UPDATED: Gold Glow */
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  /* UPDATED: Blue Glow */
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
 
 /* --- MAIN MENU (Grid Layout) --- */
@@ -88,13 +88,13 @@ body.modal-open #app-container {
 
 /* --- PREMIUM CARD STYLES --- */
 .card {
-  /* UPDATED: Deep Charcoal/Black Glass */
-  background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(10, 10, 10, 0.95));
+  /* UPDATED: Deep Navy Glass */
+  background: linear-gradient(145deg, rgba(16, 33, 58, 0.8), rgba(4, 20, 45, 0.9));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   
-  /* UPDATED: Faint Gold Border */
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  /* UPDATED: Faint Electric Blue Border */
+  border: 1px solid rgba(0, 243, 255, 0.15);
   border-radius: 15px; 
   
   display: flex; flex-direction: column;
@@ -106,8 +106,8 @@ body.modal-open #app-container {
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
   
-  /* Deep Shadow */
-  box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+  /* Deep Blue/Black Shadow */
+  box-shadow: 0 8px 25px rgba(0, 10, 20, 0.7);
 }
 
 /* Large Cards (Live, Movies, Series) */
@@ -118,67 +118,67 @@ body.modal-open #app-container {
   margin-bottom: 10px; 
   object-fit: contain; 
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); 
-  /* Optional: Tint icons gold using sepia filter if they are white */
-  /* filter: sepia(100%) hue-rotate(5deg) saturate(400%); */
 }
 
 .big-card h2 { 
     font-size: 1rem;
     font-weight: 700; 
-    color: #eee; 
+    color: #fff; 
     letter-spacing: 0.8px; 
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
 /* Small Cards (Reload, Account, Exit) */
-/* UPDATED: Dark Background */
-.small-card { height: 72px; background: rgba(20, 20, 20, 0.8); }
+/* UPDATED: Dark Navy Background */
+.small-card { height: 72px; background: rgba(10, 25, 45, 0.8); }
 
 .card-content-row { display: flex; align-items: center; gap: 8px; }
-.icon-small { width: 22px; height: 22px; object-fit: contain; opacity: 0.8; }
-.small-card span { font-size: 0.9rem; font-weight: 600; color: #ccc; letter-spacing: 0.5px; }
+.icon-small { width: 22px; height: 22px; object-fit: contain; opacity: 0.9; }
+.small-card span { font-size: 0.9rem; font-weight: 600; color: #a0c4e8; letter-spacing: 0.5px; }
 
 /* --- ACTIVE / FOCUSED STATE (The Glow Up) --- */
 .card:active, .nav-item.focused {
-  /* UPDATED: Bright Gold Border */
-  border-color: #FFD700; 
+  /* UPDATED: Bright Electric Blue Border */
+  border-color: #00f3ff; 
   
-  /* UPDATED: Metallic Gold Gradient Background */
-  background: linear-gradient(145deg, #D4AF37, #8B6914);
+  /* UPDATED: Electric Blue Gradient Background */
+  background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
   
   /* Pop Effect */
   transform: scale(1.05) translateY(-4px);
   
-  /* UPDATED: Intense Gold Glow */
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+  /* UPDATED: Intense Cyan/Blue Glow */
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
   z-index: 10;
 }
 
-/* UPDATED: Text becomes black on Gold background for readability */
+/* UPDATED: Keep text White on Blue background for high tech look */
 .nav-item.focused h2, 
 .nav-item.focused span { 
-  color: #000; 
-  text-shadow: none;
+  color: #fff; 
+  text-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
+
+/* Ensure icons stay bright white on focus */
 .nav-item.focused .icon-small,
 .nav-item.focused img {
-    filter: brightness(0); /* Turns white icons black */
+    filter: brightness(100%) drop-shadow(0 2px 5px rgba(0,0,0,0.3));
 }
 
 /* --- FOOTER --- */
 #bottom-bar {
-  display: flex; justify-content: space-between; font-size: 0.8rem; color: #888;
-  /* UPDATED: Separator line color (Faint Gold) */
-  border-top: 1px solid rgba(212, 175, 55, 0.2); 
+  display: flex; justify-content: space-between; font-size: 0.8rem; color: #5a7b9c;
+  /* UPDATED: Separator line color (Faint Blue) */
+  border-top: 1px solid rgba(0, 243, 255, 0.15); 
   padding-top: 12px;
   margin-top: 15px;
 }
 #expiration-info, #user-info {
-  background: rgba(0,0,0,0.8); 
+  background: rgba(4, 20, 45, 0.8); 
   padding: 5px 12px; 
   border-radius: 50px;
   border: 1px solid rgba(255,255,255,0.1);
-  color: #D4AF37; /* Gold text for info */
+  color: #00f3ff; /* Electric Blue text for info */
 }
 
 /* --- MOBILE OPTIMIZATION --- */
@@ -203,33 +203,34 @@ body.modal-open #app-container {
 /* 🔴 MODAL POPUP STYLES */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(2, 11, 20, 0.95);
   z-index: 9999;
   display: none; 
   justify-content: center; align-items: center;
 }
 
 .modal-box {
-  /* UPDATED: Very Dark Grey/Gold bg */
-  background: #121212; 
-  /* UPDATED: Gold Border */
-  border: 2px solid #D4AF37;
+  /* UPDATED: Dark Navy Background */
+  background: #04142d; 
+  /* UPDATED: Electric Blue Border */
+  border: 2px solid #00f3ff;
   border-radius: 20px;
   padding: 30px;
   text-align: center;
   width: 90%; max-width: 400px;
-  /* UPDATED: Gold Glow */
-  box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+  /* UPDATED: Blue Glow */
+  box-shadow: 0 0 50px rgba(0, 243, 255, 0.25);
 }
 
 .modal-box h2 { 
   font-size: 1.5rem; 
-  /* UPDATED: Gold Title */
-  color: #D4AF37; 
+  /* UPDATED: Cyan Title */
+  color: #00f3ff; 
   margin-bottom: 10px; 
   letter-spacing: 1px; 
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
-.modal-box p { font-size: 1.1rem; color: #ccc; margin-bottom: 25px; }
+.modal-box p { font-size: 1.1rem; color: #a0c4e8; margin-bottom: 25px; }
 
 .modal-buttons { display: flex; justify-content: center; gap: 20px; }
 
@@ -246,10 +247,10 @@ body.modal-open #app-container {
 }
 
 .modal-btn.focused, .modal-btn:active {
-  /* UPDATED: Active Button Background Gold */
-  background: #D4AF37;
-  color: #000;
-  /* UPDATED: Gold Glow */
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  /* UPDATED: Active Button Gradient Blue */
+  background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
+  color: #fff;
+  /* UPDATED: Blue Glow */
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
   transform: scale(1.1);
 }

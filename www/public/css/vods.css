@@ -10,9 +10,9 @@ input { -webkit-user-select: text; user-select: text; }
 
 body {
   width: 100vw; min-height: 100vh;
-  /* Premium Deep Black Background */
-  background-color: #050505;
-  background-image: radial-gradient(circle at top left, #1a1a1a 0%, #000000 100%);
+  /* UPDATED: Deep Navy Background */
+  background-color: #020b14;
+  background-image: radial-gradient(circle at top left, #051121 0%, #01060d 100%);
   font-family: 'Roboto', 'Segoe UI', sans-serif;
   color: #fff;
   overflow-y: auto; overflow-x: hidden;
@@ -26,36 +26,40 @@ body {
 /* --- SIDEBAR (Desktop/TV) --- */
 .sidebar {
   width: 280px;
-  background: rgba(15, 15, 15, 0.95);
-  border-right: 1px solid rgba(212, 175, 55, 0.2);
+  /* UPDATED: Navy Glass Sidebar */
+  background: rgba(4, 20, 45, 0.95);
+  border-right: 1px solid rgba(0, 243, 255, 0.15);
   display: flex; flex-direction: column;
   padding: 20px 0;
   flex-shrink: 0; z-index: 10;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
 .sidebar h2 {
-  font-size: 1rem; color: #D4AF37; margin: 0 0 20px 20px; 
+  font-size: 1rem; color: #00f3ff; margin: 0 0 20px 20px; 
   text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
 #category-list {
   list-style: none; padding: 0; margin: 0;
   overflow-y: auto; flex: 1;
-  scrollbar-width: thin; scrollbar-color: #D4AF37 rgba(0,0,0,0.3);
+  /* UPDATED: Blue Scrollbar */
+  scrollbar-width: thin; scrollbar-color: #00f3ff rgba(0,0,0,0.3);
 }
 
 .category-item {
-  padding: 14px 25px; font-size: 1rem; color: #888;
+  padding: 14px 25px; font-size: 1rem; color: #8faecb;
   border-left: 4px solid transparent; transition: all 0.2s; cursor: pointer;
 }
 
 .category-item.focused, .category-item:hover {
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
+  /* UPDATED: Blue Focus State */
+  background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
   color: #fff; 
-  border-left: 4px solid #D4AF37; 
+  border-left: 4px solid #00f3ff; 
   font-weight: 600;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
 
 /* --- MAIN CONTENT --- */
@@ -83,20 +87,21 @@ body {
 }
 
 .nav-btn {
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3); 
-  color: #D4AF37;
+  /* UPDATED: Blue Glass Button */
+  background: rgba(0, 243, 255, 0.08);
+  border: 1px solid rgba(0, 243, 255, 0.25); 
+  color: #00f3ff;
   padding: 8px 20px; border-radius: 30px; font-size: 0.7rem; font-weight: 500;
   cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
 
 .nav-btn:active { 
-  background: #D4AF37; 
+  background: #00f3ff; 
   color: #000; 
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
 }
 
-/* RIGHT SIDE: Info (Title, Hint, Clock) */
+/* RIGHT SIDE: Info */
 .header-info {
   display: flex; 
   flex-direction: column; 
@@ -113,16 +118,16 @@ body {
 
 /* Hint Text */
 .hint-text {
-  font-size: 0.85rem; color: #D4AF37;
-  background: rgba(212, 175, 55, 0.1);
+  font-size: 0.85rem; color: #00f3ff;
+  background: rgba(0, 243, 255, 0.1);
   padding: 4px 12px; border-radius: 20px; 
   margin-bottom: 5px;
   display: inline-block; 
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(0, 243, 255, 0.3);
 }
 
 #clock { 
-  font-size: 1rem; color: #D4AF37; font-weight: bold; margin-top: 2px;
+  font-size: 1rem; color: #00f3ff; font-weight: bold; margin-top: 2px;
 }
 
 /* Search */
@@ -130,10 +135,11 @@ body {
 .search-input {
   width: 100%; padding: 14px; font-size: 1.1rem;
   border-radius: 12px; 
-  border: 1px solid #D4AF37; 
-  background: rgba(0,0,0,0.8); color: #fff;
+  /* UPDATED: Blue Border */
+  border: 1px solid #00f3ff; 
+  background: rgba(4, 20, 45, 0.9); color: #fff;
 }
-.search-input::placeholder { color: #666; }
+.search-input::placeholder { color: #5a7b9c; }
 
 /* --- GRID LAYOUT --- */
 .grid {
@@ -145,14 +151,15 @@ body {
 /* --- PREMIUM CARDS --- */
 .channel-card {
   position: relative;
-  background: rgba(30, 30, 30, 0.6);
-  border: 1px solid rgba(255,255,255,0.05);
+  /* UPDATED: Navy Glass Card */
+  background: rgba(16, 33, 58, 0.6);
+  border: 1px solid rgba(0, 243, 255, 0.1);
   border-radius: 12px; overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-  aspect-ratio: 2 / 3; /* Poster Shape */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  aspect-ratio: 2 / 3; 
 }
 
 .channel-card img {
@@ -164,7 +171,8 @@ body {
 /* Overlay Text (Glassy) */
 .channel-card .ch-name {
   position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7), transparent);
+  /* UPDATED: Navy Gradient Overlay */
+  background: linear-gradient(to top, rgba(2, 11, 20, 0.95), rgba(2, 11, 20, 0.7), transparent);
   color: #fff; font-size: 0.85rem; font-weight: 500;
   padding: 25px 8px 10px 8px;
   text-align: center;
@@ -174,16 +182,18 @@ body {
 .fav-icon { 
     position: absolute; top: 5px; right: 5px; 
     font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.9); z-index: 2;
-    color: #FFD700;
+    /* UPDATED: Cyan Favorite Star */
+    color: #00f3ff;
 }
 
 /* Active / Focus State */
 .channel-card.focused, .channel-card:active {
   transform: scale(1.05); 
-  border: 2px solid #FFD700;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+  /* UPDATED: Electric Blue Glow */
+  border: 2px solid #00f3ff;
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
   z-index: 5;
-  background: #1a1a1a;
+  background: #051a33;
 }
 .channel-card:active img { opacity: 1; }
 
@@ -194,7 +204,7 @@ body {
 }
 
 /* ========================================= */
-/* 🟢 NEW VOD PLAYER STYLES (Gold Theme)     */
+/* 🟢 NEW VOD PLAYER STYLES (Blue Theme)     */
 /* ========================================= */
 
 .player-overlay {
@@ -223,18 +233,20 @@ video#main-video {
 /* Header */
 .player-header {
     padding: 20px 30px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    /* UPDATED: Navy Fade */
+    background: linear-gradient(to bottom, rgba(2, 11, 20, 0.9), transparent);
     display: flex; align-items: center; gap: 20px;
 }
 
 .header-text { display: flex; flex-direction: column; }
 #player-channel-name { color: #fff; font-size: 1.2rem; font-weight: 700; text-shadow: 0 2px 4px black; }
-#player-status { color: #FFD700; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+/* UPDATED: Status Blue */
+#player-status { color: #00f3ff; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
 
 /* Back Button */
 .glass-btn {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(16, 33, 58, 0.5);
+    border: 1px solid rgba(0, 243, 255, 0.2);
     color: #fff; width: 45px; height: 45px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; backdrop-filter: blur(10px);
@@ -253,46 +265,48 @@ video#main-video {
 
 .nav-circle {
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(212, 175, 55, 0.5);
-    color: #FFD700;
+    background: rgba(4, 20, 45, 0.7);
+    /* UPDATED: Circle Blue */
+    border: 2px solid rgba(0, 243, 255, 0.4);
+    color: #00f3ff;
     display: flex; align-items: center; justify-content: center;
     backdrop-filter: blur(5px); cursor: pointer; transition: all 0.2s; z-index: 10;
 }
-.nav-circle:active { background: #FFD700; color: #000; transform: scale(0.95); }
+.nav-circle:active { background: #00f3ff; color: #000; transform: scale(0.95); }
 
 .nav-circle.big { width: 80px; height: 80px; }
 .nav-circle.big svg { width: 45px; height: 45px; }
 
-.nav-circle.small { width: 55px; height: 55px; border-color: rgba(255,255,255,0.2); color: #fff; }
+.nav-circle.small { width: 55px; height: 55px; border-color: rgba(0, 243, 255, 0.2); color: #fff; }
 .nav-circle.small svg { width: 30px; height: 30px; }
 
 /* Footer (Progress Bar) */
 .player-footer {
     padding: 20px 40px 40px 40px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    background: linear-gradient(to top, rgba(2, 11, 20, 0.9), transparent);
     display: flex; align-items: center; gap: 15px; z-index: 10;
 }
 
 #current-time, #total-duration { font-size: 0.9rem; font-weight: 600; min-width: 50px; text-align: center; }
 
-/* Gold Slider */
+/* UPDATED: Blue Slider */
 input[type=range] {
     flex: 1; -webkit-appearance: none; background: transparent; cursor: pointer;
 }
 input[type=range]::-webkit-slider-runnable-track {
-    width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px;
+    width: 100%; height: 6px; background: rgba(0, 243, 255, 0.15); border-radius: 3px;
 }
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%;
-    background: #FFD700; margin-top: -6px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+    background: #00f3ff; margin-top: -6px; box-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
 }
 
 /* Loader */
 .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; pointer-events: none; }
 .spinner {
-    width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3);
-    border-top: 5px solid #FFD700; border-radius: 50%; animation: spin 1s linear infinite;
+    width: 50px; height: 50px; border: 5px solid rgba(16, 33, 58, 0.5);
+    /* UPDATED: Spinner Blue */
+    border-top: 5px solid #00f3ff; border-radius: 50%; animation: spin 1s linear infinite;
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -305,9 +319,9 @@ input[type=range]::-webkit-slider-thumb {
     /* Horizontal Chips Menu */
     .sidebar { 
         width: 100%; height: auto; 
-        background: #0a0a0a; 
+        background: #04142d; 
         border-right: none; 
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        border-bottom: 1px solid rgba(0, 243, 255, 0.2);
         padding: 10px;
     }
     .sidebar h2 { display: none; } 
@@ -321,23 +335,22 @@ input[type=range]::-webkit-slider-thumb {
     
     /* Chip Style Buttons */
     .category-item { 
-        border: 1px solid rgba(255,255,255,0.1);
-        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(0, 243, 255, 0.15);
+        background: rgba(16, 33, 58, 0.5);
         border-radius: 20px; padding: 8px 18px;
-        white-space: nowrap; font-size: 0.9rem; color: #aaa;
+        white-space: nowrap; font-size: 0.9rem; color: #8faecb;
     }
     
     .category-item.focused { 
-        background: #D4AF37; 
-        border-color: #D4AF37;
+        background: #00f3ff; 
+        border-color: #00f3ff;
         color: #000; text-shadow: none;
     }
 
     /* Content Area */
     .channel-pane { padding: 15px; height: auto; flex: 1; }
-    .top-bar { display: none; } /* Save Space */
+    .top-bar { display: none; } 
     
-    /* Tighter Grid for Phones */
     .grid { 
         grid-template-columns: repeat(3, 1fr); 
         gap: 10px; padding-bottom: 80px;
@@ -350,6 +363,5 @@ input[type=range]::-webkit-slider-thumb {
     .pagination-controls { padding: 10px 0; }
     .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
     
-    /* Hint Text for Mobile */
     .hint-text { width: 100%; text-align: center; margin-bottom: 10px; }
 }

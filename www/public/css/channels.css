@@ -4,70 +4,88 @@
     margin: 0; 
     padding: 0; 
     -webkit-tap-highlight-color: transparent; 
-    -webkit-user-select: none; user-select: none;
+    -webkit-user-select: none; 
+    user-select: none;
 }
 input { -webkit-user-select: text; user-select: text; }
 
 body {
-  width: 100vw; min-height: 100vh;
-  /* UPDATED: Premium Deep Dark Background */
-  background-color: #050505;
-  background-image: radial-gradient(circle at top left, #1a1a1a 0%, #000000 100%);
+  width: 100vw; 
+  min-height: 100vh;
+  background-color: #020b14;
+  background-image: radial-gradient(circle at top left, #051121 0%, #01060d 100%);
   font-family: 'Roboto', 'Segoe UI', sans-serif;
   color: #fff;
-  overflow-y: auto; overflow-x: hidden;
+  overflow-y: auto; 
+  overflow-x: hidden;
 }
 
 /* Main Layout */
 .live-wrapper {
-  display: flex; height: 100vh; width: 100%;
+  display: flex; 
+  height: 100vh; 
+  width: 100%;
 }
 
 /* --- SIDEBAR (Desktop/TV) --- */
 .sidebar {
   width: 280px;
-  /* UPDATED: Sidebar Background Deep Black/Charcoal */
-  background: rgba(15, 15, 15, 0.95);
-  /* UPDATED: Border Faint Gold */
-  border-right: 1px solid rgba(212, 175, 55, 0.2);
-  display: flex; flex-direction: column;
+  background: rgba(4, 20, 45, 0.95);
+  border-right: 1px solid rgba(0, 243, 255, 0.15);
+  display: flex; 
+  flex-direction: column;
   padding: 20px 0;
-  flex-shrink: 0; z-index: 10;
-  backdrop-filter: blur(10px);
+  flex-shrink: 0; 
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .sidebar h2 {
-  /* UPDATED: Header Text Metallic Gold */
-  font-size: 1rem; color: #D4AF37; margin: 0 0 20px 20px; 
-  text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+  font-size: 1rem; 
+  color: #00f3ff; 
+  margin: 0 0 20px 20px; 
+  text-transform: uppercase; 
+  letter-spacing: 1.5px; 
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
 #category-list {
-  list-style: none; padding: 0; margin: 0;
-  overflow-y: auto; flex: 1;
-  /* UPDATED: Scrollbar Color Gold */
-  scrollbar-width: thin; scrollbar-color: #D4AF37 rgba(0,0,0,0.3);
+  list-style: none; 
+  padding: 0; 
+  margin: 0;
+  overflow-y: auto; 
+  flex: 1;
+  scrollbar-width: thin; 
+  scrollbar-color: #00f3ff rgba(0,0,0,0.3);
 }
 
 .category-item {
-  padding: 14px 25px; font-size: 1rem; color: #888;
-  border-left: 4px solid transparent; transition: all 0.2s; cursor: pointer;
+  padding: 14px 25px; 
+  font-size: 1rem; 
+  color: #8faecb;
+  border-left: 4px solid transparent; 
+  transition: all 0.2s; 
+  cursor: pointer;
 }
 
 .category-item.focused, .category-item:hover {
-  /* UPDATED: Hover/Focus Gradient Gold */
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
+  background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
   color: #fff; 
-  /* UPDATED: Left Border Gold */
-  border-left: 4px solid #D4AF37; 
+  border-left: 4px solid #00f3ff; 
   font-weight: 600;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
 
 /* --- MAIN CONTENT --- */
 .channel-pane {
-  flex: 1; display: flex; flex-direction: column;
-  padding: 25px 40px; height: 100vh; overflow-y: auto;
+  flex: 1; 
+  display: flex; 
+  flex-direction: column;
+  padding: 25px 40px; 
+  height: 100vh; 
+  overflow-y: auto;
 }
 
 /* --- HEADER --- */
@@ -80,7 +98,8 @@ body {
 }
 
 .top-actions { 
-    display: flex; gap: 12px; 
+    display: flex; 
+    gap: 12px; 
 }
 
 .header-info { 
@@ -93,104 +112,115 @@ body {
 
 .header-info h1 { margin: 0; font-size: 1rem; font-weight: 300; color: #fff; }
 
-/* Hint Text */
 .hint-text {
-    font-size: 0.8rem; color: #D4AF37;
-    /* UPDATED: Hint Background Dark Gold Tint */
-    background: rgba(212, 175, 55, 0.1);
-    padding: 4px 12px; border-radius: 20px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    font-size: 0.8rem; 
+    color: #00f3ff;
+    background: rgba(0, 243, 255, 0.1);
+    padding: 4px 12px; 
+    border-radius: 20px;
+    border: 1px solid rgba(0, 243, 255, 0.3);
 }
 
 .nav-btn {
-  /* UPDATED: Button Base Dark Gold Tint */
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3); 
-  color: #D4AF37;
-  padding: 8px 20px; border-radius: 30px; font-size: 0.7rem; font-weight: 500;
-  cursor: pointer; transition: all 0.2s;
+  background: rgba(0, 243, 255, 0.08);
+  border: 1px solid rgba(0, 243, 255, 0.25); 
+  color: #00f3ff;
+  padding: 8px 20px; 
+  border-radius: 30px; 
+  font-size: 0.7rem; 
+  font-weight: 500;
+  cursor: pointer; 
+  transition: all 0.2s;
 }
 
 .nav-btn:active { 
-  /* UPDATED: Button Active Solid Gold */
-  background: #D4AF37; 
+  background: #00f3ff; 
   color: #000; 
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
 }
 
-/* Search */
 #search-container { width: 100%; display: none; margin-bottom: 20px; }
 .search-input {
-  width: 100%; padding: 14px; font-size: 1.1rem;
+  width: 100%; 
+  padding: 14px; 
+  font-size: 1.1rem;
   border-radius: 12px; 
-  /* UPDATED: Search Border Gold */
-  border: 1px solid #D4AF37; 
-  background: rgba(0,0,0,0.8); color: #fff;
+  border: 1px solid #00f3ff; 
+  background: rgba(4, 20, 45, 0.9); 
+  color: #fff;
+  outline: none;
 }
-.search-input::placeholder { color: #666; }
 
-/* --- GRID LAYOUT (4 COLUMNS) --- */
+/* --- GRID LAYOUT --- */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
-  gap: 15px; padding-bottom: 60px;
+  gap: 15px; 
+  padding-bottom: 60px;
 }
 
-/* --- PREMIUM CARDS (SQUARE) --- */
 .channel-card {
   position: relative;
-  /* UPDATED: Card Background Dark Charcoal */
-  background: rgba(30, 30, 30, 0.6);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px; overflow: hidden;
-  display: flex; flex-direction: column;
+  background: rgba(16, 33, 58, 0.6);
+  border: 1px solid rgba(0, 243, 255, 0.1);
+  border-radius: 12px; 
+  overflow: hidden;
+  display: flex; 
+  flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   aspect-ratio: 1 / 1; 
 }
 
 .channel-card img {
-  width: 100%; height: 100%; 
-  object-fit: contain; opacity: 0.8;
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain; 
+  opacity: 0.8;
   padding: 10px;
   transition: opacity 0.2s;
 }
 
 .channel-card .ch-name {
   position: absolute; bottom: 0; left: 0; right: 0;
-  /* UPDATED: Name Bar Black with transparency */
-  background: rgba(0, 0, 0, 0.85); 
-  color: #ccc; font-size: 0.75rem; font-weight: 500;
-  padding: 5px; text-align: center;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  background: rgba(2, 11, 20, 0.9); 
+  color: #a0c4e8; 
+  font-size: 0.75rem; 
+  font-weight: 500;
+  padding: 5px; 
+  text-align: center;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  border-top: 1px solid rgba(0, 243, 255, 0.1);
 }
 
 .fav-icon { 
     position: absolute; top: 5px; right: 5px; 
-    font-size: 1rem; text-shadow: 0 1px 3px rgba(0,0,0,0.9); z-index: 2;
-    /* UPDATED: Gold Star */
-    color: #FFD700;
+    font-size: 1rem; 
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9); 
+    z-index: 2;
+    color: #00f3ff;
 }
 
-/* Active State */
 .channel-card.focused, .channel-card:active {
   transform: scale(1.05); 
-  /* UPDATED: Focused Border Bright Gold */
-  border: 2px solid #FFD700;
-  /* UPDATED: Focused Glow Gold */
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  border: 2px solid #00f3ff;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
   z-index: 5;
-  background: #1a1a1a;
+  background: #051a33;
 }
-.channel-card.focused img { opacity: 1; }
-.channel-card.focused .ch-name { color: #FFD700; }
 
 /* --- PAGINATION --- */
 .pagination-controls {
-  display: flex; justify-content: center; align-items: center;
-  padding: 15px 0; margin-top: auto; gap: 15px;
+  display: flex; 
+  /* FIXED: justify(content) typo fixed to justify-content */
+  justify-content: center; 
+  align-items: center;
+  padding: 15px 0; 
+  margin-top: auto; 
+  gap: 15px;
 }
 
 /* --- PLAYER OVERLAY --- */
@@ -198,203 +228,89 @@ body {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: #000; z-index: 9999; display: none;
 }
-#player-overlay.active { display: block; }
 
-.player-ui {
-  position: absolute; bottom: 0; left: 0; width: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-  padding: 30px; display: flex; flex-direction: column; gap: 15px;
-}
-.player-info h2 { 
-  font-size: 1rem; margin: 0; 
-  /* UPDATED: Player Title Gold */
-  color: #D4AF37;
-  text-shadow: 0 2px 10px black; 
-}
-.player-info p { color: #ffffff; font-size: 1rem; font-weight: bold; }
-.player-controls-touch { display: flex; gap: 20px; justify-content: center; margin-top: 10px; }
-
-/* ========================================= */
-/* 📱 MOBILE OPTIMIZATION (Phone Mode)       */
-/* ========================================= */
-@media (max-width: 768px) {
-    .live-wrapper { flex-direction: column; height: 100vh; overflow: hidden; }
-    
-    /* Sidebar Chips */
-    .sidebar { 
-        width: 100%; height: auto; 
-        /* UPDATED: Mobile Sidebar Background Dark */
-        background: #0a0a0a; 
-        border-right: none; 
-        /* UPDATED: Border Faint Gold */
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-        padding: 10px;
-    }
-    .sidebar h2 { display: none; } 
-    
-    #category-list {
-        display: flex; flex-direction: row;
-        overflow-x: auto; gap: 8px; padding-bottom: 5px;
-        -ms-overflow-style: none; scrollbar-width: none;
-    }
-    #category-list::-webkit-scrollbar { display: none; }
-    
-    .category-item { 
-        border: 1px solid rgba(255,255,255,0.1);
-        background: rgba(255,255,255,0.05);
-        border-radius: 20px; padding: 8px 18px;
-        white-space: nowrap; font-size: 0.9rem; color: #aaa;
-    }
-    .category-item.focused { 
-        /* UPDATED: Mobile Active Chip Gold */
-        background: #D4AF37; 
-        border-color: #D4AF37; 
-        color: #000; /* Black text on gold chip */
-    }
-
-    /* Content Area */
-    .channel-pane { padding: 10px; height: auto; flex: 1; }
-    
-    /* 🟢 HEADER FIX FOR MOBILE */
-    .top-bar { 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        gap: 10px;
-    }
-    
-    .top-actions { width: 100%; justify-content: center; }
-    
-    .header-info { 
-        width: 100%; 
-        align-items: center; 
-        text-align: center; 
-    }
-    
-    /* 4 Columns */
-    .grid { 
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 8px; padding-bottom: 80px;
-    }
-    .channel-card .ch-name { font-size: 0.7rem; padding: 3px; }
-    
-    .pagination-controls { padding: 10px 0; }
-    .nav-btn { padding: 6px 12px; font-size: 0.85rem; }
-}
-
-/* ========================================= */
-/* 🟢 IMPROVED PLAYER STYLES (Gold/Black)    */
-/* ========================================= */
-
-.player-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #000; z-index: 9999;
-    display: flex; justify-content: center; align-items: center;
-}
-
-video#main-video {
-    width: 100%; height: 100%; object-fit: contain;
-}
-
-/* UI Layer - Handles the fade effect */
-.player-ui-layer {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    display: flex; flex-direction: column; justify-content: space-between;
-    transition: opacity 0.4s ease-in-out;
-    opacity: 1;
-    background: rgba(0,0,0,0.1); /* Very slight dim */
-}
-
-/* The class JS adds to hide everything */
-.ui-hidden {
-    opacity: 0 !important;
-    pointer-events: none; /* Lets you touch video behind UI */
-}
-
-/* --- TOP HEADER --- */
 .player-header {
     padding: 20px 25px;
-    /* Gradient so text is visible on bright videos */
-    background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
-    display: flex; align-items: center; gap: 20px;
-}
-
-.header-text {
-    display: flex; flex-direction: column;
-}
-
-#player-channel-name {
-    color: #fff; font-size: 1.2rem; font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    letter-spacing: 0.5px;
+    background: linear-gradient(to bottom, rgba(2, 11, 20, 0.9) 0%, transparent 100%);
+    display: flex; 
+    align-items: center; 
+    gap: 20px;
 }
 
 #player-status {
-    color: #FFD700; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;
+    color: #00f3ff; 
+    font-size: 0.8rem; 
+    font-weight: 600; 
+    text-transform: uppercase;
 }
 
 /* Back Button Style */
 .glass-btn {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(16, 33, 58, 0.5);
+    border: 1px solid rgba(0, 243, 255, 0.2);
     color: #fff;
     width: 45px; height: 45px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; backdrop-filter: blur(10px);
+    cursor: pointer; 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-.glass-btn svg { width: 26px; height: 26px; }
-.glass-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
 
-/* --- MIDDLE CONTROLS (Left/Right Buttons) --- */
+/* --- MIDDLE CONTROLS --- */
 .mid-controls {
-    flex: 1; /* Takes up all available vertical space */
+    flex: 1; 
     display: flex; 
     align-items: center; 
-    justify-content: space-between; /* Pushes buttons to edges */
+    justify-content: space-between; 
     padding: 0 30px;
     position: relative;
 }
 
-/* Invisible Touch Layer */
-#touch-layer {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 1; /* Sits behind buttons but captures taps in empty space */
-}
-
-/* Big Navigation Circles */
 .nav-circle {
     width: 60px; height: 60px; border-radius: 50%;
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid rgba(212, 175, 55, 0.3); /* Gold border */
-    color: #FFD700; /* Gold Icon */
+    background: rgba(4, 20, 45, 0.6);
+    border: 2px solid rgba(0, 243, 255, 0.3); 
+    color: #00f3ff;
     display: flex; align-items: center; justify-content: center;
     backdrop-filter: blur(5px);
-    cursor: pointer; z-index: 10; /* Above touch layer */
+    -webkit-backdrop-filter: blur(5px);
+    cursor: pointer; 
+    z-index: 10; 
     transition: all 0.2s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-.nav-circle svg { width: 35px; height: 35px; }
-
 .nav-circle:active {
-    background: #FFD700; color: #000;
+    background: #00f3ff; 
+    color: #000;
     transform: scale(0.9);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
 }
 
 /* --- LOADER --- */
-.loader {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none; display: none;
-}
-/* Simple CSS Spinner */
 .spinner {
     width: 50px; height: 50px;
-    border: 5px solid rgba(255,255,255,0.3);
-    border-top: 5px solid #FFD700;
+    border: 5px solid rgba(16, 33, 58, 0.5);
+    border-top: 5px solid #00f3ff;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
+    .sidebar { 
+        width: 100%; height: auto; 
+        background: #04142d; 
+        border-right: none; 
+        border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+        padding: 10px;
+    }
+    #category-list {
+        display: flex; flex-direction: row;
+        gap: 8px;
+    }
+    .grid { 
+        grid-template-columns: repeat(4, 1fr); 
+    }
+}
