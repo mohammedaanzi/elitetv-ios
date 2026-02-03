@@ -1,0 +1,65 @@
+name: Build VLC Player App
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install NPM Dependencies
+        run: npm install
+
+      - name: Capacitor Sync
+        run: npx cap sync ios
+
+      - name: Install CocoaPods
+        run: |
+          cd ios/App
+          pod install --repo-update
+
+      - name: Build Archive
+        run: |
+          cd ios/App
+          # We run the build and save everything to a file called 'build.log'
+          # If it fails (||), we grep for "error:" and show 5 lines before and after the error.
+          xcodebuild -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath App.xcarchive \
+            archive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            ENABLE_BITCODE=NO > build.log 2>&1 || (grep -C 5 "error:" build.log && exit 65)
+          
+          # If it succeeds, just print a success message
+          echo "Build Successful"
+
+      - name: Export IPA
+        run: |
+          cd ios/App
+          # This command finds the actual .app folder automatically
+          APP_PATH=$(find App.xcarchive/Products/Applications -name "*.app" | head -n 1)
+          echo "Found App at: $APP_PATH"
+          
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r iosozzie-vlc.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app-vlc-version
+          path: ios/App/iosozzie-vlc.ipa

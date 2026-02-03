@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Fixed viewport for Phone/Tablet -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Profile</title>
+  <link rel="stylesheet" href="css/account.css">
+</head>
+<body>
+
+  <div id="profile-container">
+    
+    <!-- Header -->
+    <header class="page-header">
+      <h1>ACCOUNT INFO</h1>
+      <div id="clock">00:00</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content-wrapper">
+      
+      <!-- Left Column: User Identity -->
+      <section class="user-card glass-panel">
+        <!-- Added fallback image so layout doesn't break if icon is missing -->
+        <img src="images/ic-user.png" alt="User" class="user-avatar" onerror="this.src='images/login-logo.png'">
+        
+        <!-- Wrapper for Mobile Layout (Side-by-Side Text) -->
+        <div class="user-info-mobile">
+            <h2 id="disp-username">Loading...</h2>
+            <div class="status-badge" id="disp-status">Checking...</div>
+        </div>
+      </section>
+
+      <!-- Right Column: Subscription Details -->
+      <section class="info-card glass-panel">
+        
+        <div class="info-row">
+          <span class="label">Expiration Date</span>
+          <span class="value" id="disp-expiry">...</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Max Connections</span>
+          <span class="value" id="disp-max">...</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Active Connections</span>
+          <span class="value" id="disp-active">...</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Trial Account</span>
+          <span class="value" id="disp-trial">...</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Created At</span>
+          <span class="value" id="disp-created">...</span>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Footer Actions -->
+    <footer class="action-bar">
+      <!-- Added type="button" for reliable clicks -->
+      <button id="btn-back" type="button" class="nav-item glass-btn">
+        BACK TO HOME
+      </button>
+      
+      <button id="btn-logout" type="button" class="nav-item glass-btn btn-danger">
+        SIGN OUT
+      </button>
+    </footer>
+
+  </div>
+
+  <script src="js/account.js"></script>
+
+</body>
+</html>

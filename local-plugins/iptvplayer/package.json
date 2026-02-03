@@ -1,0 +1,15 @@
+{
+  "name": "Iptvplayer",
+  "version": "1.0.0",
+  "description": "VLC Player wrapper",
+  "main": "index.js",
+  "keywords": ["capacitor", "plugin", "ios"],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    }
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0"
+  }
+}

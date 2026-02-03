@@ -1,0 +1,29 @@
+require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
+
+platform :ios, '15.0'
+use_frameworks!
+
+# 🟢 FIX: The missing function definition is restored here
+def capacitor_pods
+  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
+  pod 'CapgoCapacitorVideoPlayer', :path => '../../node_modules/@capgo/capacitor-video-player'
+
+  # ⬇️ CRITICAL ADDITION: This manually links your local plugin for the Build System
+  pod 'Iptvplayer', :path => '../../local-plugins/Iptvplayer'
+end
+
+target 'App' do
+  # This line now works because the function is defined above
+  capacitor_pods
+end
+
+post_install do |installer|
+  assertDeploymentTarget(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
+end

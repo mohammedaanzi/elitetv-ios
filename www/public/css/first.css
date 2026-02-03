@@ -1,0 +1,133 @@
+/* --- Global App Feel --- */
+* {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none; -webkit-user-drag: none;
+}
+input { -webkit-user-select: text; user-select: text; }
+
+body {
+  width: 100vw; min-height: 100vh; 
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  color: #fff; overflow-y: auto; 
+  display: flex; justify-content: center; align-items: center;
+  /* UPDATED: Deep Black/Dark Bronze background */
+  background-color: #050505; 
+  padding: 20px; 
+}
+
+.bg-image {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: url('../images/background2.png') no-repeat center center fixed;
+  background-size: cover; z-index: -1;
+}
+
+.bg-image::after { 
+  content: ''; position: absolute; inset: 0; 
+  /* UPDATED: Very dark overlay to make gold pop */
+  background: rgba(0, 0, 0, 0.90); 
+}
+
+.login-container { width: 100%; display: flex; justify-content: center; }
+
+.login-glass-card {
+  width: 100%; max-width: 400px; 
+  /* UPDATED: Dark Smoky Black with slight transparency */
+  background: rgba(20, 20, 20, 0.85); 
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  /* UPDATED: Subtle Gold Border */
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 20px; padding: 30px; 
+  text-align: center; 
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.logo { width: 100px; margin-bottom: 2px; }
+
+h2 { 
+  font-size: 1.5rem; margin-bottom: 5px; font-weight: 600; 
+  /* UPDATED: Metallic Gold Text */
+  color: #D4AF37;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.subtitle { color: #888; font-size: 0.9rem; margin-bottom: 25px; }
+
+/* --- INPUTS --- */
+.input-wrapper {
+  position: relative; 
+  display: flex; align-items: center;
+  /* UPDATED: Darker background for inputs */
+  background: rgba(0, 0, 0, 0.4);
+  /* UPDATED: Gold border with low opacity */
+  border: 1px solid rgba(212, 175, 55, 0.3); 
+  border-radius: 10px; padding: 0 15px;
+  margin-bottom: 15px; height: 50px;
+  transition: all 0.3s ease;
+}
+
+/* Add a glow effect when user clicks input */
+.input-wrapper:focus-within {
+  border-color: #D4AF37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.input-icon { 
+  font-size: 1.1rem; margin-right: 10px; 
+  /* UPDATED: Gold Icon */
+  color: #D4AF37; 
+  opacity: 0.8; 
+}
+
+input {
+  flex: 1; background: transparent; border: none; color: #fff;
+  font-size: 1rem; outline: none; height: 100%;
+  padding-right: 40px; 
+}
+input::placeholder { color: #666; }
+
+/* --- EYE ICON (Inside Field) --- */
+.icon-btn-eye {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    color: #D4AF37; font-size: 1.2rem;
+    padding: 10px; cursor: pointer;
+    z-index: 10; opacity: 0.7;
+}
+
+.btn-login {
+  width: 100%; padding: 14px; border-radius: 10px; border: none;
+  /* UPDATED: Metallic Gold Gradient */
+  background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+  /* UPDATED: Black text is standard on Gold buttons for readability */
+  color: #000; 
+  font-size: 1rem; font-weight: bold;
+  text-transform: uppercase; margin-top: 10px;
+  /* UPDATED: Golden Shadow Glow */
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  transition: transform 0.2s;
+}
+
+.btn-login:active {
+  transform: scale(0.98);
+}
+
+.nav-item.focused { border: 2px solid #D4AF37; }
+.error-msg { margin-top: 15px; color: #ff4d4d; font-size: 0.9rem; }
+
+.loader-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+  z-index: 9999; display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+}
+.spinner {
+  width: 40px; height: 40px; border: 4px solid #222;
+  /* UPDATED: Spinner top color to Gold */
+  border-top: 4px solid #D4AF37; 
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }

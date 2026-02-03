@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Home - ozzie</title>
+  <link rel="stylesheet" href="css/screen.css" />
+
+  <!-- STEP 3: THE FORK (Traffic Cop Logic) -->
+<!-- STEP 3: THE FORK (Traffic Cop Logic) -->
+  <script>
+    (function() {
+      // Check for the Secret Handshake from Android Java
+      var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
+
+      if (isTV) {
+        console.log("TV Mode Detected on Home Page");
+
+        // 1. Tag the HTML so CSS knows we are on TV
+        document.documentElement.classList.add("tv-mode");
+
+        // 2. Load TV-Specific CSS (For focus borders, sizing)
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "css/tv-overrides.css";
+        document.head.appendChild(link);
+        
+        // ❌ DELETED: The part that loads 'remote.js'
+        // We removed it because 'screen.js' now handles the remote perfectly.
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="app-container">
+    
+    <!-- Header -->
+    <header id="top-bar">
+      <div class="header-left">
+        <img src="images/login-logo.png" class="logo" alt="Logo" onerror="this.style.display='none'" />
+      </div>
+      <div class="header-right">
+        <div id="date-time">00:00</div>
+      </div>
+    </header>
+
+    <!-- Main Menu -->
+    <div id="main-menu">
+      
+      <!-- TOP ROW -->
+      <div class="row-large">
+        <!-- Added 'nav-item' is perfect for the TV script -->
+        <div class="card big-card nav-item" id="btn-live" data-action="live">
+          <img src="images/ic-live-tv.png" alt="Live" onerror="this.style.display='none'">
+          <h2>LIVE TV</h2>
+        </div>
+
+        <div class="card big-card nav-item" id="btn-movies" data-action="movies">
+          <img src="images/ic-movies.png" alt="Movies" onerror="this.style.display='none'">
+          <h2>MOVIES</h2>
+        </div>
+
+        <div class="card big-card nav-item" id="btn-series" data-action="series">
+          <img src="images/ic-series.png" alt="Series" onerror="this.style.display='none'">
+          <h2>SERIES</h2>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW -->
+      <div class="row-small">
+        <div class="card small-card nav-item" id="btn-reload" data-action="reload">
+          <div class="card-content-row">
+            <span>RELOAD</span>
+          </div>
+        </div>
+
+        <div class="card small-card nav-item" id="btn-account" data-action="account">
+          <div class="card-content-row">
+            <span>ACCOUNT</span>
+          </div>
+        </div>
+
+        <div class="card small-card nav-item" id="btn-exit" data-action="exit">
+          <div class="card-content-row">
+            <span>EXIT</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer id="bottom-bar">
+      <div id="expiration-info">Expires: Loading...</div>
+      <div id="user-info">User: ...</div>
+    </footer>
+
+  </div>
+
+  <!-- EXIT CONFIRMATION MODAL -->
+  <div id="exit-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h2>EXIT APPLICATION?</h2>
+      <p>Are you sure you want to close the app?</p>
+      <div class="modal-buttons">
+        <!-- Also adding nav-item to these so the remote can highlight them -->
+        <button id="confirm-yes" class="modal-btn nav-item">YES</button>
+        <button id="confirm-no" class="modal-btn nav-item">NO</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/screen.js"></script>
+</body>
+</html>

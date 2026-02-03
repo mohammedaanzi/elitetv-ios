@@ -1,0 +1,355 @@
+/* --- Global Settings --- */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+    -webkit-user-select: none; user-select: none;
+}
+input { -webkit-user-select: text; user-select: text; }
+
+body {
+  width: 100vw; min-height: 100vh;
+  /* Premium Deep Black Background */
+  background-color: #050505;
+  background-image: radial-gradient(circle at top left, #1a1a1a 0%, #000000 100%);
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  color: #fff;
+  overflow-y: auto; overflow-x: hidden;
+}
+
+/* Main Layout */
+.live-wrapper {
+  display: flex; height: 100vh; width: 100%;
+}
+
+/* --- SIDEBAR (Desktop/TV) --- */
+.sidebar {
+  width: 280px;
+  background: rgba(15, 15, 15, 0.95);
+  border-right: 1px solid rgba(212, 175, 55, 0.2);
+  display: flex; flex-direction: column;
+  padding: 20px 0;
+  flex-shrink: 0; z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+.sidebar h2 {
+  font-size: 1rem; color: #D4AF37; margin: 0 0 20px 20px; 
+  text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+}
+
+#category-list {
+  list-style: none; padding: 0; margin: 0;
+  overflow-y: auto; flex: 1;
+  scrollbar-width: thin; scrollbar-color: #D4AF37 rgba(0,0,0,0.3);
+}
+
+.category-item {
+  padding: 14px 25px; font-size: 1rem; color: #888;
+  border-left: 4px solid transparent; transition: all 0.2s; cursor: pointer;
+}
+
+.category-item.focused, .category-item:hover {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
+  color: #fff; 
+  border-left: 4px solid #D4AF37; 
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+/* --- MAIN CONTENT --- */
+.channel-pane {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 25px 40px; height: 100vh; overflow-y: auto;
+}
+
+/* Top Bar Container */
+.top-bar {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-start;        
+  flex-wrap: nowrap;              
+  width: 100%;
+  margin-bottom: 25px; 
+  gap: 20px;
+}
+
+/* LEFT SIDE: Buttons */
+.top-actions { 
+  display: flex; 
+  gap: 12px; 
+  flex-shrink: 0; 
+}
+
+.nav-btn {
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3); 
+  color: #D4AF37;
+  padding: 8px 20px; border-radius: 30px; font-size: 0.7rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+
+.nav-btn:active { 
+  background: #D4AF37; 
+  color: #000; 
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+/* RIGHT SIDE: Info (Title, Hint, Clock) */
+.header-info {
+  display: flex; 
+  flex-direction: column; 
+  align-items: flex-end;  
+  text-align: right;
+  flex-grow: 1;           
+}
+
+.header-info h1 { 
+  margin: 0 0 5px 0; 
+  font-size: 0.8rem; font-weight: 300; color: #fff; 
+  line-height: 1.2;
+}
+
+/* Hint Text */
+.hint-text {
+  font-size: 0.85rem; color: #D4AF37;
+  background: rgba(212, 175, 55, 0.1);
+  padding: 4px 12px; border-radius: 20px; 
+  margin-bottom: 5px;
+  display: inline-block; 
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+#clock { 
+  font-size: 1rem; color: #D4AF37; font-weight: bold; margin-top: 2px;
+}
+
+/* Search */
+#search-container { width: 100%; display: none; margin-bottom: 20px; }
+.search-input {
+  width: 100%; padding: 14px; font-size: 1.1rem;
+  border-radius: 12px; 
+  border: 1px solid #D4AF37; 
+  background: rgba(0,0,0,0.8); color: #fff;
+}
+.search-input::placeholder { color: #666; }
+
+/* --- GRID LAYOUT --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
+  gap: 20px; padding-bottom: 60px;
+}
+
+/* --- PREMIUM CARDS --- */
+.channel-card {
+  position: relative;
+  background: rgba(30, 30, 30, 0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px; overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  aspect-ratio: 2 / 3; /* Poster Shape */
+}
+
+.channel-card img {
+  width: 100%; height: 100%; 
+  object-fit: cover; opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+/* Overlay Text (Glassy) */
+.channel-card .ch-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7), transparent);
+  color: #fff; font-size: 0.85rem; font-weight: 500;
+  padding: 25px 8px 10px 8px;
+  text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.fav-icon { 
+    position: absolute; top: 5px; right: 5px; 
+    font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.9); z-index: 2;
+    color: #FFD700;
+}
+
+/* Active / Focus State */
+.channel-card.focused, .channel-card:active {
+  transform: scale(1.05); 
+  border: 2px solid #FFD700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+  z-index: 5;
+  background: #1a1a1a;
+}
+.channel-card:active img { opacity: 1; }
+
+/* --- PAGINATION --- */
+.pagination-controls {
+  display: flex; justify-content: center; align-items: center;
+  padding: 15px 0; margin-top: auto; gap: 15px;
+}
+
+/* ========================================= */
+/* 🟢 NEW VOD PLAYER STYLES (Gold Theme)     */
+/* ========================================= */
+
+.player-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #000; z-index: 9999;
+    display: flex; justify-content: center; align-items: center;
+}
+
+video#main-video {
+    width: 100%; height: 100%; object-fit: contain;
+}
+
+/* UI Layer */
+.player-ui-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: opacity 0.4s ease-in-out;
+    background: rgba(0,0,0,0.2);
+}
+
+.ui-hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* Header */
+.player-header {
+    padding: 20px 30px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    display: flex; align-items: center; gap: 20px;
+}
+
+.header-text { display: flex; flex-direction: column; }
+#player-channel-name { color: #fff; font-size: 1.2rem; font-weight: 700; text-shadow: 0 2px 4px black; }
+#player-status { color: #FFD700; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+
+/* Back Button */
+.glass-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff; width: 45px; height: 45px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; backdrop-filter: blur(10px);
+}
+.glass-btn svg { width: 26px; height: 26px; }
+
+/* Center Controls */
+.mid-controls {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 40px;
+    position: relative; z-index: 10;
+}
+
+#touch-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+}
+
+.nav-circle {
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(212, 175, 55, 0.5);
+    color: #FFD700;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px); cursor: pointer; transition: all 0.2s; z-index: 10;
+}
+.nav-circle:active { background: #FFD700; color: #000; transform: scale(0.95); }
+
+.nav-circle.big { width: 80px; height: 80px; }
+.nav-circle.big svg { width: 45px; height: 45px; }
+
+.nav-circle.small { width: 55px; height: 55px; border-color: rgba(255,255,255,0.2); color: #fff; }
+.nav-circle.small svg { width: 30px; height: 30px; }
+
+/* Footer (Progress Bar) */
+.player-footer {
+    padding: 20px 40px 40px 40px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    display: flex; align-items: center; gap: 15px; z-index: 10;
+}
+
+#current-time, #total-duration { font-size: 0.9rem; font-weight: 600; min-width: 50px; text-align: center; }
+
+/* Gold Slider */
+input[type=range] {
+    flex: 1; -webkit-appearance: none; background: transparent; cursor: pointer;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%;
+    background: #FFD700; margin-top: -6px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+}
+
+/* Loader */
+.loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; pointer-events: none; }
+.spinner {
+    width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3);
+    border-top: 5px solid #FFD700; border-radius: 50%; animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ========================================= */
+/* 📱 MOBILE OPTIMIZATION (Phone Mode)       */
+/* ========================================= */
+@media (max-width: 768px) {
+    .live-wrapper { flex-direction: column; height: 100vh; overflow: hidden; }
+    
+    /* Horizontal Chips Menu */
+    .sidebar { 
+        width: 100%; height: auto; 
+        background: #0a0a0a; 
+        border-right: none; 
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        padding: 10px;
+    }
+    .sidebar h2 { display: none; } 
+    
+    #category-list {
+        display: flex; flex-direction: row;
+        overflow-x: auto; gap: 8px; padding-bottom: 5px;
+        -ms-overflow-style: none; scrollbar-width: none;
+    }
+    #category-list::-webkit-scrollbar { display: none; }
+    
+    /* Chip Style Buttons */
+    .category-item { 
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.05);
+        border-radius: 20px; padding: 8px 18px;
+        white-space: nowrap; font-size: 0.9rem; color: #aaa;
+    }
+    
+    .category-item.focused { 
+        background: #D4AF37; 
+        border-color: #D4AF37;
+        color: #000; text-shadow: none;
+    }
+
+    /* Content Area */
+    .channel-pane { padding: 15px; height: auto; flex: 1; }
+    .top-bar { display: none; } /* Save Space */
+    
+    /* Tighter Grid for Phones */
+    .grid { 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 10px; padding-bottom: 80px;
+    }
+    
+    .channel-card .ch-name {
+        font-size: 0.75rem; padding: 15px 5px 5px 5px;
+    }
+    
+    .pagination-controls { padding: 10px 0; }
+    .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+    
+    /* Hint Text for Mobile */
+    .hint-text { width: 100%; text-align: center; margin-bottom: 10px; }
+}

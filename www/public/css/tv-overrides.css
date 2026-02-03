@@ -1,0 +1,98 @@
+/* www/css/tv-overrides.css */
+
+/* 1. Global TV Adjustments */
+body {
+    cursor: default; 
+}
+
+/* 🟢 NEW: KILL SWITCH FOR NATIVE ANDROID BORDERS (Orange Box) */
+* {
+    outline: none !important; 
+    -webkit-tap-highlight-color: transparent !important; 
+    -webkit-focus-ring-color: transparent !important; /* Specific for Chrome/Android */
+}
+
+/* Double Safety */
+*:focus {
+    outline: none !important;
+    border: none !important;
+}
+
+/* ... Keep the rest of your file below ... */
+
+
+/* www/css/tv-overrides.css */
+
+/* 1. Global TV Adjustments */
+body {
+    cursor: default; /* Hides the mouse cursor */
+}
+
+/* ------------------------------------------------ */
+/* 2. THE REMOTE CURSOR (Where the user is NOW)     */
+/* ------------------------------------------------ */
+
+/* 🔴 OLD CODE (The Problem: :focus allows the Browser to interfere) */
+/* .nav-item:focus, 
+.nav-item.focused { */
+
+/* 🟢 NEW CODE (The Fix: Only show border if the CLASS is present) */
+.nav-item.focused {
+    outline: none !important;
+    transform: scale(1.01) !important;
+    z-index: 999 !important;
+    background-color: transparent !important; 
+    color: #ffffff !important;
+    border: 1px solid #00aaff !important; 
+    box-shadow: 0 0 25px rgba(0, 170, 255, 0.9) !important; 
+    transition: all 0.2s ease-in-out;
+}
+
+/* ⚠️ IMPORTANT: LEAVE THE INPUT RULE ALONE 
+   Inputs (Search) still need native focus to type! */
+input.nav-item:focus, 
+input.nav-item.focused {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border: 1px solid #00aaff !important;
+    transform: scale(1.02) !important; 
+}
+
+/* ------------------------------------------------ */
+/* 3. THE ACTIVE CATEGORY (The Folder we are in)    */
+/* ------------------------------------------------ */
+/* This is the passive "Open Folder" state */
+
+.selected-cat {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #FFD700 !important; /* Gold Text */
+    border-left: 5px solid #FFD700 !important;
+    font-weight: bold !important;
+    
+    /* Reset Focus Styles */
+    transform: scale(1) !important; 
+    box-shadow: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-right: none !important;
+    z-index: 1 !important;
+}
+
+/* ------------------------------------------------ */
+/* 4. CONFLICT RESOLUTION                           */
+/* ------------------------------------------------ */
+/* If the remote moves ONTO the selected category */
+
+.selected-cat.focused {
+    /* When focused, add a slight blue tint so we know we are holding it */
+    background-color: rgba(0, 170, 255, 0.2) !important; 
+    color: #ffffff !important; /* Turn text white when focused */
+    border: 1px solid #00aaff !important;
+    transform: scale(1.1) !important;
+    z-index: 999 !important;
+}
+
+/* Hide Phone-Only Elements */
+.phone-only {
+    display: none !important;
+}

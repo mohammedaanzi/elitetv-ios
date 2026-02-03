@@ -1,0 +1,24 @@
+{
+  "appId": "com.ozzieplayer.app",
+  "appName": "ozzie",
+  "webDir": "www/public",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true,
+    "allowNavigation": ["*"]
+  },
+  "ios": {
+    "preferredContentMode": "mobile"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#050505",
+      "overlaysWebView": false
+    }
+  }
+}
