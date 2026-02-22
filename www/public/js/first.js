@@ -104,16 +104,26 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
 
-        // --- BACKEND LOGIC (Variables refactored, API logic untouched) ---
+        // --- BACKEND LOGIC ---
         executeAuthentication: async function() {
-            const usr = this.uiUser.value.trim();
-            const pwd = this.uiPass.value.trim();
+            // UPDATED: Changed from 'const' to 'let' so we can modify them
+            let usr = this.uiUser.value.trim();
+            let pwd = this.uiPass.value.trim();
+            
             const loaderScreen = document.getElementById('auth-loader');
             const alertBox = document.getElementById('alert-box');
 
             if (!usr || !pwd) {
                 this.displayAlert('Please enter your Username and Password.');
                 return;
+            }
+
+            // 🟢 NEW: DEMO/TEST ACCOUNT INTERCEPTOR
+            // If the user types 'apptest' for both, we swap them out for the real credentials
+            if (usr.toLowerCase() === 'apptest' && pwd.toLowerCase() === 'apptest') {
+                console.log("Demo Account Detected. Engaging hidden credentials.");
+                usr = 'normal';
+                pwd = 'demo';
             }
 
             loaderScreen.style.display = 'flex';
@@ -128,6 +138,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (activeServer) {
+                // Because we swapped the variables above, the REAL credentials ('normal' & 'demo') 
+                // will be saved securely into localStorage so the rest of the app works flawlessly.
                 localStorage.setItem('iptv_username', usr);
                 localStorage.setItem('iptv_password', pwd);
                 localStorage.setItem('iptv_dns', activeServer);

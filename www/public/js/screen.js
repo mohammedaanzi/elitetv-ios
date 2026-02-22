@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         executeRoute: function() {
             const route = this.interactiveNodes[this.activeNodeId].getAttribute('data-route');
             switch (route) {
-                case 'live':   window.location.href = 'channels.html'; break;
+                case 'live':   window.location.href = 'livetv.html'; break;
                 case 'movies': window.location.href = 'mvods.html'; break;
                 case 'series': window.location.href = 'svods.html'; break;
                 case 'reload': window.location.reload(); break;

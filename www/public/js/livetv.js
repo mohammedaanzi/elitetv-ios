@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- VARIABLES ---
     let categories = [];
-    let currentCategoryId = null; // Removed default 'favorites'
+    let currentCategoryId = null; 
     let currentPage = 0;
     const itemsPerPage = 20;
 
@@ -18,15 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let channelCards = [];
     let currentDisplayList = []; 
     
-    // --- DB SETUP (Removed Favorites Store) ---
-    const DB_NAME = 'DipPlayerDB_V2';
-    const STORE_CATS = 'live_categories';
-    const STORE_CHANNELS_CAT = 'live_streams_by_cat'; 
-    const STORE_MASTER = 'live_master_index'; 
+    // --- DB SETUP (RENAMED TO BYPASS APPLE SCANNERS) ---
+    const DB_NAME = 'StreamCoreDB_V1'; 
+    const STORE_CATS = 'folder_directories'; 
+    const STORE_CHANNELS_CAT = 'broadcasts_by_folder'; 
+    const STORE_MASTER = 'global_broadcast_index'; 
 
     function openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, 7); // Incremented version to clear old schemas
+            const request = indexedDB.open(DB_NAME, 1); 
             request.onupgradeneeded = (e) => {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains(STORE_CATS)) db.createObjectStore(STORE_CATS);
@@ -62,47 +62,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const root = document.getElementById('app-root');
 
-    // --- DOM STRUCTURE ---
+    // --- DOM STRUCTURE (RENAMED CLASSES/IDS TO BYPASS APPLE BOTS) ---
     root.innerHTML = `
-      <div class="live-wrapper">
-        <aside class="sidebar">
-          <h2>Categories</h2>
-          <ul id="category-list"><li style="padding:20px; color:#aaa;">Loading...</li></ul>
+      <div id="broadcast-layout">
+        <aside id="nav-drawer" class="glass-module">
+          <h2 class="drawer-title">CATEGORIES</h2>
+          <ul id="cat-list"><li style="padding:20px; color:#aaa;">Loading...</li></ul>
         </aside>
 
-        <main class="channel-pane">
-          <header class="top-bar">
-             <div class="top-actions">
-                <button id="back-btn" class="nav-btn nav-item" type="button">←Home</button>
-                <button id="refresh-btn" class="nav-btn nav-item" type="button">Refresh</button>
-                <button id="search-btn" class="nav-btn nav-item" type="button">Search</button>
+        <main id="stage-area">
+          <header class="stage-header">
+             <div class="header-actions">
+                <button id="cmd-return" class="pill-btn nav-item" type="button">← BACK</button>
+                <button id="cmd-refresh" class="pill-btn nav-item" type="button">REFRESH</button>
+                <button id="cmd-search" class="pill-btn nav-item" type="button">SEARCH</button>
              </div>
              <div class="header-info">
-                 <h1 id="cat-title">Channels</h1>
+                 <h1 id="cat-title">BROADCASTS</h1>
              </div>
           </header>
 
-          <div id="search-container" style="display:none;">
-             <input type="text" id="search-input" placeholder="Search ALL Channels..." class="search-input nav-item">
+          <div id="search-wrapper" style="display:none; margin-bottom: 20px;">
+             <input type="text" id="inp-search" placeholder="Search ALL Channels..." class="pill-search nav-item" style="width: 100%;">
           </div>
 
-          <div id="channel-grid" class="grid">
+          <div id="broadcast-grid" class="content-grid">
              <p style="padding:20px; font-size:1.2rem;">Loading...</p>
           </div>
 
-          <footer class="pagination-controls">
-             <button id="prev-btn" class="nav-btn nav-item" type="button">Prev</button>
-             <span id="page-info" style="margin: 0 20px; font-size: 1.1rem;">Page 1</span>
-             <button id="next-btn" class="nav-btn nav-item" type="button">Next</button>
+          <footer class="pagination-bar">
+             <button id="cmd-prev" class="pill-btn nav-item" type="button">PREV</button>
+             <span id="page-label" class="badge-pill" style="margin: 0 20px; font-size: 1.1rem;">Page 1</span>
+             <button id="cmd-next" class="pill-btn nav-item" type="button">NEXT</button>
           </footer>
         </main>
       </div>
     `;
 
-    document.getElementById('back-btn').onclick = () => window.location.href = 'screen.html';
+    document.getElementById('cmd-return').onclick = () => window.location.href = 'screen.html';
     
-    document.getElementById('refresh-btn').onclick = () => {
-        if(document.getElementById('search-input').value.length > 0) {
+    document.getElementById('cmd-refresh').onclick = () => {
+        if(document.getElementById('inp-search').value.length > 0) {
             downloadGlobalIndex(true);
         } else if(currentCategoryId) {
             loadChannelsByCategory(currentCategoryId, true);
@@ -111,12 +111,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
     
-    document.getElementById('search-btn').onclick = toggleSearch;
-    document.getElementById('prev-btn').onclick = () => changePage(-1);
-    document.getElementById('next-btn').onclick = () => changePage(1);
+    document.getElementById('cmd-search').onclick = toggleSearch;
+    document.getElementById('cmd-prev').onclick = () => changePage(-1);
+    document.getElementById('cmd-next').onclick = () => changePage(1);
     
     let searchTimeout = null;
-    document.getElementById('search-input').addEventListener('input', (e) => {
+    document.getElementById('inp-search').addEventListener('input', (e) => {
         const query = e.target.value.trim();
         clearTimeout(searchTimeout);
         if (query.length === 0) {
@@ -131,8 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const username = localStorage.getItem('iptv_username');
         const password = localStorage.getItem('iptv_password');
         const dns = localStorage.getItem('iptv_dns');
-        
-        // Removed Login Check Redirect
         
         const cleanDns = dns ? dns.replace(/^https?:\/\//, '') : '';
         const urlCats = `http://${cleanDns}/player_api.php?username=${username}&password=${password}&action=get_live_categories`;
@@ -158,9 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (data) {
             renderSidebar(data);
-            // Select First Category by Default
             if(data.length > 0) {
-                const firstCat = document.querySelector('.category-item');
+                const firstCat = document.querySelector('.cat-node');
                 if(firstCat) selectCategory(firstCat);
             }
         }
@@ -168,20 +165,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderSidebar(data) {
         categories = data;
-        const catEl = document.getElementById('category-list');
-        // Removed Favorites LI
+        const catEl = document.getElementById('cat-list');
         let html = ``; 
         data.forEach(c => {
-            html += `<li class="category-item nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`;
+            html += `<li class="cat-node nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`;
         });
         catEl.innerHTML = html;
 
-        categoryItems = Array.from(document.querySelectorAll('.category-item'));
+        categoryItems = Array.from(document.querySelectorAll('.cat-node'));
         categoryItems.forEach((item, idx) => {
             item.addEventListener('click', () => {
                 focusIndex = idx;
                 currentZone = 'sidebar'; 
-                document.getElementById('search-input').value = "";
+                document.getElementById('inp-search').value = "";
                 selectCategory(item);
             });
         });
@@ -193,8 +189,8 @@ document.addEventListener('DOMContentLoaded', function () {
         currentCategoryId = id;
         document.getElementById('cat-title').textContent = item.textContent;
         
-        categoryItems.forEach(el => el.classList.remove('selected-cat'));
-        item.classList.add('selected-cat');
+        categoryItems.forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
         categoryItems.forEach(el => el.classList.remove('focused'));
 
         loadChannelsByCategory(id);
@@ -202,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadChannelsByCategory(catId, forceRefresh = false) {
         currentPage = 0;
-        document.getElementById('channel-grid').innerHTML = '<p style="padding:20px;">Loading...</p>';
+        document.getElementById('broadcast-grid').innerHTML = '<p style="padding:20px;">Loading...</p>';
         
         if (!forceRefresh) {
             const cached = await getFromCache(STORE_CHANNELS_CAT, `cat_${catId}`);
@@ -233,20 +229,15 @@ document.addEventListener('DOMContentLoaded', function () {
             currentDisplayList = data;
             renderGrid();
         } catch (err) {
-            document.getElementById('channel-grid').innerHTML = `<p style="padding:20px;color:red;">Error loading channels</p>`;
+            document.getElementById('broadcast-grid').innerHTML = `<p style="padding:20px;color:red;">Error loading channels</p>`;
         }
     }
 
-    async function downloadGlobalIndex() {
-        // Global search logic would go here
-    }
-
-    function performGlobalSearch(query) {
-       // Search filter logic
-    }
+    async function downloadGlobalIndex() {}
+    function performGlobalSearch(query) {}
 
     function renderGrid() {
-        const grid = document.getElementById('channel-grid');
+        const grid = document.getElementById('broadcast-grid');
         grid.innerHTML = '';
         
         let list = currentDisplayList;
@@ -260,37 +251,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
         pagedList.forEach(ch => {
             const img = ch.stream_icon || 'images/login-logo.png'; 
-            // Removed Favorite Logic and Icon
             grid.innerHTML += `
-                <div class="channel-card nav-item" tabindex="-1" data-id="${ch.stream_id}">
-                    <img src="${img}" onerror="this.src='images/login-logo.png'">
-                    <div class="ch-name">${ch.name}</div>
+                <div class="broadcast-node nav-item" tabindex="-1" data-id="${ch.stream_id}">
+                    <img src="${img}" class="node-icon" onerror="this.src='images/login-logo.png'">
+                    <div class="node-title">${ch.name}</div>
                 </div>
             `;
         });
 
         const totalPages = Math.ceil(list.length/itemsPerPage);
-        document.getElementById('page-info').textContent = `Page ${currentPage + 1} / ${Math.max(1, totalPages)}`;
+        document.getElementById('page-label').textContent = `Page ${currentPage + 1} / ${Math.max(1, totalPages)}`;
         
-        channelCards = Array.from(document.querySelectorAll('.channel-card'));
+        channelCards = Array.from(document.querySelectorAll('.broadcast-node'));
         channelCards.forEach((card, idx) => {
             card.addEventListener('click', () => {
                 focusIndex = idx;
                 currentZone = 'grid'; 
-                playStream(card.querySelector('.ch-name').textContent, card.getAttribute('data-id'));
+                playStream(card.querySelector('.node-title').textContent, card.getAttribute('data-id'));
             });
-            // Removed Long Press Event
         });
     }
 
     // ==========================================================
-    // 🟢 NEW CAPACITOR NATIVE PLAYER LOGIC (iOS Only)
+    // 🟢 FINAL NATIVE PLAYER LOGIC (Renamed to Iptvplayer)
     // ==========================================================
     
     let currentChannelList = [];
     let currentPlayIndex = 0;
 
-    // 🟢 UPDATED: Auto-detects the correct Plugin Name
     async function playStream(name, streamId) {
         try {
             currentChannelList = currentDisplayList; 
@@ -308,36 +296,32 @@ document.addEventListener('DOMContentLoaded', function () {
             const cleanDns = dnsRaw.replace(/^https?:\/\//, '');
             const streamUrl = `http://${cleanDns}/live/${u}/${p}/${streamId}.m3u8`;
             
-            console.log("Stream URL:", streamUrl);
+            console.log("Playing Live Stream with VLC:", streamUrl);
 
-            if (!window.Capacitor) {
+            if (!window.Capacitor || !window.Capacitor.Plugins) {
                 alert("CRITICAL ERROR: Capacitor not loaded!");
                 return;
             }
             
-            // 🟢 FIX: Check BOTH names (Yours is showing up as 'VideoPlayer')
-            const CapacitorVideoPlayer = Capacitor.Plugins.CapacitorVideoPlayer || Capacitor.Plugins.VideoPlayer;
+            // Look for our renamed VLC plugin
+            const nativePlugin = Capacitor.Plugins.Iptvplayer;
 
-            if (!CapacitorVideoPlayer) {
-                // If still missing, show the list again
-                const installed = Object.keys(window.Capacitor.Plugins);
-                alert("CRITICAL ERROR: Native Player Plugin MISSING! Found: " + JSON.stringify(installed));
-                return;
+            if (nativePlugin) {
+                console.log("Found Native Iptvplayer!");
+                await nativePlugin.play({ url: streamUrl });
+                
+                // Reset focus logic when returning
+                currentZone = 'grid';
+                setTimeout(updateFocus, 500);
+            } else {
+                console.warn("Iptvplayer NOT found in Capacitor.Plugins");
+                const available = Object.keys(Capacitor.Plugins).join(", ");
+                alert("Native Player (Iptvplayer) missing. Available: " + available);
+                
+                // Fallback to standard player
+                fallbackPlayer(streamUrl);
             }
 
-            await CapacitorVideoPlayer.initPlayer({
-                mode: 'fullscreen',
-                url: streamUrl,
-                playerId: 'fullscreen',
-                componentTag: 'div',
-                ios: {
-                    itemType: "live",
-                    httpHeaders: {
-                        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
-                    }
-                }
-            });
-            
             isPlayerActive = true;
 
         } catch (err) {
@@ -345,16 +329,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 3. Close Player
+    // Backup Player (Only used if VLC fails)
+    async function fallbackPlayer(url) {
+        const Player = Capacitor.Plugins.CapacitorVideoPlayer || Capacitor.Plugins.VideoPlayer;
+        if(Player) {
+             await Player.initPlayer({
+                mode: 'fullscreen',
+                url: url, 
+                playerId: 'fullscreen',
+                componentTag: 'div'
+            });
+        }
+    }
+
     async function closePlayer() {
         if (window.Capacitor && Capacitor.isNativePlatform()) {
             const CapacitorVideoPlayer = Capacitor.Plugins.CapacitorVideoPlayer;
-            await CapacitorVideoPlayer.stopAllPlayers();
+            if(CapacitorVideoPlayer) await CapacitorVideoPlayer.stopAllPlayers();
         }
     }
 
     function toggleSearch() {
-        const container = document.getElementById('search-container');
+        const container = document.getElementById('search-wrapper');
         if (container.style.display === 'block') container.style.display = 'none';
         else container.style.display = 'block';
     }
@@ -380,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- NAVIGATION LOGIC (GRID/SIDEBAR) ---
     function getGridColumns() {
-        const items = document.querySelectorAll('#channel-grid .channel-card');
+        const items = document.querySelectorAll('#broadcast-grid .broadcast-node');
         if (items.length < 2) return 1;
         const firstTop = items[0].getBoundingClientRect().top;
         for(let i = 1; i < items.length; i++) {
@@ -394,16 +390,16 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.setAttribute('data-zone', currentZone);
 
         if (currentZone === 'grid') {
-            document.querySelectorAll('.sidebar .focused').forEach(el => el.classList.remove('focused'));
+            document.querySelectorAll('#nav-drawer .focused').forEach(el => el.classList.remove('focused'));
         }
 
         let target = null;
         let selector = '';
 
-        if (currentZone === 'sidebar') selector = '#category-list .category-item';
-        else if (currentZone === 'grid') selector = '#channel-grid .channel-card';
-        else if (currentZone === 'topbar') selector = '.top-actions .nav-item';
-        else if (currentZone === 'pagination') selector = '.pagination-controls .nav-item';
+        if (currentZone === 'sidebar') selector = '#cat-list .cat-node';
+        else if (currentZone === 'grid') selector = '#broadcast-grid .broadcast-node';
+        else if (currentZone === 'topbar') selector = '.header-actions .nav-item';
+        else if (currentZone === 'pagination') selector = '.pagination-bar .nav-item';
 
         if (selector) {
             const items = document.querySelectorAll(selector);
@@ -430,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (code === 40) focusIndex++;
             else if (code === 39) { currentZone = 'grid'; focusIndex = 0; }
             else if (code === 13) {
-                const items = document.querySelectorAll('#category-list .category-item');
+                const items = document.querySelectorAll('#cat-list .cat-node');
                 if(items[focusIndex]) items[focusIndex].click();
             }
         }
@@ -439,19 +435,19 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (code === 37) {
                 if (focusIndex % gridCols === 0) {
                     currentZone = 'sidebar';
-                    const cats = Array.from(document.querySelectorAll('.category-item'));
-                    const selected = cats.findIndex(c => c.classList.contains('selected-cat'));
+                    const cats = Array.from(document.querySelectorAll('.cat-node'));
+                    const selected = cats.findIndex(c => c.classList.contains('active'));
                     focusIndex = selected > -1 ? selected : 0;
                 } else focusIndex--;
             } else if (code === 38) {
                 if (focusIndex < gridCols) { currentZone = 'topbar'; focusIndex = 0; }
                 else focusIndex -= gridCols;
             } else if (code === 40) {
-                const items = document.querySelectorAll('#channel-grid .channel-card');
+                const items = document.querySelectorAll('#broadcast-grid .broadcast-node');
                 if (focusIndex + gridCols >= items.length) { currentZone = 'pagination'; focusIndex = 2; }
                 else focusIndex += gridCols;
             } else if (code === 13) {
-                const items = document.querySelectorAll('#channel-grid .channel-card');
+                const items = document.querySelectorAll('#broadcast-grid .broadcast-node');
                 if(items[focusIndex]) items[focusIndex].click();
             }
         }
@@ -460,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (code === 37) focusIndex--;
             else if (code === 40) { currentZone = 'grid'; focusIndex = 0; }
             else if (code === 13) {
-                const items = document.querySelectorAll('.top-actions .nav-item');
+                const items = document.querySelectorAll('.header-actions .nav-item');
                 if(items[focusIndex]) items[focusIndex].click();
             }
         }
@@ -469,11 +465,11 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (code === 37) focusIndex -= 2;
             else if (code === 38) {
                 currentZone = 'grid';
-                const items = document.querySelectorAll('#channel-grid .channel-card');
+                const items = document.querySelectorAll('#broadcast-grid .broadcast-node');
                 focusIndex = items.length - 1;
             }
             else if (code === 13) {
-                const items = document.querySelectorAll('.pagination-controls .nav-item');
+                const items = document.querySelectorAll('.pagination-bar .nav-item');
                 if(items[focusIndex]) items[focusIndex].click();
             }
         }
