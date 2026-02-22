@@ -1,140 +1,180 @@
 /* --- Global App Feel --- */
 * {
-    box-sizing: border-box;
-    margin: 0; padding: 0;
+    box-sizing: border-box; margin: 0; padding: 0;
     -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none; user-select: none; -webkit-user-drag: none;
 }
 input { -webkit-user-select: text; user-select: text; }
 
 body {
-  width: 100vw; min-height: 100vh; 
+  width: 100vw; 
+  min-height: 100vh; min-height: 100dvh; 
   font-family: 'Roboto', 'Segoe UI', sans-serif;
-  color: #fff; overflow-y: auto; 
-  display: flex; justify-content: center; align-items: center;
-  /* UPDATED: Deep Navy background base */
+  color: #fff; 
+  overflow-x: hidden; 
+  overflow-y: auto; 
   background-color: #020b14; 
-  padding: 20px; 
 }
 
-.bg-image {
+.app-backdrop {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: url('../images/background2.png') no-repeat center center fixed;
+  background: url('../images/background2.png') no-repeat center center;
   background-size: cover; z-index: -1;
 }
 
-.bg-image::after { 
+.app-backdrop::after { 
   content: ''; position: absolute; inset: 0; 
-  /* UPDATED: Navy/Black Gradient Overlay */
-  background: linear-gradient(to bottom, rgba(2, 12, 27, 0.9), rgba(4, 20, 45, 0.92)); 
+  background: linear-gradient(180deg, rgba(2, 12, 27, 0.85) 0%, rgba(4, 20, 45, 0.98) 100%); 
 }
 
-.login-container { width: 100%; display: flex; justify-content: center; }
-
-.login-glass-card {
-  width: 100%; max-width: 400px; 
-  /* UPDATED: Dark Blue-Tinted Glass */
-  background: rgba(16, 33, 58, 0.75); 
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  /* UPDATED: Faint Electric Blue Border */
-  border: 1px solid rgba(0, 243, 255, 0.15);
-  border-radius: 20px; padding: 30px; 
-  text-align: center; 
-  /* UPDATED: Cool toned shadow */
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+/* Base Layout (Normal Mobile) */
+.main-auth-wrapper { 
+  width: 100%; 
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; 
+  justify-content: space-between;
 }
 
-.logo { width: 100px; margin-bottom: 2px; }
-
-h2 { 
-  font-size: 1.5rem; margin-bottom: 5px; font-weight: 600; 
-  /* UPDATED: Electric Cyan/Blue Text */
-  color: #00f3ff;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.brand-header {
+  flex-grow: 1;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 30px 20px;
 }
 
-.subtitle { color: #8faecb; font-size: 0.9rem; margin-bottom: 25px; }
+.brand-logo { width: 110px; margin-bottom: 10px; transition: all 0.3s ease; }
 
-/* --- INPUTS --- */
-.input-wrapper {
-  position: relative; 
-  display: flex; align-items: center;
-  /* UPDATED: Dark Navy background for inputs */
-  background: rgba(0, 0, 0, 0.3);
-  /* UPDATED: Subtle Blue border */
-  border: 1px solid rgba(0, 243, 255, 0.2); 
-  border-radius: 10px; padding: 0 15px;
-  margin-bottom: 15px; height: 50px;
+.brand-title { 
+  font-size: 1.5rem; font-weight: 700; color: #00f3ff; 
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.5); letter-spacing: 2px;
+  text-align: center; transition: all 0.3s ease;
+}
+
+.brand-tagline { color: #8faecb; font-size: 0.95rem; margin-top: 5px; text-align: center; }
+
+/* Bottom Sheet Modal */
+.auth-bottom-sheet {
+  width: 100%; max-width: 500px; margin: 0 auto;
+  background: rgba(16, 33, 58, 0.85); 
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(0, 243, 255, 0.2);
+  border-radius: 40px 40px 0 0; 
+  padding: 35px 25px 45px 25px; 
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0; 
   transition: all 0.3s ease;
 }
 
-/* Add a glow effect when user clicks input */
-.input-wrapper:focus-within {
-  /* UPDATED: Bright Electric Blue Border & Glow */
-  border-color: #00f3ff;
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+.form-container { width: 100%; }
+
+.field-container {
+  position: relative; display: flex; align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 243, 255, 0.15); 
+  border-radius: 30px; 
+  padding: 0 20px; margin-bottom: 20px; height: 55px;
+  transition: all 0.3s ease;
 }
 
-.input-icon { 
-  font-size: 1.1rem; margin-right: 10px; 
-  /* UPDATED: Electric Blue Icon */
-  color: #00f3ff; 
-  opacity: 0.9; 
+.field-container:focus-within {
+  border-color: #00f3ff;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.25);
+  background: rgba(0, 0, 0, 0.6);
 }
+
+.field-icon { color: #00f3ff; font-size: 1.2rem; margin-right: 12px; }
 
 input {
   flex: 1; background: transparent; border: none; color: #fff;
-  font-size: 1rem; outline: none; height: 100%;
-  padding-right: 40px; 
+  font-size: 1.05rem; outline: none; height: 100%; padding-right: 40px; 
 }
 input::placeholder { color: #5a7b9c; }
 
-/* --- EYE ICON (Inside Field) --- */
-.icon-btn-eye {
-    position: absolute; right: 10px; top: 50%;
-    transform: translateY(-50%);
-    background: none; border: none;
-    /* UPDATED: Electric Blue */
-    color: #00f3ff; font-size: 1.2rem;
-    padding: 10px; cursor: pointer;
-    z-index: 10; opacity: 0.8;
+.reveal-btn {
+  position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: #00f3ff; font-size: 1.2rem;
+  cursor: pointer; opacity: 0.7; padding: 5px;
 }
 
-.btn-login {
-  width: 100%; padding: 14px; border-radius: 10px; border: none;
-  /* UPDATED: Electric Blue Gradient */
+.action-btn {
+  width: 100%; padding: 16px; border-radius: 30px; border: none;
   background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
-  /* UPDATED: White text for contrast on blue */
-  color: #fff; 
-  font-size: 1rem; font-weight: bold;
-  text-transform: uppercase; margin-top: 10px;
-  /* UPDATED: Blue Glow Shadow */
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
-  transition: transform 0.2s;
+  color: #fff; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.35); margin-top: 10px;
+  cursor: pointer;
 }
+.action-btn:active { transform: scale(0.97); }
 
-.btn-login:active {
-  transform: scale(0.98);
-}
+.focusable-node.highlighted { border: 2px solid #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
 
-/* UPDATED: Focus state for nav items */
-.nav-item.focused { border: 2px solid #00f3ff; }
+.alert-msg { margin-top: 15px; color: #ff4d4d; font-size: 0.95rem; text-align: center; font-weight: 500;}
 
-.error-msg { margin-top: 15px; color: #ff6b6b; font-size: 0.9rem; }
-
-.loader-overlay {
-  position: fixed; inset: 0; background: rgba(2, 11, 20, 0.95);
+/* Pulse loader */
+.loading-screen {
+  position: fixed; inset: 0; background: rgba(2, 11, 20, 0.98);
   z-index: 9999; display: flex; flex-direction: column;
   justify-content: center; align-items: center;
 }
-.spinner {
-  width: 40px; height: 40px; border: 4px solid #1a2a40;
-  /* UPDATED: Electric Blue Spinner */
-  border-top: 4px solid #00f3ff; 
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+.pulse-ring {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #00f3ff;
+  animation: pulseAnim 1.2s infinite ease-in-out;
+  margin-bottom: 15px;
 }
-@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes pulseAnim {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE DESIGN)
+   ========================================= */
+
+/* 1. SMALL/LANDSCAPE SCREENS (Phones turned sideways) */
+@media (max-height: 550px) {
+  .brand-header { padding: 15px 10px; }
+  .brand-logo { width: 70px; margin-bottom: 5px; }
+  .brand-title { font-size: 1.2rem; }
+  .auth-bottom-sheet { padding: 25px 20px 30px 20px; }
+  .field-container { height: 50px; margin-bottom: 15px; }
+}
+
+/* 2. BIG SCREENS (iPads, Tablets, Monitors - Width 768px and up) */
+@media (min-width: 768px) {
+  .main-auth-wrapper {
+    /* Center everything vertically on large screens */
+    justify-content: center; 
+    align-items: center;
+  }
+  
+  .brand-header {
+    flex-grow: 0; 
+    margin-bottom: 40px; /* Space between header and form */
+    padding: 0;
+  }
+  
+  /* Make the logo and text bigger for iPad */
+  .brand-logo { width: 160px; margin-bottom: 15px; }
+  .brand-title { font-size: 2.2rem; }
+  .brand-tagline { font-size: 1.15rem; }
+
+  /* Change Bottom Sheet into a Floating Center Card */
+  .auth-bottom-sheet {
+    max-width: 550px; /* Keep inputs a good readable width */
+    border-radius: 40px; /* Round ALL corners, not just the top */
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    padding: 50px 40px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Make inputs taller and text bigger for tablet fingers */
+  .field-container { height: 65px; border-radius: 35px; }
+  .field-icon { font-size: 1.5rem; margin-right: 15px; }
+  input { font-size: 1.2rem; }
+  
+  /* Make button bigger */
+  .action-btn {
+    padding: 20px; font-size: 1.25rem; border-radius: 35px;
+    margin-top: 15px;
+  }
+}

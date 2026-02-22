@@ -1,165 +1,172 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Profile Page Loaded");
+    console.log("Account Module Engaged");
 
-    // --- ELEMENTS ---
-    const elUsername = document.getElementById('disp-username');
-    const elStatus = document.getElementById('disp-status');
-    const elExpiry = document.getElementById('disp-expiry');
-    const elMax = document.getElementById('disp-max');
-    const elActive = document.getElementById('disp-active');
-    const elTrial = document.getElementById('disp-trial');
-    const elCreated = document.getElementById('disp-created');
-    const elClock = document.getElementById('clock');
+    const AccountController = {
+        activeIndex: 0,
+        interactiveElements: [
+            document.getElementById('cmd-return'),
+            document.getElementById('cmd-disconnect')
+        ],
+        
+        uiClock: document.getElementById('view-clock'),
+        uiUser: document.getElementById('val-username'),
+        uiState: document.getElementById('val-status'),
+        uiExpiry: document.getElementById('val-expiry'),
+        uiMax: document.getElementById('val-max'),
+        uiActive: document.getElementById('val-active'),
+        uiTrial: document.getElementById('val-trial'),
+        uiCreated: document.getElementById('val-created'),
 
-    const btnBack = document.getElementById('btn-back');
-    const btnLogout = document.getElementById('btn-logout');
+        init: function() {
+            this.startTimer();
+            this.setupInteractions();
+            this.setupHardwareBack();
+            this.retrieveProfile();
+            setTimeout(() => this.refreshHighlight(), 300);
+        },
 
-    // Navigation
-    const navItems = [btnBack, btnLogout];
-    let focusIndex = 0;
+        startTimer: function() {
+            const tick = () => {
+                const now = new Date();
+                if(this.uiClock) this.uiClock.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            };
+            setInterval(tick, 1000);
+            tick();
+        },
 
-    // --- CLOCK ---
-    function updateClock() {
-        const now = new Date();
-        if(elClock) elClock.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+        setupInteractions: function() {
+            // Button 1: Return
+            if(this.interactiveElements[0]) {
+                this.interactiveElements[0].addEventListener('click', () => {
+                    window.location.href = 'screen.html';
+                });
+                this.interactiveElements[0].addEventListener('mouseenter', () => {
+                    this.activeIndex = 0; this.refreshHighlight();
+                });
+            }
 
-    // --- CLICK LISTENERS ---
-    if(btnBack) {
-        btnBack.addEventListener('click', () => {
-            window.location.href = 'screen.html';
-        });
-        btnBack.addEventListener('mouseenter', () => { focusIndex = 0; updateFocus(); });
-    }
+            // Button 2: Disconnect
+            if(this.interactiveElements[1]) {
+                this.interactiveElements[1].addEventListener('click', async () => {
+                    localStorage.clear();
+                    await this.wipeLocalCache();
+                    window.location.href = 'index.html';
+                });
+                this.interactiveElements[1].addEventListener('mouseenter', () => {
+                    this.activeIndex = 1; this.refreshHighlight();
+                });
+            }
 
-    if(btnLogout) {
-        btnLogout.addEventListener('click', async () => {
-            // 🟢 CLEAR STORAGE
-            localStorage.clear(); // Clear login info
-            
-            // 🟢 CLEAR DATABASE (CACHE)
-            await clearAllDatabases();
-
-            // Redirect
-            window.location.href = 'index.html';
-        });
-        btnLogout.addEventListener('mouseenter', () => { focusIndex = 1; updateFocus(); });
-    }
-
-    // --- DATABASE CLEAR FUNCTION ---
-    function clearAllDatabases() {
-        return new Promise((resolve) => {
-            // We delete both DB versions just in case
-            const req1 = indexedDB.deleteDatabase('DipPlayerDB');
-            const req2 = indexedDB.deleteDatabase('DipPlayerDB_V2');
-            const req3 = indexedDB.deleteDatabase('DipMoviesDB'); // The new Movies DB
-
-            // Wait a tiny bit to ensure deletion starts
-            setTimeout(() => {
-                console.log("Databases Cleared");
-                resolve();
-            }, 500);
-        });
-    }
-
-    // --- KEYBOARD HANDLER ---
-    document.addEventListener('keydown', function (e) {
-        const keyCode = e.keyCode;
-        switch (keyCode) {
-            case 37: // LEFT
-                if (focusIndex > 0) { focusIndex--; updateFocus(); }
-                break;
-            case 39: // RIGHT
-                if (focusIndex < navItems.length - 1) { focusIndex++; updateFocus(); }
-                break;
-            case 38: // UP
-                if (focusIndex > 0) { focusIndex--; updateFocus(); }
-                break;
-            case 40: // DOWN
-                if (focusIndex < navItems.length - 1) { focusIndex++; updateFocus(); }
-                break;
-            case 13: // ENTER
-            case 23: // DPAD CENTER
-                if(focusIndex === 0) btnBack.click();
-                else btnLogout.click();
-                break;
-        }
-    });
-
-    // --- BACK BUTTON ---
-    if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
-        Capacitor.Plugins.App.addListener('backButton', () => {
-            window.location.href = 'screen.html';
-        });
-    }
-
-    // --- LOAD USER DATA ---
-    const username = localStorage.getItem('iptv_username');
-    const password = localStorage.getItem('iptv_password');
-    const dns = localStorage.getItem('iptv_dns');
-
-    if (!username || !password) {
-        window.location.href = 'index.html';
-    } else {
-        fetchUserData();
-    }
-
-    function formatTime(timestamp) {
-        if (!timestamp || timestamp === "null") return "Unlimited";
-        if (!isNaN(timestamp)) {
-            const date = new Date(parseInt(timestamp) * 1000);
-            return date.toLocaleDateString();
-        }
-        return timestamp; 
-    }
-
-    function fetchUserData() {
-        if(!dns) return;
-        const cleanDns = dns.replace(/^https?:\/\//, '');
-        const apiURL = `http://${cleanDns}/player_api.php?username=${username}&password=${password}`;
-
-        // Use Native HTTP if available
-        if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.CapacitorHttp) {
-             Capacitor.Plugins.CapacitorHttp.get({ url: apiURL }).then(response => {
-                 if(response.data && response.data.user_info) {
-                     fillData(response.data.user_info);
-                 }
-             }).catch(err => console.error(err));
-        } else {
-            // Fallback
-            fetch(apiURL).then(res => res.json()).then(data => {
-                if(data.user_info) fillData(data.user_info);
+            // TV Remote Keyboard Events
+            document.addEventListener('keydown', (e) => {
+                const key = e.keyCode;
+                if (key === 37 || key === 38) { // Left or Up
+                    if (this.activeIndex > 0) { this.activeIndex--; this.refreshHighlight(); }
+                } else if (key === 39 || key === 40) { // Right or Down
+                    if (this.activeIndex < this.interactiveElements.length - 1) { this.activeIndex++; this.refreshHighlight(); }
+                } else if (key === 13 || key === 23 || key === 66) { // Enter
+                    this.interactiveElements[this.activeIndex].click();
+                } else if (key === 10009 || key === 8) { // Back key
+                    window.location.href = 'screen.html';
+                }
             });
-        }
-    }
+        },
 
-    function fillData(info) {
-        if(elUsername) elUsername.textContent = username;
-        if(elStatus) {
-            elStatus.textContent = info.status;
-            elStatus.style.backgroundColor = (info.status === 'Active') ? '#10b981' : '#ef4444';
-        }
-        if(elExpiry) elExpiry.textContent = formatTime(info.exp_date);
-        if(elMax) elMax.textContent = info.max_connections || "1";
-        if(elActive) elActive.textContent = info.active_cons || "0";
-        if(elTrial) elTrial.textContent = (info.is_trial === "1") ? "Yes" : "No";
-        if(elCreated) elCreated.textContent = formatTime(info.created_at);
-    }
+        setupHardwareBack: function() {
+            if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
+                Capacitor.Plugins.App.addListener('backButton', () => {
+                    window.location.href = 'screen.html';
+                });
+            }
+        },
 
-    function updateFocus() {
-        navItems.forEach((btn, idx) => {
-            if(btn) {
-                if (idx === focusIndex) {
-                    btn.classList.add('focused');
-                    btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        wipeLocalCache: function() {
+            return new Promise((resolve) => {
+                // Keep exact IndexedDB names intact so we successfully clear the cache
+                indexedDB.deleteDatabase('DipPlayerDB');
+                indexedDB.deleteDatabase('DipPlayerDB_V2');
+                indexedDB.deleteDatabase('DipMoviesDB');
+                
+                setTimeout(() => {
+                    console.log("Local Storage & DB Cache Wiped");
+                    resolve();
+                }, 500);
+            });
+        },
+
+        formatTimestamp: function(ts) {
+            if (!ts || ts === "null") return "Unlimited";
+            if (!isNaN(ts)) {
+                const d = new Date(parseInt(ts) * 1000);
+                return d.toLocaleDateString();
+            }
+            return ts; 
+        },
+
+        retrieveProfile: function() {
+            const usr = localStorage.getItem('iptv_username');
+            const pwd = localStorage.getItem('iptv_password');
+            const srv = localStorage.getItem('iptv_dns');
+
+            if (!usr || !pwd) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            if(!srv) return;
+            const cleanSrv = srv.replace(/^https?:\/\//, '');
+            const endpoint = `http://${cleanSrv}/player_api.php?username=${usr}&password=${pwd}`;
+
+            // Capacitor HTTP
+            if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.CapacitorHttp) {
+                 Capacitor.Plugins.CapacitorHttp.get({ url: endpoint }).then(res => {
+                     if(res.data && res.data.user_info) this.injectData(res.data.user_info);
+                 }).catch(err => console.error("Native API Error:", err));
+            } else {
+                // Browser Fallback
+                fetch(endpoint).then(r => r.json()).then(payload => {
+                    if(payload.user_info) this.injectData(payload.user_info);
+                });
+            }
+        },
+
+        injectData: function(data) {
+            const rawUser = localStorage.getItem('iptv_username');
+            if(this.uiUser) this.uiUser.textContent = rawUser;
+            
+            if(this.uiState) {
+                this.uiState.textContent = data.status;
+                if(data.status === 'Active') {
+                    this.uiState.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                    this.uiState.style.borderColor = '#10b981';
+                    this.uiState.style.color = '#10b981';
                 } else {
-                    btn.classList.remove('focused');
+                    this.uiState.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                    this.uiState.style.borderColor = '#ef4444';
+                    this.uiState.style.color = '#ef4444';
                 }
             }
-        });
-    }
-    
-    setTimeout(updateFocus, 300);
+            
+            if(this.uiExpiry) this.uiExpiry.textContent = this.formatTimestamp(data.exp_date);
+            if(this.uiMax) this.uiMax.textContent = data.max_connections || "1";
+            if(this.uiActive) this.uiActive.textContent = data.active_cons || "0";
+            if(this.uiTrial) this.uiTrial.textContent = (data.is_trial === "1") ? "Yes" : "No";
+            if(this.uiCreated) this.uiCreated.textContent = this.formatTimestamp(data.created_at);
+        },
+
+        refreshHighlight: function() {
+            this.interactiveElements.forEach((el, idx) => {
+                if(el) {
+                    if (idx === this.activeIndex) {
+                        el.classList.add('highlighted');
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        el.classList.remove('highlighted');
+                    }
+                }
+            });
+        }
+    };
+
+    AccountController.init();
 });

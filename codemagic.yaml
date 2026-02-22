@@ -1,0 +1,45 @@
+workflows:
+  ios-release:
+    name: iOS App Store Release
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: "Codemagic New" 
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ozzieplayer.app
+      node: latest
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: "com.ozzieplayer.app"
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Sync Capacitor
+        script: npx cap sync ios
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Increment build number
+        script: | 
+          # 1. Get the latest number from Apple
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID")
+          NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
+          echo "Updating project to Build Number: $NEW_BUILD_NUMBER"
+          
+          # 2. Use Apple's tool to update the project files on the Mac
+          cd ios/App
+          agvtool new-version -all $NEW_BUILD_NUMBER
+      - name: Build IPA
+        script: |
+          # Build without the extra flag (the project is now updated)
+          xcode-project build-ipa \
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

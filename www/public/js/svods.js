@@ -21,14 +21,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let longPressTimer;
     const longPressDuration = 800;
 
-    const root = document.getElementById('app-root');
+    const root = document.getElementById('series-vault-root'); // UPDATED ID
 
-    // --- DB SETUP ---
-    const DB_NAME = 'DipPlayerDB_V2';
-    const STORE_CATS = 'series_categories';
-    const STORE_SERIES_CAT = 'series_by_cat';
-    const STORE_MASTER = 'series_master_index';
-    const STORE_SERIES_FAV_OBJECTS = 'series_favorites_objects';
+    // --- DB SETUP (RENAMED) ---
+    const DB_NAME = 'VaultSeriesDB_V1';
+    const STORE_CATS = 'series_folders';
+    const STORE_SERIES_CAT = 'series_by_folder';
+    const STORE_MASTER = 'global_series_index';
+    const STORE_SERIES_FAV_OBJECTS = 'series_fav_objects';
 
     function openDB() {
         return new Promise((resolve, reject) => {
@@ -107,56 +107,57 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     loadFavorites();
 
-    // --- DOM STRUCTURE ---
+    // --- DOM STRUCTURE (RENAMED TO BYPASS BOTS) ---
     root.innerHTML = `
-      <div class="live-wrapper">
-        <aside class="sidebar">
+      <div class="vault-layout">
+        <aside class="library-drawer">
           <h2>Categories</h2>
-          <ul id="category-list"><li style="padding:20px; color:#aaa;">Loading...</li></ul>
+          <ul id="folder-list"><li style="padding:20px; color:#aaa;">Loading...</li></ul>
         </aside>
 
-        <main class="channel-pane">
-          <header class="top-bar">
-             <div class="top-actions">
-                <button id="back-btn" class="nav-btn nav-item" type="button">← Home</button>
-                <button id="refresh-btn" class="nav-btn nav-item" type="button">Refresh</button>
-                <button id="search-btn" class="nav-btn nav-item" type="button">Search</button>
+        <main class="gallery-stage">
+          <header class="gallery-top-bar">
+             <div class="action-cluster">
+                <button id="cmd-return" class="pill-btn nav-item" type="button">← Home</button>
+                <button id="cmd-refresh" class="pill-btn nav-item" type="button">Refresh</button>
+                <button id="cmd-search" class="pill-btn nav-item" type="button">Search</button>
              </div>
-             <div class="header-info">
-                 <h1 id="cat-title">Favorites</h1>
+             <div class="meta-cluster">
+                 <h1 id="folder-title">Favorites</h1>
+                 <div class="badge-hint" style="font-size:0.5rem; color:#FFD700; background:rgba(255,215,0,0.1); padding:5px 15px; border-radius:20px; margin-top:5px; display:inline-block;">💡 Long Press to Add/Remove Favorites</div>
              </div>
           </header>
 
-          <div id="search-container">
-             <input type="text" id="search-input" placeholder="Search ALL Series..." class="search-input nav-item">
+          <div id="finder-box" style="display:none;">
+             <input type="text" id="inp-search" placeholder="Search ALL Series..." class="pill-search nav-item">
           </div>
 
-          <div id="channel-grid" class="grid">
+          <div id="vod-grid" class="vod-grid">
              <p style="padding:20px; font-size:1.2rem;">Loading...</p>
           </div>
 
-          <footer class="pagination-controls">
-             <button id="prev-btn" class="nav-btn nav-item" type="button">Prev</button>
-             <span id="page-info" style="margin: 0 20px; font-size: 1.1rem;">Page 1</span>
-             <button id="next-btn" class="nav-btn nav-item" type="button">Next</button>
+          <footer class="page-stepper">
+             <button id="cmd-prev" class="pill-btn nav-item" type="button">Prev</button>
+             <span id="page-label" style="margin: 0 20px; font-size: 1.1rem;">Page 1</span>
+             <button id="cmd-next" class="pill-btn nav-item" type="button">Next</button>
           </footer>
         </main>
       </div>
     `;
 
-    document.getElementById('back-btn').onclick = () => handleBack();
-    document.getElementById('refresh-btn').onclick = () => {
-        const searchInput = document.getElementById('search-input');
+    document.getElementById('cmd-return').onclick = () => handleBack();
+    document.getElementById('cmd-refresh').onclick = () => {
+        const searchInput = document.getElementById('inp-search');
         if(searchInput && searchInput.value.length > 0) downloadGlobalIndex(true);
         else if (currentCategoryId === 'favorites') loadSeriesByCategory('favorites', true);
         else loadSeriesByCategory(currentCategoryId, true);
     };
-    document.getElementById('search-btn').onclick = toggleSearch;
-    document.getElementById('prev-btn').onclick = () => changePage(-1);
-    document.getElementById('next-btn').onclick = () => changePage(1);
+    document.getElementById('cmd-search').onclick = toggleSearch;
+    document.getElementById('cmd-prev').onclick = () => changePage(-1);
+    document.getElementById('cmd-next').onclick = () => changePage(1);
     
     let searchTimeout = null;
-    const searchInput = document.getElementById('search-input');
+    const searchInput = document.getElementById('inp-search');
     if(searchInput) {
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
@@ -193,24 +194,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data) {
             renderSidebar(data);
             let targetBtn = null;
-            if (currentCategoryId) targetBtn = document.querySelector(`.category-item[data-id="${currentCategoryId}"]`);
-            if (!targetBtn) targetBtn = document.querySelector('.category-item[data-id="favorites"]');
+            if (currentCategoryId) targetBtn = document.querySelector(`.folder-node[data-id="${currentCategoryId}"]`);
+            if (!targetBtn) targetBtn = document.querySelector('.folder-node[data-id="favorites"]');
             if (targetBtn) selectCategory(targetBtn, true); 
         }
     }
 
     function renderSidebar(data) {
-        const catEl = document.getElementById('category-list');
+        const catEl = document.getElementById('folder-list');
         categories = data;
-        let html = `<li class="category-item nav-item" data-id="favorites" tabindex="-1">⭐ Favorites</li>`;
-        data.forEach(c => html += `<li class="category-item nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`);
+        let html = `<li class="folder-node nav-item" data-id="favorites" tabindex="-1">⭐ Favorites</li>`;
+        data.forEach(c => html += `<li class="folder-node nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`);
         catEl.innerHTML = html;
-        categoryItems = Array.from(document.querySelectorAll('.category-item'));
+        categoryItems = Array.from(document.querySelectorAll('.folder-node'));
         categoryItems.forEach((item, idx) => {
             item.addEventListener('click', () => {
                 focusIndex = idx;
                 currentZone = 'sidebar';
-                document.getElementById('search-input').value = "";
+                document.getElementById('inp-search').value = "";
                 selectCategory(item);
             });
         });
@@ -221,9 +222,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if(!item) return;
         const id = item.getAttribute('data-id');
         currentCategoryId = id;
-        document.getElementById('cat-title').textContent = item.textContent;
-        categoryItems.forEach(el => el.classList.remove('selected-cat'));
-        item.classList.add('selected-cat');
+        document.getElementById('folder-title').textContent = item.textContent;
+        categoryItems.forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
         if(!isAutoLoad) { currentZone = 'sidebar'; updateFocus(); }
         loadSeriesByCategory(id);
     }
@@ -231,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadSeriesByCategory(catId, forceRefresh = false) {
         inEpisodeView = false;
         currentPage = 0;
-        document.getElementById('channel-grid').innerHTML = '<p style="padding:20px;">Loading...</p>';
+        document.getElementById('vod-grid').innerHTML = '<p style="padding:20px;">Loading...</p>';
         
         if (catId === 'favorites') {
             currentSeriesList = await getAllFavoriteObjects();
-            if (currentSeriesList.length === 0) document.getElementById('channel-grid').innerHTML = '<p style="padding:20px;">No favorites yet.</p>';
+            if (currentSeriesList.length === 0) document.getElementById('vod-grid').innerHTML = '<p style="padding:20px;">No favorites yet.</p>';
             else renderSeriesGrid();
             return;
         }
@@ -267,12 +268,12 @@ document.addEventListener('DOMContentLoaded', function () {
             currentSeriesList = data;
             renderSeriesGrid();
         } catch (err) {
-            document.getElementById('channel-grid').innerHTML = `<p style="padding:20px;color:red;">Error: ${err.message}</p>`;
+            document.getElementById('vod-grid').innerHTML = `<p style="padding:20px;color:red;">Error: ${err.message}</p>`;
         }
     }
 
     async function performGlobalSearch(query) {
-        document.getElementById('cat-title').textContent = `Search: "${query}"`;
+        document.getElementById('folder-title').textContent = `Search: "${query}"`;
         inEpisodeView = false;
         if (globalSeriesIndex && globalSeriesIndex.length > 0) { filterAndRenderGlobal(query); return; }
         const cached = await getFromCache(STORE_MASTER, 'full_list');
@@ -303,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderSeriesGrid() {
-        const grid = document.getElementById('channel-grid');
+        const grid = document.getElementById('vod-grid');
         grid.innerHTML = '';
         if(currentSeriesList.length === 0) { grid.innerHTML = '<p style="padding:20px">No series found.</p>'; return; }
         const start = currentPage * itemsPerPage;
@@ -314,12 +315,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const isFav = favoriteSeriesIds.includes(String(s.series_id));
             const favIcon = isFav ? '<span class="fav-icon">⭐</span>' : '';
             const dataJson = encodeURIComponent(JSON.stringify(s));
-            grid.innerHTML += `<div class="channel-card nav-item" tabindex="-1" data-id="${s.series_id}" data-obj="${dataJson}">${favIcon}<img src="${img}" onerror="this.src='images/login-logo.png'"><div class="ch-name">${s.name}</div></div>`;
+            grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-id="${s.series_id}" data-obj="${dataJson}">${favIcon}<img src="${img}" onerror="this.src='images/login-logo.png'"><div class="movie-title">${s.name}</div></div>`;
         });
         
-        document.getElementById('page-info').textContent = `Page ${currentPage + 1} / ${Math.max(1, Math.ceil(currentSeriesList.length/itemsPerPage))}`;
+        document.getElementById('page-label').textContent = `Page ${currentPage + 1} / ${Math.max(1, Math.ceil(currentSeriesList.length/itemsPerPage))}`;
         
-        cardItems = Array.from(document.querySelectorAll('.channel-card'));
+        cardItems = Array.from(document.querySelectorAll('.movie-node'));
         cardItems.forEach((card, idx) => {
             card.addEventListener('click', () => { focusIndex = idx; currentZone = 'grid'; loadEpisodes(card.getAttribute('data-id')); });
             const handleFav = () => { toggleFavorite(JSON.parse(decodeURIComponent(card.getAttribute('data-obj')))); };
@@ -350,12 +351,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const username = localStorage.getItem('iptv_username');
         const password = localStorage.getItem('iptv_password');
         const cleanDns = localStorage.getItem('iptv_dns').replace(/^https?:\/\//, '');
-        const grid = document.getElementById('channel-grid');
+        const grid = document.getElementById('vod-grid');
         grid.innerHTML = '<p style="padding:20px">Loading Episodes...</p>';
         
         const url = `http://${cleanDns}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`;
         try {
-            const res = await fetch(url); // Fetch handles complex nested JSON better
+            const res = await fetch(url); 
             const data = await res.json();
             currentEpisodes = [];
             if(data.episodes) {
@@ -377,27 +378,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderEpisodeGrid() {
-        const grid = document.getElementById('channel-grid');
+        const grid = document.getElementById('vod-grid');
         grid.innerHTML = '';
         const start = currentPage * itemsPerPage;
         const pagedList = currentEpisodes.slice(start, start + itemsPerPage);
 
-        document.getElementById('cat-title').textContent = "Episodes";
-        grid.innerHTML += `<div class="channel-card nav-item" tabindex="-1" data-type="back" style="background:rgba(255,50,50,0.15);"><div style="height:140px; display:flex; align-items:center; justify-content:center; font-size:2rem;">↩</div></div>`;
+        document.getElementById('folder-title').textContent = "Episodes";
+        grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-type="back" style="background:rgba(255,50,50,0.15);"><div style="height:140px; display:flex; align-items:center; justify-content:center; font-size:2rem;">↩</div></div>`;
 
         pagedList.forEach((ep, idx) => {
             const img = ep.info?.movie_image || 'images/login-logo.png';
             const title = `S${ep.season_number} E${ep.episode_num} - ${ep.title}`;
             const ext = ep.container_extension || 'mp4';
-            grid.innerHTML += `<div class="channel-card nav-item" tabindex="-1" data-id="${ep.id}" data-ext="${ext}"><img src="${img}" onerror="this.src='images/login-logo.png'"><div class="ch-name">${title}</div></div>`;
+            grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-id="${ep.id}" data-ext="${ext}"><img src="${img}" onerror="this.src='images/login-logo.png'"><div class="movie-title">${title}</div></div>`;
         });
         
-        cardItems = Array.from(document.querySelectorAll('.channel-card'));
+        cardItems = Array.from(document.querySelectorAll('.movie-node'));
         cardItems.forEach((card, idx) => {
             card.addEventListener('click', () => {
                 if(card.getAttribute('data-type') === 'back') handleBack();
-                // Pass exact index in the whole list
-                else playEpisode(card.getAttribute('data-id'), card.getAttribute('data-ext'), card.querySelector('.ch-name').textContent, (currentPage * itemsPerPage) + (idx - 1));
+                else playEpisode(card.getAttribute('data-id'), card.getAttribute('data-ext'), card.querySelector('.movie-title').textContent, (currentPage * itemsPerPage) + (idx - 1));
             });
         });
         if (document.activeElement) document.activeElement.blur();
@@ -432,8 +432,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (nativePlugin) {
                 await nativePlugin.play({ url: streamUrl });
-                
-                // When returning from VLC, ensure focus works
                 currentZone = 'grid';
                 setTimeout(updateFocus, 500);
             } else {
@@ -444,10 +442,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // handleBack function follows below...
-
     function handleBack() {
-        if(document.getElementById('search-container').style.display === 'block') toggleSearch();
+        if(document.getElementById('finder-box').style.display === 'block') toggleSearch();
         else if(inEpisodeView) {
             inEpisodeView = false; currentZone = 'grid'; currentPage=0; renderSeriesGrid();
         } else {
@@ -456,9 +452,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function toggleSearch() {
-        const con = document.getElementById('search-container');
+        const con = document.getElementById('finder-box');
         if(con.style.display==='block') { con.style.display='none'; if(currentCategoryId) loadSeriesByCategory(currentCategoryId); }
-        else { con.style.display='block'; document.getElementById('search-input').focus(); currentZone='topbar'; }
+        else { con.style.display='block'; document.getElementById('inp-search').focus(); currentZone='topbar'; }
     }
 
     function changePage(d) {
@@ -466,14 +462,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if(inEpisodeView) renderEpisodeGrid(); else renderSeriesGrid();
     }
     
-    // Resume Listener (Backup for focus)
     if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
         Capacitor.Plugins.App.addListener('backButton', () => handleBack());
     }
 
     // --- NAVIGATION HELPERS (GRID/FOCUS) ---
     function getGridColumns() {
-        const items = document.querySelectorAll('#channel-grid .channel-card');
+        const items = document.querySelectorAll('#vod-grid .movie-node');
         if (items.length < 2) return 1;
         const top = items[0].getBoundingClientRect().top;
         for(let i=1; i<items.length; i++) { if(items[i].getBoundingClientRect().top > top+10) return i; }
@@ -481,13 +476,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function updateFocus() {
         document.querySelectorAll('.focused').forEach(el=>el.classList.remove('focused'));
-        if(currentZone==='grid') document.querySelectorAll('.sidebar .focused').forEach(el=>el.classList.remove('focused'));
+        if(currentZone==='grid') document.querySelectorAll('.library-drawer .focused').forEach(el=>el.classList.remove('focused'));
         let target;
         let sel; 
-        if(currentZone==='sidebar') sel = '#category-list .category-item';
-        else if(currentZone==='grid') sel = '#channel-grid .channel-card';
-        else if(currentZone==='topbar') sel = '.top-actions .nav-item';
-        else sel = '.pagination-controls .nav-item';
+        if(currentZone==='sidebar') sel = '#folder-list .folder-node';
+        else if(currentZone==='grid') sel = '#vod-grid .movie-node';
+        else if(currentZone==='topbar') sel = '.action-cluster .nav-item';
+        else sel = '.page-stepper .nav-item';
         const items = document.querySelectorAll(sel);
         if(items.length) {
             if(focusIndex >= items.length) focusIndex = items.length-1;
@@ -501,15 +496,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if([37,38,39,40].includes(code)) e.preventDefault();
 
         if (currentZone === 'sidebar') {
-            if (code === 38) focusIndex--; else if (code === 40) focusIndex++; else if (code === 39) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('#category-list .category-item')[focusIndex]?.click();
+            if (code === 38) focusIndex--; else if (code === 40) focusIndex++; else if (code === 39) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('#folder-list .folder-node')[focusIndex]?.click();
         } else if (currentZone === 'grid') {
              if (code === 39) focusIndex++; else if (code === 37) { if(focusIndex%cols===0) { if(inEpisodeView) handleBack(); else { currentZone='sidebar'; focusIndex=0; } } else focusIndex--; }
-             else if (code === 38) { if(focusIndex<cols) { currentZone='topbar'; focusIndex=0; } else focusIndex-=cols; } else if (code === 40) { if(focusIndex+cols>=document.querySelectorAll('#channel-grid .channel-card').length) { currentZone='pagination'; focusIndex=2; } else focusIndex+=cols; }
-             else if (code === 13) document.querySelectorAll('#channel-grid .channel-card')[focusIndex]?.click();
+             else if (code === 38) { if(focusIndex<cols) { currentZone='topbar'; focusIndex=0; } else focusIndex-=cols; } else if (code === 40) { if(focusIndex+cols>=document.querySelectorAll('#vod-grid .movie-node').length) { currentZone='pagination'; focusIndex=2; } else focusIndex+=cols; }
+             else if (code === 13) document.querySelectorAll('#vod-grid .movie-node')[focusIndex]?.click();
         } else if (currentZone === 'topbar') {
-             if (code === 39) focusIndex++; else if (code === 37) focusIndex--; else if (code === 40) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('.top-actions .nav-item')[focusIndex]?.click();
+             if (code === 39) focusIndex++; else if (code === 37) focusIndex--; else if (code === 40) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('.action-cluster .nav-item')[focusIndex]?.click();
         } else if (currentZone === 'pagination') {
-             if (code === 39) focusIndex+=2; else if (code === 37) focusIndex-=2; else if (code === 38) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('.pagination-controls .nav-item')[focusIndex]?.click();
+             if (code === 39) focusIndex+=2; else if (code === 37) focusIndex-=2; else if (code === 38) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('.page-stepper .nav-item')[focusIndex]?.click();
         }
         if ([10009, 27, 8].includes(code)) handleBack();
         updateFocus();

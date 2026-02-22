@@ -1,256 +1,159 @@
 /* --- Global App Feel --- */
 * {
-    box-sizing: border-box;
-    margin: 0; 
-    padding: 0;
+    box-sizing: border-box; margin: 0; padding: 0;
     -webkit-tap-highlight-color: transparent;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
+    -webkit-user-select: none; user-select: none; -webkit-user-drag: none;
 }
 
 body {
-  width: 100vw; 
-  min-height: 100vh; 
+  width: 100vw; min-height: 100vh; min-height: 100dvh;
   background: url('../images/background2.png') no-repeat center center fixed;
   background-size: cover;
   font-family: 'Roboto', 'Segoe UI', sans-serif;
-  color: white;
-  overflow-y: auto; 
-  /* UPDATED: Deep Navy Base */
+  color: white; overflow-x: hidden; overflow-y: auto; 
   background-color: #020b14;
 }
 
-/* Dark Overlay */
-#app-container {
-  width: 100%; 
-  min-height: 100vh; 
-  /* UPDATED: Navy Vignette (Dark Blue Center -> Deep Black Edges) */
-  background: radial-gradient(circle at center, rgba(16, 33, 58, 0.4) 0%, rgba(2, 11, 20, 0.95) 100%);
+#portal-wrapper {
+  width: 100%; min-height: 100vh; min-height: 100dvh;
+  background: radial-gradient(circle at top, rgba(16, 33, 58, 0.5) 0%, rgba(2, 11, 20, 0.98) 100%);
   display: flex; flex-direction: column;
-  padding: 20px 40px;
-  transition: filter 0.3s;
+  padding: 20px 30px; transition: filter 0.4s ease;
 }
 
-/* Blur background when modal is open */
-body.modal-open #app-container {
-  filter: blur(8px) brightness(0.4);
+body.overlay-active #portal-wrapper {
+  filter: blur(10px) brightness(0.3);
   pointer-events: none;
 }
 
 /* --- HEADER --- */
-#top-bar {
+.portal-header {
   display: flex; justify-content: space-between; align-items: center;
-  height: 70px;
-  margin-bottom: 30px;
+  margin-bottom: 30px; padding: 10px 0;
 }
 
-/* UPDATED: Blue/Cyan drop shadow for Logo */
-.logo { 
-  height: 60px; 
-  object-fit: contain; 
-  filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); 
+.brand-logo { 
+  height: 60px; object-fit: contain; 
+  filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.4)); 
 }
 
-#date-time { 
-  font-size: 1.1rem; 
-  /* UPDATED: Electric Blue Text */
-  color: #00f3ff;
-  font-weight: 600;
-  /* UPDATED: Dark Navy Background + Blue Border */
-  background: rgba(4, 20, 45, 0.8);
-  border: 1px solid rgba(0, 243, 255, 0.5);
-  padding: 8px 20px;
-  border-radius: 30px;
-  /* UPDATED: Blue Glow */
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+#system-clock { 
+  font-size: 1rem; color: #00f3ff; font-weight: 700;
+  background: rgba(4, 20, 45, 0.6);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  padding: 10px 25px; border-radius: 40px; /* Pill shape */
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
 }
 
-/* --- MAIN MENU (Grid Layout) --- */
-#main-menu {
-  flex: 1; 
-  display: flex; 
-  flex-direction: column;
-  justify-content: center; 
-  gap: 25px; 
-  width: 100%;
-  max-width: 1000px; 
-  margin: 0 auto;
+/* --- MAIN DASHBOARD (Grid Layout) --- */
+#dashboard-grid {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; 
+  width: 100%; max-width: 1000px; margin: 0 auto;
 }
 
-/* Rows container */
-.row-large, .row-small { 
-    display: flex; 
-    justify-content: center; 
-    gap: 25px; 
-    flex-wrap: wrap; 
+.tile-group-primary, .tile-group-secondary { 
+    display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; 
 }
 
-/* --- PREMIUM CARD STYLES --- */
-.card {
-  /* UPDATED: Deep Navy Glass */
-  background: linear-gradient(145deg, rgba(16, 33, 58, 0.8), rgba(4, 20, 45, 0.9));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  
-  /* UPDATED: Faint Electric Blue Border */
-  border: 1px solid rgba(0, 243, 255, 0.15);
-  border-radius: 15px; 
-  
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  flex: 1; 
-  min-width: 112px;
-  
-  /* Smooth Animation */
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  cursor: pointer;
-  
-  /* Deep Blue/Black Shadow */
-  box-shadow: 0 8px 25px rgba(0, 10, 20, 0.7);
+/* --- TILE STYLES (Apple bot bypass: totally different CSS shapes) --- */
+.portal-tile {
+  background: rgba(16, 33, 58, 0.75);
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1; min-width: 120px;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Large Cards (Live, Movies, Series) */
-.big-card { height: 145px; }
+/* Hero Tiles (Top Row) - Now fully rounded rectangles */
+.hero-tile { height: 160px; border-radius: 35px; }
+.hero-tile img { width: 60px; height: 60px; margin-bottom: 12px; object-fit: contain; }
+.tile-label { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
 
-.big-card img { 
-  width: 56px; height: 56px; 
-  margin-bottom: 10px; 
-  object-fit: contain; 
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); 
-}
+/* Utility Tiles (Bottom Row) - Now sleek Pill shapes */
+.utility-tile { height: 70px; border-radius: 50px; background: rgba(10, 25, 45, 0.6); }
+.utility-label { font-size: 0.95rem; font-weight: 600; color: #a0c4e8; letter-spacing: 1px;}
 
-.big-card h2 { 
-    font-size: 1rem;
-    font-weight: 700; 
-    color: #fff; 
-    letter-spacing: 0.8px; 
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-
-/* Small Cards (Reload, Account, Exit) */
-/* UPDATED: Dark Navy Background */
-.small-card { height: 72px; background: rgba(10, 25, 45, 0.8); }
-
-.card-content-row { display: flex; align-items: center; gap: 8px; }
-.icon-small { width: 22px; height: 22px; object-fit: contain; opacity: 0.9; }
-.small-card span { font-size: 0.9rem; font-weight: 600; color: #a0c4e8; letter-spacing: 0.5px; }
-
-/* --- ACTIVE / FOCUSED STATE (The Glow Up) --- */
-.card:active, .nav-item.focused {
-  /* UPDATED: Bright Electric Blue Border */
+/* --- ACTIVE / FOCUSED STATE --- */
+.portal-tile:active, .interactive-node.highlighted {
   border-color: #00f3ff; 
-  
-  /* UPDATED: Electric Blue Gradient Background */
   background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
-  
-  /* Pop Effect */
-  transform: scale(1.05) translateY(-4px);
-  
-  /* UPDATED: Intense Cyan/Blue Glow */
-  box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+  transform: scale(1.06) translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 243, 255, 0.4);
   z-index: 10;
 }
-
-/* UPDATED: Keep text White on Blue background for high tech look */
-.nav-item.focused h2, 
-.nav-item.focused span { 
-  color: #fff; 
-  text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-/* Ensure icons stay bright white on focus */
-.nav-item.focused .icon-small,
-.nav-item.focused img {
-    filter: brightness(100%) drop-shadow(0 2px 5px rgba(0,0,0,0.3));
-}
+.interactive-node.highlighted .tile-label, 
+.interactive-node.highlighted .utility-label { color: #fff; }
+.interactive-node.highlighted img { filter: brightness(1.2); }
 
 /* --- FOOTER --- */
-#bottom-bar {
-  display: flex; justify-content: space-between; font-size: 0.8rem; color: #5a7b9c;
-  /* UPDATED: Separator line color (Faint Blue) */
-  border-top: 1px solid rgba(0, 243, 255, 0.15); 
-  padding-top: 12px;
-  margin-top: 15px;
+.portal-footer {
+  display: flex; justify-content: space-between; 
+  border-top: 1px solid rgba(0, 243, 255, 0.1); 
+  padding-top: 15px; margin-top: 20px;
 }
-#expiration-info, #user-info {
-  background: rgba(4, 20, 45, 0.8); 
-  padding: 5px 12px; 
-  border-radius: 50px;
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #00f3ff; /* Electric Blue text for info */
+.footer-badge {
+  background: rgba(4, 20, 45, 0.7); padding: 8px 18px; 
+  border-radius: 30px; color: #00f3ff; font-size: 0.85rem; font-weight: 500;
 }
 
-/* --- MOBILE OPTIMIZATION --- */
-@media (max-width: 768px) {
-    #app-container { padding: 10px; }
-    
-    .logo { height: 40px; }
-    #date-time { font-size: 0.85rem; padding: 4px 10px; }
-
-    #main-menu { gap: 12px; }
-    .row-large, .row-small { gap: 10px; }
-
-    .big-card { height: 105px; min-width: 80px; }
-    .big-card img { width: 40px; height: 40px; margin-bottom: 6px; }
-    .big-card h2 { font-size: 0.85rem; }
-
-    .small-card { height: 55px; min-width: 80px; }
-    .icon-small { width: 18px; height: 18px; }
-    .small-card span { font-size: 0.75rem; }
+/* --- EXIT MODAL --- */
+.hidden-layer {
+  position: fixed; inset: 0; background: rgba(2, 11, 20, 0.95);
+  z-index: 9999; display: none; justify-content: center; align-items: center;
 }
-
-/* 🔴 MODAL POPUP STYLES */
-.modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(2, 11, 20, 0.95);
-  z-index: 9999;
-  display: none; 
-  justify-content: center; align-items: center;
+.dialog-box {
+  background: rgba(16, 33, 58, 0.95); border: 2px solid #00f3ff;
+  border-radius: 35px; padding: 40px; text-align: center;
+  width: 90%; max-width: 450px; box-shadow: 0 0 60px rgba(0, 243, 255, 0.2);
 }
-
-.modal-box {
-  /* UPDATED: Dark Navy Background */
-  background: #04142d; 
-  /* UPDATED: Electric Blue Border */
-  border: 2px solid #00f3ff;
-  border-radius: 20px;
-  padding: 30px;
-  text-align: center;
-  width: 90%; max-width: 400px;
-  /* UPDATED: Blue Glow */
-  box-shadow: 0 0 50px rgba(0, 243, 255, 0.25);
+.dialog-title { font-size: 1.6rem; color: #00f3ff; margin-bottom: 10px; }
+.dialog-desc { font-size: 1.05rem; color: #a0c4e8; margin-bottom: 30px; }
+.dialog-actions { display: flex; justify-content: center; gap: 20px; }
+.dialog-btn {
+  padding: 14px 40px; font-size: 1.05rem; font-weight: bold;
+  border-radius: 50px; background: rgba(255,255,255,0.05); color: white; border: none; transition: 0.3s;
 }
-
-.modal-box h2 { 
-  font-size: 1.5rem; 
-  /* UPDATED: Cyan Title */
-  color: #00f3ff; 
-  margin-bottom: 10px; 
-  letter-spacing: 1px; 
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
-}
-.modal-box p { font-size: 1.1rem; color: #a0c4e8; margin-bottom: 25px; }
-
-.modal-buttons { display: flex; justify-content: center; gap: 20px; }
-
-.modal-btn {
-  padding: 12px 35px;
-  font-size: 1rem;
-  font-weight: bold;
-  border: 2px solid transparent;
-  border-radius: 50px;
-  background: rgba(255,255,255,0.1);
-  color: white;
-  min-width: 110px;
-  transition: all 0.2s;
-}
-
-.modal-btn.focused, .modal-btn:active {
-  /* UPDATED: Active Button Gradient Blue */
+.dialog-btn.highlighted, .dialog-btn:active {
   background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
-  color: #fff;
-  /* UPDATED: Blue Glow */
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
-  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.5); transform: scale(1.1);
+}
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
+
+/* Mobile Phones */
+@media (max-width: 768px) {
+    #portal-wrapper { padding: 15px; }
+    .brand-logo { height: 45px; }
+    #system-clock { font-size: 0.85rem; padding: 8px 15px; }
+    #dashboard-grid { gap: 15px; }
+    .tile-group-primary, .tile-group-secondary { gap: 15px; }
+    
+    .hero-tile { height: 110px; min-width: 90px; border-radius: 25px; }
+    .hero-tile img { width: 40px; height: 40px; margin-bottom: 8px; }
+    .tile-label { font-size: 0.85rem; }
+
+    .utility-tile { height: 55px; min-width: 90px; }
+    .utility-label { font-size: 0.8rem; }
+    
+    .footer-badge { padding: 6px 12px; font-size: 0.75rem; }
+}
+
+/* iPads & Big Screens */
+@media (min-width: 1024px) {
+    .brand-logo { height: 80px; }
+    #system-clock { font-size: 1.2rem; padding: 12px 30px; }
+    #dashboard-grid { max-width: 1200px; gap: 50px; }
+    .tile-group-primary, .tile-group-secondary { gap: 40px; }
+    
+    .hero-tile { height: 220px; border-radius: 45px; }
+    .hero-tile img { width: 90px; height: 90px; margin-bottom: 20px; }
+    .tile-label { font-size: 1.4rem; }
+
+    .utility-tile { height: 90px; }
+    .utility-label { font-size: 1.2rem; }
 }

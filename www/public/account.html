@@ -2,75 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Fixed viewport for Phone/Tablet -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>My Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Account Info</title>
   <link rel="stylesheet" href="css/account.css">
+  
+  <script>
+    (function() {
+      // TV Handshake Logic
+      var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
+      if (isTV) {
+        document.documentElement.classList.add("tv-mode");
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "css/tv-overrides.css";
+        document.head.appendChild(link);
+      }
+    })();
+  </script>
 </head>
 <body>
 
-  <div id="profile-container">
+  <div id="account-viewport">
     
     <!-- Header -->
-    <header class="page-header">
-      <h1>ACCOUNT INFO</h1>
-      <div id="clock">00:00</div>
+    <header class="view-header">
+      <h1 class="view-title">ACCOUNT INFO</h1>
+      <div id="view-clock">00:00</div>
     </header>
 
     <!-- Main Content -->
-    <main class="content-wrapper">
+    <main class="details-grid">
       
       <!-- Left Column: User Identity -->
-      <section class="user-card glass-panel">
-        <!-- Added fallback image so layout doesn't break if icon is missing -->
-        <img src="images/ic-user.png" alt="User" class="user-avatar" onerror="this.src='images/login-logo.png'">
+      <section class="identity-panel module-glass">
+        <img src="images/ic-user.png" alt="User" class="identity-avatar" onerror="this.src='images/login-logo.png'">
         
-        <!-- Wrapper for Mobile Layout (Side-by-Side Text) -->
-        <div class="user-info-mobile">
-            <h2 id="disp-username">Loading...</h2>
-            <div class="status-badge" id="disp-status">Checking...</div>
+        <div class="identity-text-zone">
+            <h2 id="val-username">Loading...</h2>
+            <div class="badge-pill" id="val-status">Checking...</div>
         </div>
       </section>
 
       <!-- Right Column: Subscription Details -->
-      <section class="info-card glass-panel">
+      <section class="metrics-panel module-glass">
         
-        <div class="info-row">
-          <span class="label">Expiration Date</span>
-          <span class="value" id="disp-expiry">...</span>
+        <div class="metric-item">
+          <span class="metric-label">Expiration Date</span>
+          <span class="metric-val" id="val-expiry">...</span>
         </div>
 
-        <div class="info-row">
-          <span class="label">Max Connections</span>
-          <span class="value" id="disp-max">...</span>
+        <div class="metric-item">
+          <span class="metric-label">Max Connections</span>
+          <span class="metric-val" id="val-max">...</span>
         </div>
 
-        <div class="info-row">
-          <span class="label">Active Connections</span>
-          <span class="value" id="disp-active">...</span>
+        <div class="metric-item">
+          <span class="metric-label">Active Connections</span>
+          <span class="metric-val" id="val-active">...</span>
         </div>
 
-        <div class="info-row">
-          <span class="label">Trial Account</span>
-          <span class="value" id="disp-trial">...</span>
+        <div class="metric-item">
+          <span class="metric-label">Trial Account</span>
+          <span class="metric-val" id="val-trial">...</span>
         </div>
 
-        <div class="info-row">
-          <span class="label">Created At</span>
-          <span class="value" id="disp-created">...</span>
+        <div class="metric-item">
+          <span class="metric-label">Created At</span>
+          <span class="metric-val" id="val-created">...</span>
         </div>
 
       </section>
     </main>
 
     <!-- Footer Actions -->
-    <footer class="action-bar">
-      <!-- Added type="button" for reliable clicks -->
-      <button id="btn-back" type="button" class="nav-item glass-btn">
+    <footer class="command-bar">
+      <button id="cmd-return" type="button" class="action-node glass-button">
         BACK TO HOME
       </button>
       
-      <button id="btn-logout" type="button" class="nav-item glass-btn btn-danger">
+      <button id="cmd-disconnect" type="button" class="action-node glass-button btn-critical">
         SIGN OUT
       </button>
     </footer>

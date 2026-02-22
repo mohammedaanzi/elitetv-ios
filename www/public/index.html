@@ -3,83 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>ozzie Login</title>
+  <title>App Authentication</title>
   <link rel="stylesheet" href="css/first.css" />
   
   <script>
     (function() {
-      // 1. Existing Auto-Login Logic (Untouched)
+      // Auto-Login Logic (Untouched)
       const u = localStorage.getItem('iptv_username');
       const p = localStorage.getItem('iptv_password');
       if (u && p) window.location.href = 'screen.html';
 
-      // -------------------------------------------------------------
-      // 2. NEW: TV Handshake Logic
-      // -------------------------------------------------------------
-      // We check if the Java code added our secret signature
+      // TV Handshake Logic (Untouched, but classes slightly updated)
       var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
-
       if (isTV) {
         console.log("TV Mode Detected: Engaging Remote Control Protocols");
-
-        // A. Add a specific class to the HTML tag
-        // This lets you use CSS like: .tv-mode .btn-login { transform: scale(1.2); }
         document.documentElement.classList.add("tv-mode");
-
-        // B. Load the TV-Only CSS (You need to create this file)
-        // This prevents the TV styles from messing up the Phone styles
         var link = document.createElement("link");
         link.rel = "stylesheet";
         link.href = "css/tv-overrides.css"; 
         document.head.appendChild(link);
-
-        // C. Load the TV Remote Script (js/remote.js)
-        // This ensures the remote control ONLY works on TV, not phones
         var script = document.createElement("script");
         script.src = "js/remote.js";
         script.defer = true;
         document.head.appendChild(script);
       }
-      // -------------------------------------------------------------
     })();
   </script>
 </head>
 <body>
 
-  <div class="bg-image"></div>
+  <!-- Renamed from bg-image -->
+  <div class="app-backdrop"></div>
 
-  <div id="loader" class="loader-overlay" style="display:none;">
-    <div class="spinner"></div>
-    <p>Connecting...</p>
+  <!-- Renamed loader classes and changed animation style -->
+  <div id="auth-loader" class="loading-screen" style="display:none;">
+    <div class="pulse-ring"></div>
+    <p>Authenticating...</p>
   </div>
 
-  <div class="login-container">
-    <div class="login-glass-card">
-      <div class="logo-area">
-        <img src="images/login-logo.png" alt="Logo" class="logo" onerror="this.style.display='none'"/>
-        <h2>WELCOME BACK</h2>
-        <p class="subtitle">Sign in to continue</p>
-      </div>
+  <div class="main-auth-wrapper">
+    
+    <!-- NEW: Logo is now floating at the top of the screen instead of inside the card -->
+    <div class="brand-header">
+      <img src="images/login-logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'"/>
+      <h1 class="brand-title">WELCOME BACK</h1>
+      <p class="brand-tagline">Enter your credentials to stream</p>
+    </div>
 
-      <div class="form-area">
+    <!-- NEW: Bottom Sheet Layout -->
+    <div class="auth-bottom-sheet">
+      <div class="form-container">
         
         <!-- Username -->
-        <!-- Added 'nav-item' class which remote.js usually looks for -->
-        <div class="input-wrapper nav-item" id="wrap-user">
-          <span class="input-icon">👤</span>
-          <input type="text" id="username" placeholder="Username" autocomplete="off" />
+        <div class="field-container focusable-node" id="node-user">
+          <span class="field-icon">👤</span>
+          <input type="text" id="iptv-user" placeholder="Your Username" autocomplete="off" />
         </div>
 
         <!-- Password -->
-        <div class="input-wrapper nav-item" id="wrap-pass">
-          <span class="input-icon">🔒</span>
-          <input type="password" id="password" placeholder="Password" autocomplete="off" />
-          <button id="toggle-password" type="button" class="icon-btn-eye nav-item">👁</button>
+        <div class="field-container focusable-node" id="node-pass">
+          <span class="field-icon">🔒</span>
+          <input type="password" id="iptv-pass" placeholder="Your Password" autocomplete="off" />
+          <button id="node-toggle" type="button" class="reveal-btn focusable-node">👁</button>
         </div>
 
-        <button id="add-user" type="button" class="btn-login nav-item">LOGIN</button>
+        <button id="node-submit" type="button" class="action-btn focusable-node">CONNECT NOW</button>
         
-        <div id="error-box" class="error-msg" style="display: none;"></div>
+        <div id="alert-box" class="alert-msg" style="display: none;"></div>
       </div>
     </div>
   </div>

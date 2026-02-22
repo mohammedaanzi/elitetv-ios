@@ -12,7 +12,7 @@
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^6.0.0"
   },
-  "description": "An iptv Player Application",
-  "author": "Mohammed Aanzi",
+  "description": "An m3u  Player Application",
+  "author": "azz media team",
   "private": true
 }

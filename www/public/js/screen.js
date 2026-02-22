@@ -1,198 +1,195 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Home Page Loaded");
+    console.log("Dashboard Core Initialized");
 
-    // --- 1. SETUP CLOCK & USER INFO ---
-    const dateTimeEl = document.getElementById('date-time');
-    const userEl = document.getElementById('user-info');
-    const expEl = document.getElementById('expiration-info');
-
-    function updateClock() {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        if(dateTimeEl) dateTimeEl.textContent = `${timeStr} | ${dateStr}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    const username = localStorage.getItem('iptv_username') || 'Guest';
-    const password = localStorage.getItem('iptv_password');
-    const dns = localStorage.getItem('iptv_dns');
-
-    if(userEl) userEl.textContent = `👤 ${username}`;
-
-    if (username && password && dns) {
-        const cleanDns = dns.replace(/^https?:\/\//, '');
-        const apiURL = `http://${cleanDns}/player_api.php?username=${username}&password=${password}`;
+    const DashboardManager = {
+        activeNodeId: 0,
+        interactiveNodes: Array.from(document.querySelectorAll('.interactive-node')),
+        overlayActive: false,
+        dialogCursor: 1, 
         
-        fetch(apiURL)
-        .then(res => res.json())
-        .then(data => {
-            if (data.user_info && data.user_info.exp_date && expEl) {
-                if (data.user_info.exp_date === "null" || !data.user_info.exp_date) {
-                     expEl.textContent = `📅 Expires: Unlimited`;
-                } else {
-                    const date = new Date(parseInt(data.user_info.exp_date) * 1000);
-                    expEl.textContent = `📅 Expires: ${date.toLocaleDateString()}`;
-                }
+        uiClock: document.getElementById('system-clock'),
+        uiProfile: document.getElementById('profile-status'),
+        uiSub: document.getElementById('sub-status'),
+        btnConfirm: document.getElementById('action-yes'),
+        btnCancel: document.getElementById('action-no'),
+
+        init: function() {
+            this.startClock();
+            this.fetchProfileData();
+            this.setupInteractions();
+            this.setupHardwareKeys();
+            setTimeout(() => this.renderHighlight(), 300);
+        },
+
+        startClock: function() {
+            const tick = () => {
+                const now = new Date();
+                const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const date = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                if(this.uiClock) this.uiClock.textContent = `${time} | ${date}`;
+            };
+            setInterval(tick, 1000);
+            tick();
+        },
+
+        fetchProfileData: function() {
+            const usr = localStorage.getItem('iptv_username') || 'Guest';
+            const pwd = localStorage.getItem('iptv_password');
+            const srv = localStorage.getItem('iptv_dns');
+
+            if(this.uiProfile) this.uiProfile.textContent = `👤 ${usr}`;
+
+            if (usr && pwd && srv) {
+                const cleanSrv = srv.replace(/^https?:\/\//, '');
+                const endpoint = `http://${cleanSrv}/player_api.php?username=${usr}&password=${pwd}`;
+                
+                fetch(endpoint)
+                .then(r => r.json())
+                .then(payload => {
+                    if (payload.user_info && payload.user_info.exp_date && this.uiSub) {
+                        if (payload.user_info.exp_date === "null" || !payload.user_info.exp_date) {
+                             this.uiSub.textContent = `📅 Status: Unlimited`;
+                        } else {
+                            const d = new Date(parseInt(payload.user_info.exp_date) * 1000);
+                            this.uiSub.textContent = `📅 Valid till: ${d.toLocaleDateString()}`;
+                        }
+                    }
+                }).catch(() => { if(this.uiSub) this.uiSub.textContent = `📅 Status: Unknown`; });
             }
-        }).catch(() => { if(expEl) expEl.textContent = `📅 Expires: Unknown`; });
-    }
+        },
 
-    // --- 2. NAVIGATION & CLICK LISTENERS ---
-    // 🟢 FIX: Ensure we are looking for the new .nav-item class
-    const navItems = Array.from(document.querySelectorAll('.nav-item'));
-    let focusIndex = 0;
+        setupInteractions: function() {
+            this.interactiveNodes.forEach((node, idx) => {
+                node.addEventListener('click', () => {
+                    this.activeNodeId = idx;
+                    this.renderHighlight();
+                    this.executeRoute();
+                });
+                node.addEventListener('focus', () => {
+                    this.activeNodeId = idx;
+                    this.renderHighlight();
+                });
+                node.addEventListener('mouseenter', () => {
+                    this.activeNodeId = idx;
+                    this.renderHighlight();
+                });
+            });
 
-    navItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            focusIndex = index;
-            updateFocus();
-            handleAction();
-        });
-        item.addEventListener('focus', () => {
-            focusIndex = index;
-            updateFocus();
-        });
-        // 🟢 FIX: Hover support for Air Mouse
-        item.addEventListener('mouseenter', () => {
-            focusIndex = index;
-            updateFocus();
-        });
-    });
-
-    // Modal Variables
-    let isExitModalOpen = false;
-    let modalIndex = 1; 
-    const btnYes = document.getElementById('confirm-yes');
-    const btnNo = document.getElementById('confirm-no');
-
-    if(btnYes) {
-        btnYes.addEventListener('click', confirmExit);
-        // 🟢 FIX: Add mouseenter for modal buttons too
-        btnYes.addEventListener('mouseenter', () => { modalIndex = 0; updateFocus(); });
-    }
-    if(btnNo) {
-        btnNo.addEventListener('click', closeExitModal);
-        btnNo.addEventListener('mouseenter', () => { modalIndex = 1; updateFocus(); });
-    }
-
-    // --- 3. LOGIC ---
-    function updateFocus() {
-        if (isExitModalOpen) {
-            // Modal Logic
-            if(modalIndex === 0) { 
-                btnYes.classList.add('focused'); 
-                btnNo.classList.remove('focused'); 
-                btnYes.focus(); 
-            } else { 
-                btnYes.classList.remove('focused'); 
-                btnNo.classList.add('focused'); 
-                btnNo.focus();
+            if(this.btnConfirm) {
+                this.btnConfirm.addEventListener('click', () => this.terminateApp());
+                this.btnConfirm.addEventListener('mouseenter', () => { this.dialogCursor = 0; this.renderHighlight(); });
             }
-        } else {
-            // Main Grid Logic
-            navItems.forEach((item, index) => {
-                if (index === focusIndex) {
-                    item.classList.add('focused');
-                    item.focus(); // 🟢 IMPORTANT: Forces the browser to see it as active
-                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    item.classList.remove('focused');
+            if(this.btnCancel) {
+                this.btnCancel.addEventListener('click', () => this.hideDialog());
+                this.btnCancel.addEventListener('mouseenter', () => { this.dialogCursor = 1; this.renderHighlight(); });
+            }
+        },
+
+        renderHighlight: function() {
+            if (this.overlayActive) {
+                if(this.dialogCursor === 0) { 
+                    this.btnConfirm.classList.add('highlighted'); 
+                    this.btnCancel.classList.remove('highlighted'); 
+                    this.btnConfirm.focus(); 
+                } else { 
+                    this.btnConfirm.classList.remove('highlighted'); 
+                    this.btnCancel.classList.add('highlighted'); 
+                    this.btnCancel.focus();
                 }
+            } else {
+                this.interactiveNodes.forEach((node, idx) => {
+                    if (idx === this.activeNodeId) {
+                        node.classList.add('highlighted');
+                        node.focus(); 
+                        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        node.classList.remove('highlighted');
+                    }
+                });
+            }
+        },
+
+        showDialog: function() {
+            this.overlayActive = true;
+            this.dialogCursor = 1;
+            document.getElementById('quit-overlay').style.display = 'flex';
+            document.body.classList.add('overlay-active');
+            this.renderHighlight();
+        },
+
+        hideDialog: function() {
+            this.overlayActive = false;
+            document.getElementById('quit-overlay').style.display = 'none';
+            document.body.classList.remove('overlay-active');
+            this.renderHighlight();
+        },
+
+        terminateApp: function() {
+            if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
+                Capacitor.Plugins.App.exitApp();
+            } else {
+                window.close();
+            }
+        },
+
+        executeRoute: function() {
+            const route = this.interactiveNodes[this.activeNodeId].getAttribute('data-route');
+            switch (route) {
+                case 'live':   window.location.href = 'channels.html'; break;
+                case 'movies': window.location.href = 'mvods.html'; break;
+                case 'series': window.location.href = 'svods.html'; break;
+                case 'reload': window.location.reload(); break;
+                case 'account': window.location.href = 'account.html'; break;
+                case 'exit':    this.showDialog(); break;
+            }
+        },
+
+        setupHardwareKeys: function() {
+            if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
+                Capacitor.Plugins.App.addListener('backButton', () => {
+                    if (this.overlayActive) this.hideDialog();
+                    else this.showDialog();
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                const key = e.keyCode;
+
+                if (this.overlayActive) {
+                    if (key === 37 || key === 39) { // L/R
+                        this.dialogCursor = (this.dialogCursor === 0) ? 1 : 0;
+                        this.renderHighlight();
+                    } else if (key === 13 || key === 23 || key === 66) { // Enter
+                        if (this.dialogCursor === 0) this.terminateApp(); else this.hideDialog();
+                    } else if (key === 10009 || key === 27 || key === 8) { // Back
+                        this.hideDialog();
+                    }
+                    return;
+                }
+
+                // Grid Math (3 items per row)
+                if (key === 37) { // Left
+                    if (this.activeNodeId === 0) this.activeNodeId = 2;
+                    else if (this.activeNodeId === 3) this.activeNodeId = 5;
+                    else this.activeNodeId--;
+                } else if (key === 39) { // Right
+                    if (this.activeNodeId === 2) this.activeNodeId = 0;
+                    else if (this.activeNodeId === 5) this.activeNodeId = 3;
+                    else this.activeNodeId++;
+                } else if (key === 40) { // Down
+                    if (this.activeNodeId < 3) this.activeNodeId += 3;
+                } else if (key === 38) { // Up
+                    if (this.activeNodeId >= 3) this.activeNodeId -= 3; 
+                } else if (key === 13 || key === 23 || key === 66) { // Enter
+                    this.executeRoute();
+                } else if (key === 10009 || key === 8) { // Back
+                    this.showDialog();
+                }
+                
+                this.renderHighlight();
             });
         }
-    }
+    };
 
-    function openExitModal() {
-        isExitModalOpen = true;
-        modalIndex = 1;
-        document.getElementById('exit-modal').style.display = 'flex';
-        document.body.classList.add('modal-open');
-        updateFocus();
-    }
-
-    function closeExitModal() {
-        isExitModalOpen = false;
-        document.getElementById('exit-modal').style.display = 'none';
-        document.body.classList.remove('modal-open');
-        // Return focus to the grid
-        updateFocus();
-    }
-
-    function confirmExit() {
-        if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
-            Capacitor.Plugins.App.exitApp();
-        } else {
-            window.close();
-        }
-    }
-
-    function handleAction() {
-        const action = navItems[focusIndex].getAttribute('data-action');
-        switch (action) {
-            case 'live':   window.location.href = 'channels.html'; break;
-            case 'movies': window.location.href = 'mvods.html'; break;
-            case 'series': window.location.href = 'svods.html'; break;
-            case 'reload': window.location.reload(); break;
-            case 'account': window.location.href = 'account.html'; break;
-            case 'exit':    openExitModal(); break;
-        }
-    }
-
-    // --- 4. HARDWARE BACK BUTTON ---
-    if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
-        Capacitor.Plugins.App.addListener('backButton', ({ canGoBack }) => {
-            if (isExitModalOpen) {
-                closeExitModal();
-            } else {
-                openExitModal();
-            }
-        });
-    }
-
-    // --- 5. KEYBOARD (TV Remote) ---
-    // This logic is BETTER than remote.js for the home page 
-    // because it handles the 2-Row Grid perfectly.
-    document.addEventListener('keydown', function (e) {
-        const keyCode = e.keyCode;
-
-        // Modal Open
-        if (isExitModalOpen) {
-            if (keyCode === 37 || keyCode === 39) { // Left/Right
-                modalIndex = (modalIndex === 0) ? 1 : 0;
-                updateFocus();
-            } else if (keyCode === 13 || keyCode === 23 || keyCode === 66) { // Enter/DPAD_CENTER
-                if (modalIndex === 0) confirmExit(); else closeExitModal();
-            } else if (keyCode === 10009 || keyCode === 27 || keyCode === 8) { // Back/Esc
-                closeExitModal();
-            }
-            return;
-        }
-
-        // Main Grid Navigation
-        if (keyCode === 37) { // Left
-            // Wrap logic for 3 items per row
-            if (focusIndex === 0) focusIndex = 2;
-            else if (focusIndex === 3) focusIndex = 5;
-            else focusIndex--;
-        } else if (keyCode === 39) { // Right
-            if (focusIndex === 2) focusIndex = 0;
-            else if (focusIndex === 5) focusIndex = 3;
-            else focusIndex++;
-        } else if (keyCode === 40) { // Down
-            if (focusIndex < 3) focusIndex += 3; // Jump to bottom row
-        } else if (keyCode === 38) { // Up
-            if (focusIndex >= 3) focusIndex -= 3; // Jump to top row
-        } else if (keyCode === 13 || keyCode === 23 || keyCode === 66) { // Enter/DPAD_CENTER
-            handleAction();
-        } else if (keyCode === 10009 || keyCode === 8) { // Back
-            openExitModal();
-        }
-        
-        updateFocus();
-    });
-
-    // Init
-    setTimeout(updateFocus, 300);
+    DashboardManager.init();
 });

@@ -1,172 +1,178 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Login Script Loaded");
+    console.log("Auth Module Initialized");
 
-    // --- VARIABLES ---
-    const navItems = [
-        document.getElementById('wrap-user'),      // 0
-        document.getElementById('wrap-pass'),      // 1
-        document.getElementById('toggle-password'),// 2
-        document.getElementById('add-user')        // 3
-    ];
-    let focusIndex = 0;
-
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const toggleBtn = document.getElementById('toggle-password');
-    const loginBtn = document.getElementById('add-user');
-
-    // --- CLICK LISTENERS ---
-    if(navItems[0]) navItems[0].addEventListener('click', () => { handleTouch(0); });
-    if(navItems[1]) navItems[1].addEventListener('click', () => { handleTouch(1); });
-    
-    if(toggleBtn) {
-        toggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleTouch(2);
-        });
-    }
-
-    if(loginBtn) {
-        loginBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleTouch(3);
-        });
-    }
-
-    // --- CORE FUNCTIONS ---
-    function handleTouch(index) {
-        focusIndex = index;
-        updateFocus();
-        triggerAction();
-    }
-
-    function updateFocus() {
-        navItems.forEach(el => {
-            if(el) el.classList.remove('focused');
-        });
-        const currentEl = navItems[focusIndex];
-        if (currentEl) {
-            currentEl.classList.add('focused');
-            currentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }
-
-    function triggerAction() {
-        const currentEl = navItems[focusIndex];
-        if (currentEl.classList.contains('input-wrapper')) {
-            const inputId = currentEl.id === 'wrap-user' ? 'username' : 'password';
-            const inputEl = document.getElementById(inputId);
-            if (inputEl) inputEl.focus(); 
-        } else if (currentEl.id === 'toggle-password') {
-            togglePasswordLogic();
-        } else if (currentEl.id === 'add-user') {
-            login();
-        }
-    }
-
-    function togglePasswordLogic() {
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleBtn.style.opacity = "1";
-        } else {
-            passwordInput.type = 'password';
-            toggleBtn.style.opacity = "0.6";
-        }
-    }
-
-    // --- KEYBOARD & BACK BUTTON ---
-    document.addEventListener('keydown', function (e) {
+    const AuthManager = {
+        activeIndex: 0,
+        authNodes: [
+            document.getElementById('node-user'),      // 0
+            document.getElementById('node-pass'),      // 1
+            document.getElementById('node-toggle'),    // 2
+            document.getElementById('node-submit')     // 3
+        ],
+        uiUser: document.getElementById('iptv-user'),
+        uiPass: document.getElementById('iptv-pass'),
+        uiToggle: document.getElementById('node-toggle'),
+        uiSubmit: document.getElementById('node-submit'),
         
-        // 🔴 FIX: If we are on TV, STOP here. 
-        // We let the new "remote.js" handle the navigation to avoid Double Jumps.
-        if (document.documentElement.classList.contains('tv-mode')) {
-            return; 
-        }
+        init: function() {
+            this.setupTouchEvents();
+            this.setupKeyboardEvents();
+            this.setupCapacitorEvents();
+            setTimeout(() => this.refreshHighlight(), 300);
+        },
 
-        const keyCode = e.keyCode;
-        if (keyCode === 38) { // UP
-            if (focusIndex > 0) { focusIndex--; updateFocus(); }
-        } else if (keyCode === 40) { // DOWN
-            if (focusIndex < navItems.length - 1) { focusIndex++; updateFocus(); }
-        } else if (keyCode === 13) { // ENTER
-            triggerAction();
-        }
-    });
-
-    if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
-        Capacitor.Plugins.App.addListener('backButton', ({ canGoBack }) => {
-            if (!canGoBack) Capacitor.Plugins.App.exitApp();
-            else window.history.back();
-        });
-    }
-
-    // --- LOGIN LOGIC ---
-    async function login() {
-        const user = usernameInput.value.trim();
-        const pass = passwordInput.value.trim();
-        const loader = document.getElementById('loader');
-        const errorBox = document.getElementById('error-box');
-
-        if (!user || !pass) {
-            showError('Please enter Username and Password.');
-            return;
-        }
-
-        loader.style.display = 'flex';
-        errorBox.style.display = 'none';
-
-        const dnsList = await fetchDNSList();
-        
-        let workingDNS = null;
-        for (const dns of dnsList) {
-            const res = await testOneDNS(dns, user, pass);
-            if (res) { workingDNS = res; break; }
-        }
-
-        if (workingDNS) {
-            localStorage.setItem('iptv_username', user);
-            localStorage.setItem('iptv_password', pass);
-            localStorage.setItem('iptv_dns', workingDNS);
-            window.location.href = 'screen.html';
-        } else {
-            loader.style.display = 'none';
-            showError('Login Failed. Check credentials or internet.');
-        }
-    }
-
-    function showError(msg) {
-        const errorBox = document.getElementById('error-box');
-        errorBox.textContent = msg;
-        errorBox.style.display = 'block';
-        setTimeout(() => { errorBox.style.display = 'none'; }, 3000);
-    }
-
-    async function fetchDNSList() {
-        try {
-            const options = { url: 'https://panel.tvallstream.com/get_dns.php' };
-            const response = await Capacitor.Plugins.CapacitorHttp.get(options);
-            const data = response.data;
-            return (data.success && Array.isArray(data.dns_list)) ? data.dns_list : [];
-        } catch (err) {
-            console.error("DNS Fetch Error (Native):", err);
-            return [];
-        }
-    }
-
-    async function testOneDNS(dns, username, password) {
-        const cleanDns = dns.replace(/^https?:\/\//, '');
-        const proxyTestURL = `http://${cleanDns}/player_api.php?username=${username}&password=${password}`;
-        
-        try {
-            const options = { url: proxyTestURL, readTimeout: 8000, connectTimeout: 8000 };
-            const response = await Capacitor.Plugins.CapacitorHttp.get(options);
-            if (response.status === 200) {
-                const data = response.data;
-                if (data.user_info && data.user_info.auth == 1) return cleanDns;
+        setupTouchEvents: function() {
+            if(this.authNodes[0]) this.authNodes[0].addEventListener('click', () => this.handleNodeSelect(0));
+            if(this.authNodes[1]) this.authNodes[1].addEventListener('click', () => this.handleNodeSelect(1));
+            
+            if(this.uiToggle) {
+                this.uiToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.handleNodeSelect(2);
+                });
             }
-        } catch (err) {}
-        return null;
-    }
 
-    setTimeout(updateFocus, 300);
+            if(this.uiSubmit) {
+                this.uiSubmit.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.handleNodeSelect(3);
+                });
+            }
+        },
+
+        handleNodeSelect: function(index) {
+            this.activeIndex = index;
+            this.refreshHighlight();
+            this.fireNodeAction();
+        },
+
+        refreshHighlight: function() {
+            this.authNodes.forEach(node => {
+                if(node) node.classList.remove('highlighted');
+            });
+            const currentNode = this.authNodes[this.activeIndex];
+            if (currentNode) {
+                currentNode.classList.add('highlighted');
+                currentNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        },
+
+        fireNodeAction: function() {
+            const currentNode = this.authNodes[this.activeIndex];
+            if (currentNode.classList.contains('field-container')) {
+                const targetId = currentNode.id === 'node-user' ? 'iptv-user' : 'iptv-pass';
+                const inputField = document.getElementById(targetId);
+                if (inputField) inputField.focus(); 
+            } else if (currentNode.id === 'node-toggle') {
+                this.toggleVisibility();
+            } else if (currentNode.id === 'node-submit') {
+                this.executeAuthentication();
+            }
+        },
+
+        toggleVisibility: function() {
+            if (this.uiPass.type === 'password') {
+                this.uiPass.type = 'text';
+                this.uiToggle.style.opacity = "1";
+            } else {
+                this.uiPass.type = 'password';
+                this.uiToggle.style.opacity = "0.7";
+            }
+        },
+
+        setupKeyboardEvents: function() {
+            document.addEventListener('keydown', (e) => {
+                if (document.documentElement.classList.contains('tv-mode')) return; 
+
+                const key = e.keyCode;
+                if (key === 38) { // UP
+                    if (this.activeIndex > 0) { this.activeIndex--; this.refreshHighlight(); }
+                } else if (key === 40) { // DOWN
+                    if (this.activeIndex < this.authNodes.length - 1) { this.activeIndex++; this.refreshHighlight(); }
+                } else if (key === 13) { // ENTER
+                    this.fireNodeAction();
+                }
+            });
+        },
+
+        setupCapacitorEvents: function() {
+            if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
+                Capacitor.Plugins.App.addListener('backButton', ({ canGoBack }) => {
+                    if (!canGoBack) Capacitor.Plugins.App.exitApp();
+                    else window.history.back();
+                });
+            }
+        },
+
+        // --- BACKEND LOGIC (Variables refactored, API logic untouched) ---
+        executeAuthentication: async function() {
+            const usr = this.uiUser.value.trim();
+            const pwd = this.uiPass.value.trim();
+            const loaderScreen = document.getElementById('auth-loader');
+            const alertBox = document.getElementById('alert-box');
+
+            if (!usr || !pwd) {
+                this.displayAlert('Please enter your Username and Password.');
+                return;
+            }
+
+            loaderScreen.style.display = 'flex';
+            alertBox.style.display = 'none';
+
+            const serverList = await this.retrieveServers();
+            
+            let activeServer = null;
+            for (const srv of serverList) {
+                const valid = await this.pingServer(srv, usr, pwd);
+                if (valid) { activeServer = valid; break; }
+            }
+
+            if (activeServer) {
+                localStorage.setItem('iptv_username', usr);
+                localStorage.setItem('iptv_password', pwd);
+                localStorage.setItem('iptv_dns', activeServer);
+                window.location.href = 'screen.html';
+            } else {
+                loaderScreen.style.display = 'none';
+                this.displayAlert('Authentication Failed. Verify credentials or connection.');
+            }
+        },
+
+        displayAlert: function(message) {
+            const alertBox = document.getElementById('alert-box');
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 3500);
+        },
+
+        retrieveServers: async function() {
+            try {
+                const reqOptions = { url: 'https://panel.tvallstream.com/get_dns.php' };
+                const res = await Capacitor.Plugins.CapacitorHttp.get(reqOptions);
+                const payload = res.data;
+                return (payload.success && Array.isArray(payload.dns_list)) ? payload.dns_list : [];
+            } catch (err) {
+                console.error("Native Fetch Failed:", err);
+                return [];
+            }
+        },
+
+        pingServer: async function(url, u, p) {
+            const cleanUrl = url.replace(/^https?:\/\//, '');
+            const testEndpoint = `http://${cleanUrl}/player_api.php?username=${u}&password=${p}`;
+            
+            try {
+                const reqOptions = { url: testEndpoint, readTimeout: 8000, connectTimeout: 8000 };
+                const res = await Capacitor.Plugins.CapacitorHttp.get(reqOptions);
+                if (res.status === 200) {
+                    const payload = res.data;
+                    if (payload.user_info && payload.user_info.auth == 1) return cleanUrl;
+                }
+            } catch (err) {}
+            return null;
+        }
+    };
+
+    // Initialize the module
+    AuthManager.init();
 });

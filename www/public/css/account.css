@@ -1,222 +1,163 @@
-/* --- Global App Feel --- */
+/* --- Global Reset & Base --- */
 * {
-    box-sizing: border-box;
-    margin: 0; 
-    padding: 0;
+    box-sizing: border-box; margin: 0; padding: 0;
     -webkit-tap-highlight-color: transparent;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-}
-
-/* Allow text selection only on inputs */
-input, textarea {
-    -webkit-user-select: text;
-    user-select: text;
+    -webkit-user-select: none; user-select: none; -webkit-user-drag: none;
 }
 
 body {
-  width: 100vw; 
-  min-height: 100vh; 
+  width: 100vw; min-height: 100vh; min-height: 100dvh;
   background: url('../images/background2.png') no-repeat center center fixed;
   background-size: cover;
-  font-family: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;
-  color: white;
-  overflow-y: auto; 
-  /* UPDATED: Deep Navy Base */
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  color: white; overflow-x: hidden; overflow-y: auto; 
   background-color: #020b14;
 }
 
-/* Container with Dark Overlay */
-#profile-container {
-  width: 100%; 
-  min-height: 100vh; 
-  /* UPDATED: Deep Navy Gradient Overlay */
-  background: linear-gradient(to bottom, rgba(2, 12, 27, 0.9), rgba(4, 20, 45, 0.92)); 
+/* Main Container */
+#account-viewport {
+  width: 100%; min-height: 100vh; min-height: 100dvh;
+  background: linear-gradient(180deg, rgba(2, 12, 27, 0.9) 0%, rgba(4, 20, 45, 0.95) 100%);
   display: flex; flex-direction: column;
-  padding: 20px 40px; 
+  padding: 25px 40px; 
 }
 
 /* --- Header --- */
-.page-header {
+.view-header {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px;
-  /* UPDATED: Separator line to faint Electric Blue */
-  border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(0, 243, 255, 0.15);
   padding-bottom: 15px;
 }
 
-/* UPDATED: Title color to Electric Blue */
-.page-header h1 { 
-  font-size: 1.5rem; 
-  letter-spacing: 1px; 
-  color: #00f3ff; 
-  font-weight: 500; 
-  text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+.view-title { 
+  font-size: 1.5rem; letter-spacing: 2px; color: #00f3ff; 
+  font-weight: 700; text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
 }
 
-#clock { font-size: 1rem; color: #fff; font-weight: bold; opacity: 0.8; }
+#view-clock { font-size: 1rem; font-weight: 600; color: #8faecb; }
 
-/* --- Main Content --- */
-.content-wrapper {
-  display: flex; 
-  gap: 20px;
-  flex: 1; 
-  align-items: flex-start; 
+/* --- Main Layout --- */
+.details-grid {
+  display: flex; gap: 25px; flex: 1; align-items: stretch; 
 }
 
-/* Glass Panel Style (Cards) */
-.glass-panel {
-  /* UPDATED: Card Background to Dark Navy Glass */
-  background: rgba(16, 33, 58, 0.75); 
-  backdrop-filter: blur(12px); 
-  -webkit-backdrop-filter: blur(12px);
-  /* UPDATED: Border to faint Electric Blue */
-  border: 1px solid rgba(0, 243, 255, 0.2);
-  border-radius: 16px;
-  padding: 25px;
-  /* UPDATED: Deep Cool Shadow */
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+/* Glass Panels */
+.module-glass {
+  background: rgba(16, 33, 58, 0.6); 
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  border-radius: 30px; /* Heavily rounded */
+  padding: 35px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* Left Column: User Card */
-.user-card {
-  flex: 1;
-  display: flex; flex-direction: column;
+/* Left Panel */
+.identity-panel {
+  flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  min-height: 220px;
 }
 
-.user-avatar {
-  width: 100px; height: 100px;
-  margin-bottom: 15px;
-  border-radius: 50%; 
-  /* UPDATED: Avatar Border to Electric Blue */
-  border: 3px solid #00f3ff;
-  padding: 4px;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+.identity-avatar {
+  width: 110px; height: 110px; border-radius: 50%; 
+  border: 3px solid #00f3ff; padding: 5px; margin-bottom: 20px;
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
+  object-fit: cover;
 }
 
-.user-card h2 { font-size: 1.4rem; margin-bottom: 10px; text-align: center; color: #fff; }
+.identity-text-zone { text-align: center; }
+#val-username { font-size: 1.5rem; margin-bottom: 12px; font-weight: 700; color: #fff; }
 
-.status-badge {
-  padding: 6px 20px;
-  border-radius: 50px;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  /* UPDATED: Electric Look - Cyan text on navy bg */
-  color: #00f3ff;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #00f3ff; 
-  letter-spacing: 1.5px;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+.badge-pill {
+  display: inline-block; padding: 8px 25px; border-radius: 30px;
+  font-weight: 700; font-size: 0.9rem; letter-spacing: 1px;
+  color: #fff; background: rgba(0, 0, 0, 0.5); border: 1px solid transparent;
 }
 
-/* Right Column: Info List */
-.info-card {
-  flex: 2;
-  display: flex; flex-direction: column;
-  justify-content: center;
+/* Right Panel */
+.metrics-panel {
+  flex: 2; display: flex; flex-direction: column; justify-content: center;
 }
 
-.info-row {
-  display: flex; justify-content: space-between;
-  /* UPDATED: Separator line to very faint Blue */
-  border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-  padding: 14px 0;
-  font-size: 1rem;
+.metric-item {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(0, 243, 255, 0.08);
+  padding: 16px 0; font-size: 1.05rem;
 }
-.info-row:last-child { border-bottom: none; }
+.metric-item:last-child { border-bottom: none; }
 
-.label { color: #8faecb; font-weight: 400; }
-.value { font-weight: 600; color: #fff; text-align: right; }
+.metric-label { color: #8faecb; font-weight: 500; }
+.metric-val { font-weight: 700; color: #fff; }
 
-/* --- Footer Actions --- */
-.action-bar {
-  margin-top: 30px;
-  display: flex; justify-content: center; gap: 20px;
-  margin-bottom: 20px; 
+/* --- Buttons --- */
+.command-bar {
+  margin-top: 30px; display: flex; justify-content: center; gap: 20px;
 }
 
-.glass-btn {
-  /* UPDATED: Subtle Blue tint on background */
-  background: rgba(0, 243, 255, 0.05);
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  color: #00f3ff;
-  font-size: 1rem;
-  padding: 12px 30px;
-  border-radius: 12px;
-  cursor: pointer;
-  text-transform: uppercase;
-  font-weight: 600;
-  transition: all 0.2s;
-  min-width: 140px;
+.glass-button {
+  background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3);
+  color: #00f3ff; font-size: 1rem; padding: 15px 35px; border-radius: 30px;
+  cursor: pointer; font-weight: 700; letter-spacing: 1px;
+  transition: all 0.25s ease; min-width: 180px;
 }
 
-/* Danger Button Style (Logout) */
-.btn-danger {
-  background: rgba(255, 59, 48, 0.1);
-  border-color: rgba(255, 59, 48, 0.4);
-  color: #ff6b6b;
+.btn-critical {
+  background: rgba(255, 59, 48, 0.05); border-color: rgba(255, 59, 48, 0.3); color: #ff6b6b;
 }
 
-/* --- ACTIVE STATE (Touch) --- */
-.glass-btn:active {
-    transform: scale(0.98);
-    /* UPDATED: Active state becomes Electric Blue Gradient with White Text */
-    background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
-    border-color: #00f3ff;
-    color: #fff;
-    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+/* Active & TV Remote Highlight State */
+.action-node:active, .action-node.highlighted {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
+  border-color: #00f3ff; color: #fff;
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.5);
 }
 
-/* Exception for danger button active state */
-.btn-danger:active {
-    background: #ff3b30;
-    border-color: #ff3b30;
-    color: white;
-    box-shadow: 0 0 15px rgba(255, 59, 48, 0.4);
+.action-node.btn-critical:active, .action-node.btn-critical.highlighted {
+  background: linear-gradient(135deg, #ff3b30 0%, #ff6b6b 100%);
+  border-color: #ff3b30; color: #fff;
+  box-shadow: 0 0 25px rgba(255, 59, 48, 0.5);
 }
 
-/* --- MOBILE OPTIMIZATION --- */
+/* =========================================
+   RESPONSIVE DESIGN (Media Queries)
+   ========================================= */
+
+/* Mobile Phones */
 @media (max-width: 768px) {
-    #profile-container { padding: 15px; }
+    #account-viewport { padding: 15px 20px; }
+    .view-title { font-size: 1.25rem; }
+    
+    .details-grid { flex-direction: column; gap: 15px; }
+    
+    .identity-panel { flex-direction: row; justify-content: flex-start; gap: 20px; padding: 25px 20px; border-radius: 25px; }
+    .identity-avatar { width: 70px; height: 70px; margin-bottom: 0; }
+    .identity-text-zone { text-align: left; }
+    #val-username { font-size: 1.2rem; margin-bottom: 6px; }
+    .badge-pill { padding: 5px 15px; font-size: 0.8rem; }
+    
+    .metrics-panel { padding: 20px; border-radius: 25px; }
+    .metric-item { padding: 12px 0; font-size: 0.95rem; }
 
-    /* Stack Columns */
-    .content-wrapper {
-        flex-direction: column; 
-        gap: 15px;
-    }
-    
-    .page-header h1 { font-size: 1.2rem; }
-    
-    /* Make User Card Compact */
-    .user-card { 
-        min-height: auto; 
-        padding: 20px; 
-        flex-direction: row; 
-        justify-content: flex-start;
-        gap: 20px;
-    }
-    .user-avatar { width: 60px; height: 60px; margin-bottom: 0; }
-    .user-info-mobile { display: flex; flex-direction: column; align-items: flex-start; }
-    .user-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
-    
-    /* Make Info Card Compact */
-    .info-card { padding: 15px 20px; }
-    .info-row { font-size: 0.9rem; padding: 12px 0; }
+    .command-bar { flex-direction: column; gap: 15px; margin-top: 20px; }
+    .glass-button { width: 100%; padding: 15px; font-size: 1rem; }
+}
 
-    /* Footer Stacked */
-    .action-bar { 
-        flex-direction: column; 
-        gap: 10px; 
-        margin-top: 20px; 
-    }
-    .glass-btn { 
-        width: 100%; 
-        padding: 14px; 
-        font-size: 0.95rem; 
-    }
+/* iPads & Big Screens */
+@media (min-width: 1024px) {
+    #account-viewport { padding: 40px 60px; }
+    .view-title { font-size: 2rem; }
+    #view-clock { font-size: 1.2rem; }
+    
+    .details-grid { gap: 40px; }
+    .module-glass { padding: 50px; border-radius: 40px; }
+    
+    .identity-avatar { width: 160px; height: 160px; border-width: 4px; }
+    #val-username { font-size: 2rem; margin-bottom: 15px; }
+    .badge-pill { padding: 10px 30px; font-size: 1.1rem; }
+    
+    .metric-item { padding: 22px 0; font-size: 1.25rem; }
+    
+    .command-bar { margin-top: 40px; gap: 30px; }
+    .glass-button { padding: 20px 50px; font-size: 1.2rem; border-radius: 40px; }
 }
