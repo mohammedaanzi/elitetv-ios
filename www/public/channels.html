@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Live Broadcasts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Live TV - ozzie</title>
   <link rel="stylesheet" href="css/channels.css" />
   
   <script>
@@ -20,55 +20,11 @@
   </script>
 </head>
 <body>
-  
-  <div id="broadcast-layout">
-    
-    <!-- Left Navigation Drawer -->
-    <aside id="nav-drawer" class="glass-module">
-      <h2 class="drawer-title">CATEGORIES</h2>
-      <ul id="cat-list">
-        <li class="loader-text">Loading folders...</li>
-      </ul>
-    </aside>
-
-    <!-- Main Content Stage -->
-    <main id="stage-area">
-      
-      <header class="stage-header">
-        <div class="header-actions">
-          <button id="cmd-return" class="pill-btn interactive-node">← BACK</button>
-          <button id="cmd-search" class="pill-btn interactive-node">🔍 SEARCH</button>
-        </div>
-        <div class="header-info">
-          <input type="text" id="inp-search" class="pill-search hidden" placeholder="Find a broadcast..." />
-          <div id="stats-badge" class="badge-pill">0 Broadcasts</div>
-        </div>
-      </header>
-
-      <!-- Grid for Channels -->
-      <div id="broadcast-grid" class="content-grid"></div>
-
-      <!-- Pagination -->
-      <div id="page-controls" class="pagination-bar">
-        <button id="cmd-prev" class="pill-btn interactive-node">PREVIOUS</button>
-        <span id="page-label" class="badge-pill">Page 1</span>
-        <button id="cmd-next" class="pill-btn interactive-node">NEXT</button>
-      </div>
-
-    </main>
+  <div id="app-root">
+    <!-- Content injected by channels.js -->
   </div>
 
-  <!-- Fullscreen Cinema Player -->
-  <div id="cinema-layer" class="hidden-layer">
-    <div class="cinema-header">
-      <button id="cmd-close-player" class="circle-btn interactive-node">✖</button>
-      <div id="cinema-title" class="badge-pill">Now Playing...</div>
-    </div>
-    
-    <!-- Standard HTML5 Video Player for HLS streams -->
-    <video id="stream-engine" controls autoplay playsinline></video>
-  </div>
-
+  <!-- JS Logic -->
   <script src="js/channels.js" defer></script>
 </body>
 </html>
