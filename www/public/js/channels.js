@@ -291,14 +291,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPlayIndex = 0;
 
     // 🟢 UPDATED: Auto-detects the correct Plugin Name
-    // 🟢 UPDATED: More compatible playStream function
     async function playStream(name, streamId) {
         try {
-            // 1. Get List for Player Navigation (Next/Prev)
             currentChannelList = currentDisplayList; 
             currentPlayIndex = currentChannelList.findIndex(ch => String(ch.stream_id) === String(streamId));
 
-            // 2. Get Credentials
             const u = localStorage.getItem('iptv_username');
             const p = localStorage.getItem('iptv_password');
             const dnsRaw = localStorage.getItem('iptv_dns');
@@ -308,48 +305,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // 3. Clean DNS and Build URL
-            // We strip http/https first to ensure we don't duplicate protocols
-            const cleanDns = dnsRaw.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            const cleanDns = dnsRaw.replace(/^https?:\/\//, '');
+            const streamUrl = `http://${cleanDns}/live/${u}/${p}/${streamId}.m3u8`;
             
-            // NOTE: We force http:// because 4kapps does NOT support https.
-            // If the server supports https (like tvallstreamplus), it will usually redirect automatically.
-            let streamUrl = `http://${cleanDns}/live/${u}/${p}/${streamId}.m3u8`;
-            
-            console.log("Attempting to play:", streamUrl);
+            console.log("Stream URL:", streamUrl);
 
-            // 4. Check Capacitor
             if (!window.Capacitor) {
                 alert("CRITICAL ERROR: Capacitor not loaded!");
                 return;
             }
             
+            // 🟢 FIX: Check BOTH names (Yours is showing up as 'VideoPlayer')
             const CapacitorVideoPlayer = Capacitor.Plugins.CapacitorVideoPlayer || Capacitor.Plugins.VideoPlayer;
 
             if (!CapacitorVideoPlayer) {
-                alert("Native Player Plugin MISSING!");
+                // If still missing, show the list again
+                const installed = Object.keys(window.Capacitor.Plugins);
+                alert("CRITICAL ERROR: Native Player Plugin MISSING! Found: " + JSON.stringify(installed));
                 return;
             }
 
-            // 5. Initialize Player with SIMPLIFIED Headers
-            // Removing the User-Agent often fixes issues with older servers like 4kapps
             await CapacitorVideoPlayer.initPlayer({
                 mode: 'fullscreen',
                 url: streamUrl,
                 playerId: 'fullscreen',
                 componentTag: 'div',
                 ios: {
-                    itemType: "live", // Helps iOS understand it's a stream
-                    // We REMOVED the httpHeaders "User-Agent" block. 
-                    // Allowing the native player to send its default agent is safer for old servers.
+                    itemType: "live",
+                    httpHeaders: {
+                        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+                    }
                 }
             });
             
             isPlayerActive = true;
 
         } catch (err) {
-            console.error("Player Error", err);
-            // Don't show alert immediately, sometimes it's just a buffering delay
+            alert("PLAYER CRASHED: " + JSON.stringify(err));
         }
     }
 
