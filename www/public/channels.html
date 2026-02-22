@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>App Authentication</title>
+  <link rel="stylesheet" href="css/first.css" />
+  
+  <script>
+    (function() {
+      // Auto-Login Logic (Untouched)
+      const u = localStorage.getItem('iptv_username');
+      const p = localStorage.getItem('iptv_password');
+      if (u && p) window.location.href = 'screen.html';
+
+      // TV Handshake Logic (Untouched, but classes slightly updated)
+      var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
+      if (isTV) {
+        console.log("TV Mode Detected: Engaging Remote Control Protocols");
+        document.documentElement.classList.add("tv-mode");
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "css/tv-overrides.css"; 
+        document.head.appendChild(link);
+        var script = document.createElement("script");
+        script.src = "js/remote.js";
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Renamed from bg-image -->
+  <div class="app-backdrop"></div>
+
+  <!-- Renamed loader classes and changed animation style -->
+  <div id="auth-loader" class="loading-screen" style="display:none;">
+    <div class="pulse-ring"></div>
+    <p>Authenticating...</p>
+  </div>
+
+  <div class="main-auth-wrapper">
+    
+    <!-- NEW: Logo is now floating at the top of the screen instead of inside the card -->
+    <div class="brand-header">
+      <img src="images/login-logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'"/>
+      <h1 class="brand-title">WELCOME BACK</h1>
+      <p class="brand-tagline">Enter your credentials to stream</p>
+    </div>
+
+    <!-- NEW: Bottom Sheet Layout -->
+    <div class="auth-bottom-sheet">
+      <div class="form-container">
+        
+        <!-- Username -->
+        <div class="field-container focusable-node" id="node-user">
+          <span class="field-icon">👤</span>
+          <input type="text" id="iptv-user" placeholder="Your Username" autocomplete="off" />
+        </div>
+
+        <!-- Password -->
+        <div class="field-container focusable-node" id="node-pass">
+          <span class="field-icon">🔒</span>
+          <input type="password" id="iptv-pass" placeholder="Your Password" autocomplete="off" />
+          <button id="node-toggle" type="button" class="reveal-btn focusable-node">👁</button>
+        </div>
+
+        <button id="node-submit" type="button" class="action-btn focusable-node">CONNECT NOW</button>
+        
+        <div id="alert-box" class="alert-msg" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/first.js" defer></script>
+</body>
+</html>
