@@ -9,8 +9,6 @@ def capacitor_pods
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
   pod 'CapgoCapacitorVideoPlayer', :path => '../../node_modules/@capgo/capacitor-video-player'
-
-  # ⬇️ CRITICAL ADDITION: This manually links your local plugin for the Build System
   pod 'Iptvplayer', :path => '../../local-plugins/Iptvplayer'
 end
 
