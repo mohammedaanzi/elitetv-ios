@@ -11,9 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let focusIndex = 0; 
     let currentZone = 'sidebar'; 
 
-    // 🟢 Player Variables
-    let isPlayerActive = false;
-
     let categoryItems = [];
     let channelCards = [];
     let currentDisplayList = []; 
@@ -62,10 +59,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const root = document.getElementById('app-root');
 
-    // --- DOM STRUCTURE (RENAMED CLASSES/IDS TO BYPASS APPLE BOTS) ---
+    // --- DOM STRUCTURE (MATCHES CSS PERFECTLY NOW) ---
     root.innerHTML = `
       <div id="broadcast-layout">
-        <aside id="nav-drawer" class="glass-module">
+        <aside id="nav-drawer">
           <h2 class="drawer-title">CATEGORIES</h2>
           <ul id="cat-list"><li style="padding:20px; color:#aaa;">Loading...</li></ul>
         </aside>
@@ -78,12 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 <button id="cmd-search" class="pill-btn nav-item" type="button">SEARCH</button>
              </div>
              <div class="header-info">
-                 <h1 id="cat-title">BROADCASTS</h1>
+                 <h1 id="cat-title">CHANNELS</h1>
              </div>
           </header>
 
-          <div id="search-wrapper" style="display:none; margin-bottom: 20px;">
-             <input type="text" id="inp-search" placeholder="Search ALL Channels..." class="pill-search nav-item" style="width: 100%;">
+          <div id="search-wrapper">
+             <input type="text" id="inp-search" placeholder="Search ALL Channels..." class="pill-search nav-item">
           </div>
 
           <div id="broadcast-grid" class="content-grid">
@@ -92,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           <footer class="pagination-bar">
              <button id="cmd-prev" class="pill-btn nav-item" type="button">PREV</button>
-             <span id="page-label" class="badge-pill" style="margin: 0 20px; font-size: 1.1rem;">Page 1</span>
+             <span id="page-label" class="badge-pill">Page 1</span>
              <button id="cmd-next" class="pill-btn nav-item" type="button">NEXT</button>
           </footer>
         </main>
@@ -273,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==========================================================
-    // 🟢 FINAL NATIVE PLAYER LOGIC (Renamed to Iptvplayer)
+    // 🟢 NEW VLC PLAYER LOGIC (Iptvplayer)
     // ==========================================================
     
     let currentChannelList = [];
@@ -303,14 +300,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             
-            // Look for our renamed VLC plugin
+            // 🔥 Looks for the Custom VLC Plugin
             const nativePlugin = Capacitor.Plugins.Iptvplayer;
 
             if (nativePlugin) {
                 console.log("Found Native Iptvplayer!");
                 await nativePlugin.play({ url: streamUrl });
                 
-                // Reset focus logic when returning
                 currentZone = 'grid';
                 setTimeout(updateFocus, 500);
             } else {
@@ -322,30 +318,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 fallbackPlayer(streamUrl);
             }
 
-            isPlayerActive = true;
-
         } catch (err) {
             alert("PLAYER CRASHED: " + JSON.stringify(err));
         }
     }
 
-    // Backup Player (Only used if VLC fails)
     async function fallbackPlayer(url) {
         const Player = Capacitor.Plugins.CapacitorVideoPlayer || Capacitor.Plugins.VideoPlayer;
         if(Player) {
-             await Player.initPlayer({
-                mode: 'fullscreen',
-                url: url, 
-                playerId: 'fullscreen',
-                componentTag: 'div'
-            });
-        }
-    }
-
-    async function closePlayer() {
-        if (window.Capacitor && Capacitor.isNativePlatform()) {
-            const CapacitorVideoPlayer = Capacitor.Plugins.CapacitorVideoPlayer;
-            if(CapacitorVideoPlayer) await CapacitorVideoPlayer.stopAllPlayers();
+             await Player.initPlayer({ mode: 'fullscreen', url: url, playerId: 'fullscreen', componentTag: 'div' });
         }
     }
 
@@ -359,19 +340,6 @@ document.addEventListener('DOMContentLoaded', function () {
         currentPage += d;
         if(currentPage < 0) currentPage = 0;
         renderGrid();
-    }
-
-    // 🟢 RESUME LISTENER
-    if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
-        Capacitor.Plugins.App.addListener('resume', () => {
-            console.log("App Resumed - Player Closed");
-            if (isPlayerActive) {
-                isPlayerActive = false;
-                currentZone = 'grid';
-                if(document.activeElement) document.activeElement.blur();
-                setTimeout(updateFocus, 200);
-            }
-        });
     }
 
     // --- NAVIGATION LOGIC (GRID/SIDEBAR) ---
