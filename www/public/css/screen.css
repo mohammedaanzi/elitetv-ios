@@ -1,124 +1,339 @@
-/* --- Global App Feel --- */
+/* ============================================
+   EliteTV Play — Dark Red Theme Dashboard
+   ============================================ */
+
+/* --- Design Tokens --- */
+:root {
+  --red-900: #7f1d1d;
+  --red-800: #991b1b;
+  --red-700: #b91c1c;
+  --red-600: #dc2626;
+  --red-500: #ef4444;
+  --red-400: #f87171;
+  --red-300: #fca5a5;
+  --red-200: #fecaca;
+
+  --surface-bg: #0a0a0a;
+  --card-bg: rgba(30, 10, 10, 0.65);
+  --card-border: rgba(220, 38, 38, 0.15);
+  --input-bg: rgba(0, 0, 0, 0.45);
+  --text-primary: #fff;
+  --text-secondary: #c4a0a0;
+  --text-muted: #7a5555;
+  --glow-color: rgba(220, 38, 38, 0.35);
+}
+
+/* --- Global Reset --- */
 * {
-    box-sizing: border-box; margin: 0; padding: 0;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-user-select: none; user-select: none; -webkit-user-drag: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
+/* --- Body & Background --- */
 body {
-  width: 100vw; min-height: 100vh; min-height: 100dvh;
-  background: url('../images/background2.png') no-repeat center center fixed;
-  background-size: cover;
-  font-family: 'Roboto', 'Segoe UI', sans-serif;
-  color: white; overflow-x: hidden; overflow-y: auto; 
-  background-color: #020b14;
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--surface-bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(220, 38, 38, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(252, 165, 165, 0.1) 0%, transparent 55%);
+  background-attachment: fixed;
+  overscroll-behavior-y: none;
+  /* iOS bounce disable */
 }
 
+/* --- Portal Wrapper --- */
 #portal-wrapper {
-  width: 100%; min-height: 100vh; min-height: 100dvh;
-  background: radial-gradient(circle at top, rgba(16, 33, 58, 0.5) 0%, rgba(2, 11, 20, 0.98) 100%);
-  display: flex; flex-direction: column;
-  padding: 20px 30px; transition: filter 0.4s ease;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(20px + env(safe-area-inset-top)) max(30px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(30px, env(safe-area-inset-left));
+  transition: filter 0.4s ease;
 }
 
 body.overlay-active #portal-wrapper {
-  filter: blur(10px) brightness(0.3);
+  filter: blur(12px) brightness(0.2);
   pointer-events: none;
 }
 
 /* --- HEADER --- */
 .portal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 30px; padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding: 10px 0;
+  animation: fadeSlideDown 0.5s ease-out both;
 }
 
-.brand-logo { 
-  height: 60px; object-fit: contain; 
-  filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.4)); 
+.brand-logo {
+  height: 55px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(220, 38, 38, 0.3));
 }
 
-#system-clock { 
-  font-size: 1rem; color: #00f3ff; font-weight: 700;
-  background: rgba(4, 20, 45, 0.6);
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  padding: 10px 25px; border-radius: 40px; /* Pill shape */
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
+#system-clock {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--red-400);
+  font-weight: 600;
+  background: rgba(30, 10, 10, 0.6);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  padding: 10px 22px;
+  border-radius: 14px;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.08);
+  letter-spacing: 0.3px;
 }
 
-/* --- MAIN DASHBOARD (Grid Layout) --- */
+/* --- MAIN DASHBOARD GRID --- */
 #dashboard-grid {
-  flex: 1; display: flex; flex-direction: column;
-  justify-content: center; gap: 30px; 
-  width: 100%; max-width: 1000px; margin: 0 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  animation: fadeSlideUp 0.6s 0.1s ease-out both;
 }
 
-.tile-group-primary, .tile-group-secondary { 
-    display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; 
+.tile-group-primary,
+.tile-group-secondary {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
-/* --- TILE STYLES (Apple bot bypass: totally different CSS shapes) --- */
+/* --- TILE STYLES --- */
 .portal-tile {
-  background: rgba(16, 33, 58, 0.75);
-  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 243, 255, 0.2);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  flex: 1; min-width: 120px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 120px;
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Hero Tiles (Top Row) - Now fully rounded rectangles */
-.hero-tile { height: 160px; border-radius: 35px; }
-.hero-tile img { width: 60px; height: 60px; margin-bottom: 12px; object-fit: contain; }
-.tile-label { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+/* Subtle inner glow on hover */
+.portal-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(220, 38, 38, 0.06) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
 
-/* Utility Tiles (Bottom Row) - Now sleek Pill shapes */
-.utility-tile { height: 70px; border-radius: 50px; background: rgba(10, 25, 45, 0.6); }
-.utility-label { font-size: 0.95rem; font-weight: 600; color: #a0c4e8; letter-spacing: 1px;}
+.portal-tile:hover::before {
+  opacity: 1;
+}
+
+/* Hero Tiles (Top Row) — Rounded rectangles */
+.hero-tile {
+  height: 150px;
+  border-radius: 20px;
+}
+
+.hero-tile img {
+  width: 55px;
+  height: 55px;
+  margin-bottom: 15px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(220, 38, 38, 0.4)) saturate(0.8) sepia(0.5) hue-rotate(-30deg);
+  transition: all 0.25s ease;
+}
+
+.tile-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+/* Utility Tiles (Bottom Row) — Subtle rectangles */
+.utility-tile {
+  height: 60px;
+  border-radius: 14px;
+  background: rgba(20, 8, 8, 0.55);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  flex-direction: row;
+  gap: 12px;
+}
+
+.utility-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(220, 38, 38, 0.3)) saturate(0.8) sepia(0.5) hue-rotate(-30deg);
+  transition: all 0.25s ease;
+}
+
+.utility-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 1.2px;
+}
 
 /* --- ACTIVE / FOCUSED STATE --- */
-.portal-tile:active, .interactive-node.highlighted {
-  border-color: #00f3ff; 
-  background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
-  transform: scale(1.06) translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 243, 255, 0.4);
+.portal-tile:active,
+.interactive-node.highlighted {
+  border-color: var(--red-500);
+  background: linear-gradient(135deg, var(--red-800) 0%, var(--red-600) 100%);
+  transform: scale(1.04) translateY(-4px);
+  box-shadow: 0 12px 36px rgba(220, 38, 38, 0.35);
   z-index: 10;
 }
-.interactive-node.highlighted .tile-label, 
-.interactive-node.highlighted .utility-label { color: #fff; }
-.interactive-node.highlighted img { filter: brightness(1.2); }
+
+.interactive-node.highlighted .tile-label,
+.interactive-node.highlighted .utility-label {
+  color: #fff;
+}
+
+.interactive-node.highlighted img {
+  filter: brightness(1.3) drop-shadow(0 4px 15px rgba(255, 255, 255, 0.25)) saturate(0) sepia(0) hue-rotate(0);
+}
 
 /* --- FOOTER --- */
 .portal-footer {
-  display: flex; justify-content: space-between; 
-  border-top: 1px solid rgba(0, 243, 255, 0.1); 
-  padding-top: 15px; margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(220, 38, 38, 0.1);
+  padding-top: 14px;
+  margin-top: 20px;
+  animation: fadeSlideUp 0.5s 0.3s ease-out both;
 }
+
 .footer-badge {
-  background: rgba(4, 20, 45, 0.7); padding: 8px 18px; 
-  border-radius: 30px; color: #00f3ff; font-size: 0.85rem; font-weight: 500;
+  background: rgba(30, 10, 10, 0.6);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: var(--red-300);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 /* --- EXIT MODAL --- */
 .hidden-layer {
-  position: fixed; inset: 0; background: rgba(2, 11, 20, 0.95);
-  z-index: 9999; display: none; justify-content: center; align-items: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.92);
+  z-index: 9999;
+  display: none;
+  justify-content: center;
+  align-items: center;
 }
+
 .dialog-box {
-  background: rgba(16, 33, 58, 0.95); border: 2px solid #00f3ff;
-  border-radius: 35px; padding: 40px; text-align: center;
-  width: 90%; max-width: 450px; box-shadow: 0 0 60px rgba(0, 243, 255, 0.2);
+  background: rgba(30, 10, 10, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 0 60px rgba(220, 38, 38, 0.12);
+  animation: fadeSlideUp 0.3s ease-out both;
 }
-.dialog-title { font-size: 1.6rem; color: #00f3ff; margin-bottom: 10px; }
-.dialog-desc { font-size: 1.05rem; color: #a0c4e8; margin-bottom: 30px; }
-.dialog-actions { display: flex; justify-content: center; gap: 20px; }
+
+.dialog-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.4rem;
+  color: var(--red-400);
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.dialog-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
 .dialog-btn {
-  padding: 14px 40px; font-size: 1.05rem; font-weight: bold;
-  border-radius: 50px; background: rgba(255,255,255,0.05); color: white; border: none; transition: 0.3s;
+  font-family: 'Inter', sans-serif;
+  padding: 13px 36px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.5px;
 }
-.dialog-btn.highlighted, .dialog-btn:active {
-  background: linear-gradient(135deg, #007aff 0%, #00d4ff 100%);
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.5); transform: scale(1.1);
+
+.dialog-btn.highlighted,
+.dialog-btn:active {
+  background: linear-gradient(135deg, var(--red-700) 0%, var(--red-500) 100%);
+  border-color: var(--red-500);
+  box-shadow: 0 4px 24px rgba(220, 38, 38, 0.4);
+  transform: scale(1.06);
+}
+
+/* --- Animations --- */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =========================================
@@ -127,33 +342,104 @@ body.overlay-active #portal-wrapper {
 
 /* Mobile Phones */
 @media (max-width: 768px) {
-    #portal-wrapper { padding: 15px; }
-    .brand-logo { height: 45px; }
-    #system-clock { font-size: 0.85rem; padding: 8px 15px; }
-    #dashboard-grid { gap: 15px; }
-    .tile-group-primary, .tile-group-secondary { gap: 15px; }
-    
-    .hero-tile { height: 110px; min-width: 90px; border-radius: 25px; }
-    .hero-tile img { width: 40px; height: 40px; margin-bottom: 8px; }
-    .tile-label { font-size: 0.85rem; }
+  #portal-wrapper {
+    padding: calc(40px + env(safe-area-inset-top)) max(60px, env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) max(60px, env(safe-area-inset-left));
+  }
 
-    .utility-tile { height: 55px; min-width: 90px; }
-    .utility-label { font-size: 0.8rem; }
-    
-    .footer-badge { padding: 6px 12px; font-size: 0.75rem; }
+  .brand-logo {
+    height: 42px;
+  }
+
+  #system-clock {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+    border-radius: 12px;
+  }
+
+  #dashboard-grid {
+    gap: 14px;
+  }
+
+  .tile-group-primary,
+  .tile-group-secondary {
+    gap: 12px;
+  }
+
+  .hero-tile {
+    height: 105px;
+    min-width: 90px;
+    border-radius: 16px;
+  }
+
+  .hero-tile img {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 8px;
+  }
+
+  .tile-label {
+    font-size: 0.8rem;
+  }
+
+  .utility-tile {
+    height: 50px;
+    min-width: 90px;
+    border-radius: 12px;
+  }
+
+  .utility-label {
+    font-size: 0.75rem;
+  }
+
+  .footer-badge {
+    padding: 6px 12px;
+    font-size: 0.7rem;
+    border-radius: 10px;
+  }
 }
 
 /* iPads & Big Screens */
 @media (min-width: 1024px) {
-    .brand-logo { height: 80px; }
-    #system-clock { font-size: 1.2rem; padding: 12px 30px; }
-    #dashboard-grid { max-width: 1200px; gap: 50px; }
-    .tile-group-primary, .tile-group-secondary { gap: 40px; }
-    
-    .hero-tile { height: 220px; border-radius: 45px; }
-    .hero-tile img { width: 90px; height: 90px; margin-bottom: 20px; }
-    .tile-label { font-size: 1.4rem; }
+  .brand-logo {
+    height: 75px;
+  }
 
-    .utility-tile { height: 90px; }
-    .utility-label { font-size: 1.2rem; }
+  #system-clock {
+    font-size: 1.05rem;
+    padding: 12px 28px;
+  }
+
+  #dashboard-grid {
+    max-width: 1200px;
+    gap: 40px;
+  }
+
+  .tile-group-primary,
+  .tile-group-secondary {
+    gap: 32px;
+  }
+
+  .hero-tile {
+    height: 200px;
+    border-radius: 28px;
+  }
+
+  .hero-tile img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 18px;
+  }
+
+  .tile-label {
+    font-size: 1.3rem;
+  }
+
+  .utility-tile {
+    height: 80px;
+    border-radius: 18px;
+  }
+
+  .utility-label {
+    font-size: 1.1rem;
+  }
 }

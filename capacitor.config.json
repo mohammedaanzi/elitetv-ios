@@ -1,12 +1,14 @@
 {
-  "appId": "com.ozzieplayer.app",
-  "appName": "ozzie",
+  "appId": "com.elitetvplay.app",
+  "appName": "elitetvplay",
   "webDir": "www/public",
   "bundledWebRuntime": false,
   "server": {
     "androidScheme": "http",
     "cleartext": true,
-    "allowNavigation": ["*"]
+    "allowNavigation": [
+      "*"
+    ]
   },
   "ios": {
     "preferredContentMode": "mobile"

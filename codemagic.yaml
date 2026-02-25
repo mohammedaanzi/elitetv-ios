@@ -8,12 +8,12 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.ozzieplayer.app
+        bundle_identifier: com.elitetvplay.app
       node: latest
       xcode: latest
       cocoapods: default
       vars:
-        BUNDLE_ID: "com.ozzieplayer.app"
+        BUNDLE_ID: "com.elitetvplay.app"
     scripts:
       - name: Install dependencies
         script: npm install

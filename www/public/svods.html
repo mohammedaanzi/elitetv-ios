@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Series Vault</title>
-  <link rel="stylesheet" href="css/vods.css" /> 
-  
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>EliteTV Play — Series</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/vods.css" />
+
   <!-- HLS Support -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <!-- TV DETECTION -->
   <script>
-    (function() {
+    (function () {
       var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
       if (isTV) {
         document.documentElement.classList.add("tv-mode");
@@ -23,66 +28,79 @@
     })();
   </script>
 </head>
+
 <body>
-  
+
   <!-- JS will inject the layout here -->
   <div id="series-vault-root"></div>
 
-  <!-- 🟢 CUSTOM VOD PLAYER OVERLAY (Renamed to bypass scanners) -->
+  <!-- 🟢 CUSTOM VOD PLAYER OVERLAY -->
   <div id="theater-mode-layer" class="fullscreen-theater" style="display:none;">
-    
+
     <!-- Video Element -->
     <video id="engine-playback" playsinline preload="auto" style="background:#000;"></video>
 
     <!-- UI Layer -->
     <div id="theater-ui-plane" class="theater-controls-plane">
-        
-        <!-- Header -->
-        <header class="theater-top-bar">
-            <button id="cmd-close-theater" class="orb-btn interactive-node">
-                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-            </button>
-            <div class="theater-meta">
-                <span id="theater-title-display">Loading Episode...</span>
-                <span id="theater-badge">SERIES</span>
-            </div>
-        </header>
 
-        <!-- Center Controls (Rewind - Play/Pause - Forward) -->
-        <div class="theater-center-console">
-            <!-- Rewind 10s -->
-            <button id="cmd-step-back" class="action-orb small interactive-node">
-                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-            </button>
-
-            <!-- Play/Pause -->
-            <button id="cmd-toggle-play" class="action-orb big interactive-node">
-                <!-- Play Icon -->
-                <svg id="svg-play" viewBox="0 0 24 24" style="display:none;"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-                <!-- Pause Icon -->
-                <svg id="svg-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-
-            <!-- Forward 10s -->
-            <button id="cmd-step-fwd" class="action-orb small interactive-node">
-                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 12.5c0 3.54-3.01 6.55-6.6 7.6l-.78-2.37c3.19-1.05 5.38-4.06 5.38-7.73 0-1.96-.72-3.73-1.88-5.12L2.5 8.5V1h9v6.5L9.6 5.6C11.51 7.01 12.5 9.4 12.5 12.5z"/></svg>
-            </button>
+      <!-- Header -->
+      <header class="theater-top-bar">
+        <button id="cmd-close-theater" class="orb-btn interactive-node">
+          <svg viewBox="0 0 24 24">
+            <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+          </svg>
+        </button>
+        <div class="theater-meta">
+          <span id="theater-title-display">Loading Episode...</span>
+          <span id="theater-badge">SERIES</span>
         </div>
+      </header>
 
-        <!-- Touch Layer -->
-        <div id="gesture-catch-layer"></div>
+      <!-- Center Controls (Rewind - Play/Pause - Forward) -->
+      <div class="theater-center-console">
+        <!-- Rewind 10s -->
+        <button id="cmd-step-back" class="action-orb small interactive-node">
+          <svg viewBox="0 0 24 24">
+            <path fill="currentColor"
+              d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" />
+          </svg>
+        </button>
 
-        <!-- Footer (Progress Bar) -->
-        <footer class="theater-bottom-bar">
-            <span id="time-elapsed" class="time-stamp">00:00</span>
-            <input type="range" id="timeline-slider" class="interactive-node" value="0" min="0" step="1">
-            <span id="time-total" class="time-stamp">00:00</span>
-        </footer>
+        <!-- Play/Pause -->
+        <button id="cmd-toggle-play" class="action-orb big interactive-node">
+          <!-- Play Icon -->
+          <svg id="svg-play" viewBox="0 0 24 24" style="display:none;">
+            <path fill="currentColor" d="M8 5v14l11-7z" />
+          </svg>
+          <!-- Pause Icon -->
+          <svg id="svg-pause" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        </button>
+
+        <!-- Forward 10s -->
+        <button id="cmd-step-fwd" class="action-orb small interactive-node">
+          <svg viewBox="0 0 24 24">
+            <path fill="currentColor"
+              d="M10 12.5c0 3.54-3.01 6.55-6.6 7.6l-.78-2.37c3.19-1.05 5.38-4.06 5.38-7.73 0-1.96-.72-3.73-1.88-5.12L2.5 8.5V1h9v6.5L9.6 5.6C11.51 7.01 12.5 9.4 12.5 12.5z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Touch Layer -->
+      <div id="gesture-catch-layer"></div>
+
+      <!-- Footer (Progress Bar) -->
+      <footer class="theater-bottom-bar">
+        <span id="time-elapsed" class="time-stamp">00:00</span>
+        <input type="range" id="timeline-slider" class="interactive-node" value="0" min="0" step="1">
+        <span id="time-total" class="time-stamp">00:00</span>
+      </footer>
     </div>
 
     <!-- Loader -->
     <div id="theater-spinner" class="loading-halo" style="display:none;">
-        <div class="ring-spinner"></div>
+      <div class="ring-spinner"></div>
     </div>
   </div>
 
@@ -94,4 +112,5 @@
 
   <script src="js/svods.js" defer></script>
 </body>
+
 </html>

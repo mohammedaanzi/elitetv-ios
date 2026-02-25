@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
             this.setupTouchEvents();
             this.setupKeyboardEvents();
             this.setupCapacitorEvents();
+            this.setupInputAnimations();
             setTimeout(() => this.refreshHighlight(), 300);
         },
 
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.uiToggle.style.opacity = "1";
             } else {
                 this.uiPass.type = 'password';
-                this.uiToggle.style.opacity = "0.7";
+                this.uiToggle.style.opacity = "0.6";
             }
         },
 
@@ -100,6 +101,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 Capacitor.Plugins.App.addListener('backButton', ({ canGoBack }) => {
                     if (!canGoBack) Capacitor.Plugins.App.exitApp();
                     else window.history.back();
+                });
+            }
+        },
+
+        // NEW: Subtle card scale on input focus
+        setupInputAnimations: function() {
+            const card = document.querySelector('.auth-card');
+            const inputs = document.querySelectorAll('.field-container input');
+            
+            if (card && inputs.length) {
+                inputs.forEach(input => {
+                    input.addEventListener('focus', () => {
+                        card.style.transform = 'scale(1.01)';
+                        card.style.transition = 'transform 0.25s ease';
+                    });
+                    input.addEventListener('blur', () => {
+                        card.style.transform = 'scale(1)';
+                    });
                 });
             }
         },

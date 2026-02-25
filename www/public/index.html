@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>App Authentication</title>
+  <title>EliteTV Play — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/first.css" />
   
   <script>
@@ -13,7 +16,7 @@
       const p = localStorage.getItem('iptv_password');
       if (u && p) window.location.href = 'screen.html';
 
-      // TV Handshake Logic (Untouched, but classes slightly updated)
+      // TV Handshake Logic (Untouched)
       var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
       if (isTV) {
         console.log("TV Mode Detected: Engaging Remote Control Protocols");
@@ -32,47 +35,57 @@
 </head>
 <body>
 
-  <!-- Renamed from bg-image -->
+  <!-- Decorative CSS-only backdrop (no image) -->
   <div class="app-backdrop"></div>
 
-  <!-- Renamed loader classes and changed animation style -->
+  <!-- Loading Screen -->
   <div id="auth-loader" class="loading-screen" style="display:none;">
-    <div class="pulse-ring"></div>
+    <div class="dual-ring"></div>
     <p>Authenticating...</p>
   </div>
 
   <div class="main-auth-wrapper">
     
-    <!-- NEW: Logo is now floating at the top of the screen instead of inside the card -->
+    <!-- Brand Header -->
     <div class="brand-header">
-      <img src="images/login-logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'"/>
-      <h2 class="brand-title">Step into OZZIE PLAYER<br></h2>
-      <p class="brand-tagline">Enter your playlist details to connect</p>
+      <img src="images/login-logo.png" alt="EliteTV Play" class="brand-logo" onerror="this.style.display='none'"/>
+      <h2 class="brand-title">Welcome Back</h2>
+      <p class="brand-tagline">Sign in to your playlist</p>
     </div>
 
-    <!-- NEW: Bottom Sheet Layout -->
-    <div class="auth-bottom-sheet">
+    <!-- Auth Card (Glassmorphic Centered Card) -->
+    <div class="auth-card">
       <div class="form-container">
+
+        <!-- Decorative Divider -->
+        <div class="auth-divider"></div>
         
         <!-- Username -->
         <div class="field-container focusable-node" id="node-user">
-          <span class="field-icon">👤</span>
-          <input type="text" id="iptv-user" placeholder="Your Username" autocomplete="off" />
+          <span class="field-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .7.5 1.2 1.2 1.2h16.8c.7 0 1.2-.5 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          </span>
+          <input type="text" id="iptv-user" placeholder="Username" autocomplete="off" />
         </div>
 
         <!-- Password -->
         <div class="field-container focusable-node" id="node-pass">
-          <span class="field-icon">🔒</span>
-          <input type="password" id="iptv-pass" placeholder="Your Password" autocomplete="off" />
-          <button id="node-toggle" type="button" class="reveal-btn focusable-node">👁</button>
+          <span class="field-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1s3.1 1.4 3.1 3.1v2z"/></svg>
+          </span>
+          <input type="password" id="iptv-pass" placeholder="Password" autocomplete="off" />
+          <button id="node-toggle" type="button" class="reveal-btn focusable-node">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zM12 17c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"/></svg>
+          </button>
         </div>
 
-        <button id="node-submit" type="button" class="action-btn focusable-node">CONNECT NOW</button>
+        <button id="node-submit" type="button" class="action-btn focusable-node">CONNECT</button>
         
         <div id="alert-box" class="alert-msg" style="display: none;"></div>
+
         <!-- APPLE REVIEW DISCLAIMER -->
-        <p style="font-size: 11px; color: #a9a9a9; text-align: center; margin-top: 20px; line-height: 1.4; padding: 0 10px;">
-          <strong>Disclaimer:</strong> OZZIE is strictly a media player tool. We do not supply, host, or endorse any media content, IPTV playlists, or TV streams. Users are solely responsible for providing their own legally sourced content.
+        <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 22px; line-height: 1.5; padding: 0 8px;">
+          <strong>Disclaimer:</strong> elitetvplay is strictly a media player tool. We do not supply, host, or endorse any media content, IPTV playlists, or TV streams. Users are solely responsible for providing their own legally sourced content.
         </p>
       </div>
     </div>

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('cmd-return'),
             document.getElementById('cmd-disconnect')
         ],
-        
+
         uiClock: document.getElementById('view-clock'),
         uiUser: document.getElementById('val-username'),
         uiState: document.getElementById('val-status'),
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         uiTrial: document.getElementById('val-trial'),
         uiCreated: document.getElementById('val-created'),
 
-        init: function() {
+        init: function () {
             this.startTimer();
             this.setupInteractions();
             this.setupHardwareBack();
@@ -25,18 +25,18 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => this.refreshHighlight(), 300);
         },
 
-        startTimer: function() {
+        startTimer: function () {
             const tick = () => {
                 const now = new Date();
-                if(this.uiClock) this.uiClock.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                if (this.uiClock) this.uiClock.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             };
             setInterval(tick, 1000);
             tick();
         },
 
-        setupInteractions: function() {
+        setupInteractions: function () {
             // Button 1: Return
-            if(this.interactiveElements[0]) {
+            if (this.interactiveElements[0]) {
                 this.interactiveElements[0].addEventListener('click', () => {
                     window.location.href = 'screen.html';
                 });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Button 2: Disconnect
-            if(this.interactiveElements[1]) {
+            if (this.interactiveElements[1]) {
                 this.interactiveElements[1].addEventListener('click', async () => {
                     localStorage.clear();
                     await this.wipeLocalCache();
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         },
 
-        setupHardwareBack: function() {
+        setupHardwareBack: function () {
             if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
                 Capacitor.Plugins.App.addListener('backButton', () => {
                     window.location.href = 'screen.html';
@@ -80,13 +80,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
 
-        wipeLocalCache: function() {
+        wipeLocalCache: function () {
             return new Promise((resolve) => {
                 // Keep exact IndexedDB names intact so we successfully clear the cache
                 indexedDB.deleteDatabase('DipPlayerDB');
                 indexedDB.deleteDatabase('DipPlayerDB_V2');
                 indexedDB.deleteDatabase('DipMoviesDB');
-                
+
                 setTimeout(() => {
                     console.log("Local Storage & DB Cache Wiped");
                     resolve();
@@ -94,16 +94,16 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         },
 
-        formatTimestamp: function(ts) {
+        formatTimestamp: function (ts) {
             if (!ts || ts === "null") return "Unlimited";
             if (!isNaN(ts)) {
                 const d = new Date(parseInt(ts) * 1000);
                 return d.toLocaleDateString();
             }
-            return ts; 
+            return ts;
         },
 
-        retrieveProfile: function() {
+        retrieveProfile: function () {
             const usr = localStorage.getItem('iptv_username');
             const pwd = localStorage.getItem('iptv_password');
             const srv = localStorage.getItem('iptv_dns');
@@ -113,50 +113,50 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            if(!srv) return;
+            if (!srv) return;
             const cleanSrv = srv.replace(/^https?:\/\//, '');
             const endpoint = `http://${cleanSrv}/player_api.php?username=${usr}&password=${pwd}`;
 
             // Capacitor HTTP
             if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.CapacitorHttp) {
-                 Capacitor.Plugins.CapacitorHttp.get({ url: endpoint }).then(res => {
-                     if(res.data && res.data.user_info) this.injectData(res.data.user_info);
-                 }).catch(err => console.error("Native API Error:", err));
+                Capacitor.Plugins.CapacitorHttp.get({ url: endpoint }).then(res => {
+                    if (res.data && res.data.user_info) this.injectData(res.data.user_info);
+                }).catch(err => console.error("Native API Error:", err));
             } else {
                 // Browser Fallback
                 fetch(endpoint).then(r => r.json()).then(payload => {
-                    if(payload.user_info) this.injectData(payload.user_info);
+                    if (payload.user_info) this.injectData(payload.user_info);
                 });
             }
         },
 
-        injectData: function(data) {
+        injectData: function (data) {
             const rawUser = localStorage.getItem('iptv_username');
-            if(this.uiUser) this.uiUser.textContent = rawUser;
-            
-            if(this.uiState) {
+            if (this.uiUser) this.uiUser.textContent = rawUser;
+
+            if (this.uiState) {
                 this.uiState.textContent = data.status;
-                if(data.status === 'Active') {
-                    this.uiState.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
-                    this.uiState.style.borderColor = '#10b981';
-                    this.uiState.style.color = '#10b981';
+
+                // Clear existing dynamic classes
+                this.uiState.classList.remove('status-active', 'status-inactive');
+
+                if (data.status === 'Active') {
+                    this.uiState.classList.add('status-active');
                 } else {
-                    this.uiState.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
-                    this.uiState.style.borderColor = '#ef4444';
-                    this.uiState.style.color = '#ef4444';
+                    this.uiState.classList.add('status-inactive');
                 }
             }
-            
-            if(this.uiExpiry) this.uiExpiry.textContent = this.formatTimestamp(data.exp_date);
-            if(this.uiMax) this.uiMax.textContent = data.max_connections || "1";
-            if(this.uiActive) this.uiActive.textContent = data.active_cons || "0";
-            if(this.uiTrial) this.uiTrial.textContent = (data.is_trial === "1") ? "Yes" : "No";
-            if(this.uiCreated) this.uiCreated.textContent = this.formatTimestamp(data.created_at);
+
+            if (this.uiExpiry) this.uiExpiry.textContent = this.formatTimestamp(data.exp_date);
+            if (this.uiMax) this.uiMax.textContent = data.max_connections || "1";
+            if (this.uiActive) this.uiActive.textContent = data.active_cons || "0";
+            if (this.uiTrial) this.uiTrial.textContent = (data.is_trial === "1") ? "Yes" : "No";
+            if (this.uiCreated) this.uiCreated.textContent = this.formatTimestamp(data.created_at);
         },
 
-        refreshHighlight: function() {
+        refreshHighlight: function () {
             this.interactiveElements.forEach((el, idx) => {
-                if(el) {
+                if (el) {
                     if (idx === this.activeIndex) {
                         el.classList.add('highlighted');
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });

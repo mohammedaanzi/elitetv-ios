@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Account Info</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>EliteTV Play — Account Info</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/account.css">
-  
+
   <script>
-    (function() {
+    (function () {
       // TV Handshake Logic
       var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
       if (isTV) {
@@ -20,10 +25,11 @@
     })();
   </script>
 </head>
+
 <body>
 
   <div id="account-viewport">
-    
+
     <!-- Header -->
     <header class="view-header">
       <h1 class="view-title">ACCOUNT INFO</h1>
@@ -32,20 +38,21 @@
 
     <!-- Main Content -->
     <main class="details-grid">
-      
+
       <!-- Left Column: User Identity -->
       <section class="identity-panel module-glass">
+        <!-- Kept the user image icon but the CSS now filters it to red -->
         <img src="images/ic-user.png" alt="User" class="identity-avatar" onerror="this.src='images/login-logo.png'">
-        
+
         <div class="identity-text-zone">
-            <h2 id="val-username">Loading...</h2>
-            <div class="badge-pill" id="val-status">Checking...</div>
+          <h2 id="val-username">Loading...</h2>
+          <div class="badge-pill" id="val-status">Checking...</div>
         </div>
       </section>
 
       <!-- Right Column: Subscription Details -->
       <section class="metrics-panel module-glass">
-        
+
         <div class="metric-item">
           <span class="metric-label">Expiration Date</span>
           <span class="metric-val" id="val-expiry">...</span>
@@ -79,7 +86,7 @@
       <button id="cmd-return" type="button" class="action-node glass-button">
         BACK TO HOME
       </button>
-      
+
       <button id="cmd-disconnect" type="button" class="action-node glass-button btn-critical">
         SIGN OUT
       </button>
@@ -90,4 +97,5 @@
   <script src="js/account.js"></script>
 
 </body>
+
 </html>

@@ -7,9 +7,9 @@ Pod::Spec.new do |s|
   s.version = package['version']
   s.summary = package['description']
   s.license = package['license']
-  s.homepage = 'https://ozzie.org'
+  s.homepage = 'https://elitetvplay.org'
   s.author = 'azzmedia'
-  s.source = { :git => 'https://github.com/mohammedaanzi/ozzie-ios', :tag => s.version.to_s }
+  s.source = { :git => 'https://github.com/mohammedaanzi/elitetvplay-ios', :tag => s.version.to_s }
   s.source_files = 'ios/plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
   s.ios.deployment_target  = '13.0'
   s.dependency 'Capacitor'
