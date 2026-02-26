@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Series Page Loaded");
 
     // --- VARIABLES ---
-    let categories = []; 
-    let currentCategoryId = 'favorites'; 
+    let categories = [];
+    let currentCategoryId = null;
     let currentPage = 0;
     const itemsPerPage = 20;
 
@@ -14,31 +14,26 @@ document.addEventListener('DOMContentLoaded', function () {
     let inEpisodeView = false;
     let categoryItems = [];
     let cardItems = [];
-    let favoriteSeriesIds = [];
-    let currentSeriesList = []; 
-    let currentEpisodes = []; 
+    let currentSeriesList = [];
+    let currentEpisodes = [];
     let globalSeriesIndex = null;
-    let longPressTimer;
-    const longPressDuration = 800;
 
-    const root = document.getElementById('series-vault-root'); // UPDATED ID
+    const root = document.getElementById('series-vault-root');
 
-    // --- DB SETUP (RENAMED) ---
+    // --- DB SETUP ---
     const DB_NAME = 'VaultSeriesDB_V1';
     const STORE_CATS = 'series_folders';
     const STORE_SERIES_CAT = 'series_by_folder';
     const STORE_MASTER = 'global_series_index';
-    const STORE_SERIES_FAV_OBJECTS = 'series_fav_objects';
 
     function openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, 10); 
+            const request = indexedDB.open(DB_NAME, 11);
             request.onupgradeneeded = (e) => {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains(STORE_CATS)) db.createObjectStore(STORE_CATS);
                 if (!db.objectStoreNames.contains(STORE_SERIES_CAT)) db.createObjectStore(STORE_SERIES_CAT);
                 if (!db.objectStoreNames.contains(STORE_MASTER)) db.createObjectStore(STORE_MASTER);
-                if (!db.objectStoreNames.contains(STORE_SERIES_FAV_OBJECTS)) db.createObjectStore(STORE_SERIES_FAV_OBJECTS, { keyPath: "series_id" }); 
             };
             request.onsuccess = (e) => resolve(e.target.result);
             request.onerror = (e) => resolve(null);
@@ -48,66 +43,26 @@ document.addEventListener('DOMContentLoaded', function () {
     async function saveToCache(store, key, data) {
         try {
             const db = await openDB();
-            if(!db) return;
+            if (!db) return;
             const tx = db.transaction(store, 'readwrite');
             tx.objectStore(store).put(data, key);
-        } catch(e) {}
+        } catch (e) { }
     }
 
     async function getFromCache(store, key) {
         try {
             const db = await openDB();
-            if(!db) return null;
+            if (!db) return null;
             return new Promise((resolve) => {
                 const tx = db.transaction(store, 'readonly');
                 const request = tx.objectStore(store).get(key);
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => resolve(null);
             });
-        } catch(e) { return null; }
+        } catch (e) { return null; }
     }
 
-    async function addFavoriteObject(seriesData) {
-        try {
-            seriesData.series_id = String(seriesData.series_id);
-            const db = await openDB();
-            if(!db) return;
-            const tx = db.transaction(STORE_SERIES_FAV_OBJECTS, 'readwrite');
-            tx.objectStore(STORE_SERIES_FAV_OBJECTS).put(seriesData);
-        } catch(e) {}
-    }
-
-    async function removeFavoriteObject(seriesId) {
-        try {
-            const db = await openDB();
-            if(!db) return;
-            const tx = db.transaction(STORE_SERIES_FAV_OBJECTS, 'readwrite');
-            tx.objectStore(STORE_SERIES_FAV_OBJECTS).delete(String(seriesId));
-        } catch(e) {}
-    }
-
-    async function getAllFavoriteObjects() {
-        try {
-            const db = await openDB();
-            if(!db) return [];
-            return new Promise((resolve) => {
-                const tx = db.transaction(STORE_SERIES_FAV_OBJECTS, 'readonly');
-                const request = tx.objectStore(STORE_SERIES_FAV_OBJECTS).getAll();
-                request.onsuccess = () => resolve(request.result || []);
-                request.onerror = () => resolve([]);
-            });
-        } catch(e) { return []; }
-    }
-
-    function loadFavorites() {
-        try {
-            const saved = localStorage.getItem('iptv_favorites_series');
-            if (saved) favoriteSeriesIds = JSON.parse(saved);
-        } catch (e) { favoriteSeriesIds = []; }
-    }
-    loadFavorites();
-
-    // --- DOM STRUCTURE (RENAMED TO BYPASS BOTS) ---
+    // --- DOM STRUCTURE ---
     root.innerHTML = `
       <div class="vault-layout">
         <aside class="library-drawer">
@@ -123,8 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <button id="cmd-search" class="pill-btn nav-item" type="button">Search</button>
              </div>
              <div class="meta-cluster">
-                 <h1 id="folder-title">Favorites</h1>
-                 <div class="badge-hint" style="font-size:0.5rem; color:#FFD700; background:rgba(255,215,0,0.1); padding:5px 15px; border-radius:20px; margin-top:5px; display:inline-block;">💡 Long Press to Add/Remove Favorites</div>
+                 <h1 id="folder-title">Series</h1>
              </div>
           </header>
 
@@ -148,22 +102,21 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('cmd-return').onclick = () => handleBack();
     document.getElementById('cmd-refresh').onclick = () => {
         const searchInput = document.getElementById('inp-search');
-        if(searchInput && searchInput.value.length > 0) downloadGlobalIndex(true);
-        else if (currentCategoryId === 'favorites') loadSeriesByCategory('favorites', true);
-        else loadSeriesByCategory(currentCategoryId, true);
+        if (searchInput && searchInput.value.length > 0) downloadGlobalIndex(true);
+        else if (currentCategoryId) loadSeriesByCategory(currentCategoryId, true);
     };
     document.getElementById('cmd-search').onclick = toggleSearch;
     document.getElementById('cmd-prev').onclick = () => changePage(-1);
     document.getElementById('cmd-next').onclick = () => changePage(1);
-    
+
     let searchTimeout = null;
     const searchInput = document.getElementById('inp-search');
-    if(searchInput) {
+    if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
             clearTimeout(searchTimeout);
             if (query.length === 0) {
-                if(currentCategoryId) loadSeriesByCategory(currentCategoryId);
+                if (currentCategoryId) loadSeriesByCategory(currentCategoryId);
                 return;
             }
             searchTimeout = setTimeout(() => performGlobalSearch(query), 500);
@@ -183,27 +136,30 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 if (window.Capacitor && window.Capacitor.isNativePlatform()) {
                     const res = await Capacitor.Plugins.CapacitorHttp.get({ url: urlCats });
-                    if(res.status===200) data = res.data;
+                    if (res.status === 200) data = res.data;
                 } else {
                     const res = await fetch(urlCats);
                     data = await res.json();
                 }
                 await saveToCache(STORE_CATS, 'all_series_categories', data);
-            } catch (err) {}
+            } catch (err) { }
         }
         if (data) {
             renderSidebar(data);
             let targetBtn = null;
             if (currentCategoryId) targetBtn = document.querySelector(`.folder-node[data-id="${currentCategoryId}"]`);
-            if (!targetBtn) targetBtn = document.querySelector('.folder-node[data-id="favorites"]');
-            if (targetBtn) selectCategory(targetBtn, true); 
+            if (!targetBtn) {
+                targetBtn = document.querySelector('.folder-node');
+                if (targetBtn) currentCategoryId = targetBtn.getAttribute('data-id');
+            }
+            if (targetBtn) selectCategory(targetBtn, true);
         }
     }
 
     function renderSidebar(data) {
         const catEl = document.getElementById('folder-list');
         categories = data;
-        let html = `<li class="folder-node nav-item" data-id="favorites" tabindex="-1">⭐ Favorites</li>`;
+        let html = '';
         data.forEach(c => html += `<li class="folder-node nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`);
         catEl.innerHTML = html;
         categoryItems = Array.from(document.querySelectorAll('.folder-node'));
@@ -217,15 +173,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         setTimeout(updateFocus, 200);
     }
-    
+
     function selectCategory(item, isAutoLoad = false) {
-        if(!item) return;
+        if (!item) return;
         const id = item.getAttribute('data-id');
         currentCategoryId = id;
         document.getElementById('folder-title').textContent = item.textContent;
         categoryItems.forEach(el => el.classList.remove('active'));
         item.classList.add('active');
-        if(!isAutoLoad) { currentZone = 'sidebar'; updateFocus(); }
+        if (!isAutoLoad) { currentZone = 'sidebar'; updateFocus(); }
         loadSeriesByCategory(id);
     }
 
@@ -233,13 +189,6 @@ document.addEventListener('DOMContentLoaded', function () {
         inEpisodeView = false;
         currentPage = 0;
         document.getElementById('vod-grid').innerHTML = '<p style="padding:20px;">Loading...</p>';
-        
-        if (catId === 'favorites') {
-            currentSeriesList = await getAllFavoriteObjects();
-            if (currentSeriesList.length === 0) document.getElementById('vod-grid').innerHTML = '<p style="padding:20px;">No favorites yet.</p>';
-            else renderSeriesGrid();
-            return;
-        }
 
         if (!forceRefresh) {
             const cached = await getFromCache(STORE_SERIES_CAT, `cat_${catId}`);
@@ -289,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const url = `http://${cleanDns}/player_api.php?username=${username}&password=${password}&action=get_series`;
         try {
             const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
-            if(res.status === 200) {
+            if (res.status === 200) {
                 globalSeriesIndex = res.data;
                 await saveToCache(STORE_MASTER, 'full_list', res.data);
             }
@@ -306,44 +255,22 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderSeriesGrid() {
         const grid = document.getElementById('vod-grid');
         grid.innerHTML = '';
-        if(currentSeriesList.length === 0) { grid.innerHTML = '<p style="padding:20px">No series found.</p>'; return; }
+        if (currentSeriesList.length === 0) { grid.innerHTML = '<p style="padding:20px">No series found.</p>'; return; }
         const start = currentPage * itemsPerPage;
         const pagedList = currentSeriesList.slice(start, start + itemsPerPage);
-        
+
         pagedList.forEach(s => {
-            const img = s.cover || s.stream_icon || 'images/login-logo.png'; 
-            const isFav = favoriteSeriesIds.includes(String(s.series_id));
-            const favIcon = isFav ? '<span class="fav-icon">⭐</span>' : '';
-            const dataJson = encodeURIComponent(JSON.stringify(s));
-            grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-id="${s.series_id}" data-obj="${dataJson}">${favIcon}<img src="${img}" onerror="this.src='images/login-logo.png'"><div class="movie-title">${s.name}</div></div>`;
+            const img = s.cover || s.stream_icon || 'images/login-logo.png';
+            grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-id="${s.series_id}"><img src="${img}" onerror="this.src='images/login-logo.png'"><div class="movie-title">${s.name}</div></div>`;
         });
-        
-        document.getElementById('page-label').textContent = `Page ${currentPage + 1} / ${Math.max(1, Math.ceil(currentSeriesList.length/itemsPerPage))}`;
-        
+
+        document.getElementById('page-label').textContent = `Page ${currentPage + 1} / ${Math.max(1, Math.ceil(currentSeriesList.length / itemsPerPage))}`;
+
         cardItems = Array.from(document.querySelectorAll('.movie-node'));
         cardItems.forEach((card, idx) => {
             card.addEventListener('click', () => { focusIndex = idx; currentZone = 'grid'; loadEpisodes(card.getAttribute('data-id')); });
-            const handleFav = () => { toggleFavorite(JSON.parse(decodeURIComponent(card.getAttribute('data-obj')))); };
-            card.addEventListener('touchstart', (e) => { longPressTimer = setTimeout(handleFav, 800); });
-            card.addEventListener('touchend', () => clearTimeout(longPressTimer));
         });
         if (currentZone === 'grid') updateFocus();
-    }
-
-    async function toggleFavorite(seriesObj) {
-        if(navigator.vibrate) navigator.vibrate(50);
-        const id = String(seriesObj.series_id);
-        const index = favoriteSeriesIds.indexOf(id);
-        if (index > -1) {
-            favoriteSeriesIds.splice(index, 1);
-            await removeFavoriteObject(id);
-        } else {
-            favoriteSeriesIds.push(id);
-            await addFavoriteObject(seriesObj);
-        }
-        localStorage.setItem('iptv_favorites_series', JSON.stringify(favoriteSeriesIds));
-        if (currentCategoryId === 'favorites') loadSeriesByCategory('favorites', true);
-        else renderSeriesGrid(); 
     }
 
     // --- EPISODES ---
@@ -353,27 +280,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const cleanDns = localStorage.getItem('iptv_dns').replace(/^https?:\/\//, '');
         const grid = document.getElementById('vod-grid');
         grid.innerHTML = '<p style="padding:20px">Loading Episodes...</p>';
-        
+
         const url = `http://${cleanDns}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`;
         try {
-            const res = await fetch(url); 
+            const res = await fetch(url);
             const data = await res.json();
             currentEpisodes = [];
-            if(data.episodes) {
+            if (data.episodes) {
                 Object.keys(data.episodes).forEach(seasonNum => {
                     data.episodes[seasonNum].forEach(ep => {
-                        ep.season_number = seasonNum; 
+                        ep.season_number = seasonNum;
                         currentEpisodes.push(ep);
                     });
                 });
             }
             inEpisodeView = true;
-            currentPage = 0; 
+            currentPage = 0;
             renderEpisodeGrid();
             currentZone = 'grid'; focusIndex = 0; updateFocus();
         } catch (e) {
             inEpisodeView = false;
-            renderSeriesGrid(); 
+            renderSeriesGrid();
         }
     }
 
@@ -392,11 +319,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const ext = ep.container_extension || 'mp4';
             grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-id="${ep.id}" data-ext="${ext}"><img src="${img}" onerror="this.src='images/login-logo.png'"><div class="movie-title">${title}</div></div>`;
         });
-        
+
         cardItems = Array.from(document.querySelectorAll('.movie-node'));
         cardItems.forEach((card, idx) => {
             card.addEventListener('click', () => {
-                if(card.getAttribute('data-type') === 'back') handleBack();
+                if (card.getAttribute('data-type') === 'back') handleBack();
                 else playEpisode(card.getAttribute('data-id'), card.getAttribute('data-ext'), card.querySelector('.movie-title').textContent, (currentPage * itemsPerPage) + (idx - 1));
             });
         });
@@ -405,9 +332,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==========================================================
-    // 🟢 CUSTOM SERIES PLAYER LOGIC (Same as Movies)
+    // 🟢 SERIES PLAYER LOGIC
     // ==========================================================
-    
+
     let currentPlayIndex = 0;
 
     async function playEpisode(id, ext, name, indexInList) {
@@ -419,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let extension = ext ? ext.replace(/^\./, '') : 'mp4';
         const streamUrl = `http://${cleanDns}/series/${u}/${p}/${id}.${extension}`;
-        
+
         console.log("Playing Episode with VLC:", streamUrl);
 
         try {
@@ -443,68 +370,68 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function handleBack() {
-        if(document.getElementById('finder-box').style.display === 'block') toggleSearch();
-        else if(inEpisodeView) {
-            inEpisodeView = false; currentZone = 'grid'; currentPage=0; renderSeriesGrid();
+        if (document.getElementById('finder-box').style.display === 'block') toggleSearch();
+        else if (inEpisodeView) {
+            inEpisodeView = false; currentZone = 'grid'; currentPage = 0; renderSeriesGrid();
         } else {
             window.location.href = 'screen.html';
         }
     }
-    
+
     function toggleSearch() {
         const con = document.getElementById('finder-box');
-        if(con.style.display==='block') { con.style.display='none'; if(currentCategoryId) loadSeriesByCategory(currentCategoryId); }
-        else { con.style.display='block'; document.getElementById('inp-search').focus(); currentZone='topbar'; }
+        if (con.style.display === 'block') { con.style.display = 'none'; if (currentCategoryId) loadSeriesByCategory(currentCategoryId); }
+        else { con.style.display = 'block'; document.getElementById('inp-search').focus(); currentZone = 'topbar'; }
     }
 
     function changePage(d) {
-        currentPage += d; if(currentPage<0) currentPage=0;
-        if(inEpisodeView) renderEpisodeGrid(); else renderSeriesGrid();
+        currentPage += d; if (currentPage < 0) currentPage = 0;
+        if (inEpisodeView) renderEpisodeGrid(); else renderSeriesGrid();
     }
-    
+
     if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
         Capacitor.Plugins.App.addListener('backButton', () => handleBack());
     }
 
-    // --- NAVIGATION HELPERS (GRID/FOCUS) ---
+    // --- NAVIGATION HELPERS ---
     function getGridColumns() {
         const items = document.querySelectorAll('#vod-grid .movie-node');
         if (items.length < 2) return 1;
         const top = items[0].getBoundingClientRect().top;
-        for(let i=1; i<items.length; i++) { if(items[i].getBoundingClientRect().top > top+10) return i; }
+        for (let i = 1; i < items.length; i++) { if (items[i].getBoundingClientRect().top > top + 10) return i; }
         return items.length;
     }
     function updateFocus() {
-        document.querySelectorAll('.focused').forEach(el=>el.classList.remove('focused'));
-        if(currentZone==='grid') document.querySelectorAll('.library-drawer .focused').forEach(el=>el.classList.remove('focused'));
+        document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+        if (currentZone === 'grid') document.querySelectorAll('.library-drawer .focused').forEach(el => el.classList.remove('focused'));
         let target;
-        let sel; 
-        if(currentZone==='sidebar') sel = '#folder-list .folder-node';
-        else if(currentZone==='grid') sel = '#vod-grid .movie-node';
-        else if(currentZone==='topbar') sel = '.action-cluster .nav-item';
+        let sel;
+        if (currentZone === 'sidebar') sel = '#folder-list .folder-node';
+        else if (currentZone === 'grid') sel = '#vod-grid .movie-node';
+        else if (currentZone === 'topbar') sel = '.action-cluster .nav-item';
         else sel = '.page-stepper .nav-item';
         const items = document.querySelectorAll(sel);
-        if(items.length) {
-            if(focusIndex >= items.length) focusIndex = items.length-1;
+        if (items.length) {
+            if (focusIndex >= items.length) focusIndex = items.length - 1;
             target = items[focusIndex];
         }
-        if(target) { target.classList.add('focused'); target.scrollIntoView({behavior:'smooth', block:'nearest', inline:'nearest'}); }
+        if (target) { target.classList.add('focused'); target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }); }
     }
 
     document.addEventListener('keydown', (e) => {
         const code = e.keyCode; const cols = getGridColumns();
-        if([37,38,39,40].includes(code)) e.preventDefault();
+        if ([37, 38, 39, 40].includes(code)) e.preventDefault();
 
         if (currentZone === 'sidebar') {
-            if (code === 38) focusIndex--; else if (code === 40) focusIndex++; else if (code === 39) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('#folder-list .folder-node')[focusIndex]?.click();
+            if (code === 38) focusIndex--; else if (code === 40) focusIndex++; else if (code === 39) { currentZone = 'grid'; focusIndex = 0; } else if (code === 13) document.querySelectorAll('#folder-list .folder-node')[focusIndex]?.click();
         } else if (currentZone === 'grid') {
-             if (code === 39) focusIndex++; else if (code === 37) { if(focusIndex%cols===0) { if(inEpisodeView) handleBack(); else { currentZone='sidebar'; focusIndex=0; } } else focusIndex--; }
-             else if (code === 38) { if(focusIndex<cols) { currentZone='topbar'; focusIndex=0; } else focusIndex-=cols; } else if (code === 40) { if(focusIndex+cols>=document.querySelectorAll('#vod-grid .movie-node').length) { currentZone='pagination'; focusIndex=2; } else focusIndex+=cols; }
-             else if (code === 13) document.querySelectorAll('#vod-grid .movie-node')[focusIndex]?.click();
+            if (code === 39) focusIndex++; else if (code === 37) { if (focusIndex % cols === 0) { if (inEpisodeView) handleBack(); else { currentZone = 'sidebar'; focusIndex = 0; } } else focusIndex--; }
+            else if (code === 38) { if (focusIndex < cols) { currentZone = 'topbar'; focusIndex = 0; } else focusIndex -= cols; } else if (code === 40) { if (focusIndex + cols >= document.querySelectorAll('#vod-grid .movie-node').length) { currentZone = 'pagination'; focusIndex = 2; } else focusIndex += cols; }
+            else if (code === 13) document.querySelectorAll('#vod-grid .movie-node')[focusIndex]?.click();
         } else if (currentZone === 'topbar') {
-             if (code === 39) focusIndex++; else if (code === 37) focusIndex--; else if (code === 40) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('.action-cluster .nav-item')[focusIndex]?.click();
+            if (code === 39) focusIndex++; else if (code === 37) focusIndex--; else if (code === 40) { currentZone = 'grid'; focusIndex = 0; } else if (code === 13) document.querySelectorAll('.action-cluster .nav-item')[focusIndex]?.click();
         } else if (currentZone === 'pagination') {
-             if (code === 39) focusIndex+=2; else if (code === 37) focusIndex-=2; else if (code === 38) { currentZone='grid'; focusIndex=0; } else if (code === 13) document.querySelectorAll('.page-stepper .nav-item')[focusIndex]?.click();
+            if (code === 39) focusIndex += 2; else if (code === 37) focusIndex -= 2; else if (code === 38) { currentZone = 'grid'; focusIndex = 0; } else if (code === 13) document.querySelectorAll('.page-stepper .nav-item')[focusIndex]?.click();
         }
         if ([10009, 27, 8].includes(code)) handleBack();
         updateFocus();

@@ -174,15 +174,6 @@ body {
   margin-top: 5px;
 }
 
-.badge-hint {
-  font-size: 0.8rem;
-  color: var(--red-300);
-  background: rgba(220, 38, 38, 0.1);
-  padding: 6px 15px;
-  border-radius: 12px;
-  border: 1px solid rgba(220, 38, 38, 0.2);
-}
-
 #finder-box {
   width: 100%;
   display: none;
@@ -227,15 +218,17 @@ body {
   border: 1px solid var(--card-border);
   border-radius: 14px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   aspect-ratio: 2 / 3;
+  min-height: 0;
 }
 
 .movie-node img {
+  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -270,16 +263,6 @@ body {
 .movie-node:active img,
 .movie-node.highlighted img {
   opacity: 1;
-}
-
-/* Favorite star icon */
-.fav-icon {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 6;
-  font-size: 1.1rem;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
 }
 
 .page-stepper {
@@ -460,6 +443,7 @@ body {
 #timeline-slider {
   flex: 1;
   -webkit-appearance: none;
+  appearance: none;
   background: transparent;
   cursor: pointer;
 }
