@@ -8,12 +8,12 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.elitetvplay.app
+        bundle_identifier: com.azzmedia.elitetvplay
       node: latest
       xcode: latest
       cocoapods: default
       vars:
-        BUNDLE_ID: "com.elitetvplay.app"
+        BUNDLE_ID: "com.azzmedia.elitetvplay"
     scripts:
       - name: Install dependencies
         script: npm install

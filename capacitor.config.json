@@ -1,5 +1,5 @@
 {
-  "appId": "com.elitetvplay.app",
+  "appId": "com.azzmedia.elitetvplay",
   "appName": "elitetvplay",
   "webDir": "www/public",
   "bundledWebRuntime": false,
