@@ -212,6 +212,7 @@ body {
 }
 
 /* Movie Poster Card */
+/* Movie Poster Card */
 .movie-node {
   position: relative;
   background: var(--card-bg);
@@ -221,8 +222,10 @@ body {
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  aspect-ratio: 2 / 3;
-  min-height: 0;
+
+  /* 🟢 THE FIX: Replaced aspect-ratio with padding hack */
+  padding-top: 150%;
+  display: block;
 }
 
 .movie-node img {
