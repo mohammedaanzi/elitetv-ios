@@ -211,7 +211,7 @@ body {
   scrollbar-color: var(--red-700) rgba(0, 0, 0, 0.2);
 }
 
-/* Movie Poster Card (BULLETPROOF FIX) */
+/* --- THE BULLETPROOF MOVIE POSTER HACK --- */
 .movie-node {
   position: relative;
   background: var(--card-bg);
@@ -221,22 +221,28 @@ body {
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
+  
+  /* This forces the card to ALWAYS be taller than it is wide (Movie Poster shape) */
+  padding-top: 150%; 
+  height: 0; /* Required for the padding trick to work */
+  display: block;
 }
 
 .movie-node img {
-  display: block;
+  /* Locks the image perfectly inside the padded box */
+  position: absolute; 
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 220px;
-  /* Safe, fixed height forces the grid to stay open */
+  height: 100%;
   object-fit: cover;
   opacity: 0.85;
   transition: opacity 0.3s;
 }
 
 .movie-title {
-  position: absolute;
+  /* Locks the title text to the bottom of the card */
+  position: absolute; 
   bottom: 0;
   left: 0;
   right: 0;
@@ -252,6 +258,7 @@ body {
   z-index: 2;
 }
 
+/* Hover/Focus Effects */
 .movie-node:active,
 .movie-node.highlighted {
   transform: scale(1.05);
@@ -562,12 +569,7 @@ body {
     padding: 9px 18px;
     font-size: 0.8rem;
   }
-
-  .movie-node img {
-    height: 160px;
-    /* Smaller height for mobile phones */
-  }
-
+  
   .movie-title {
     font-size: 0.72rem;
     padding: 18px 5px 8px 5px;
