@@ -311,8 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const pagedList = currentEpisodes.slice(start, start + itemsPerPage);
 
         document.getElementById('folder-title').textContent = "Episodes";
-        grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-type="back" style="background:rgba(255,50,50,0.15);"><div style="height:140px; display:flex; align-items:center; justify-content:center; font-size:2rem;">↩</div></div>`;
-
+        grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-type="back" style="background:rgba(220, 38, 38, 0.2);"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #fff; z-index: 2; text-shadow: 0 4px 12px rgba(0,0,0,0.5);">↩</div></div>`;
         pagedList.forEach((ep, idx) => {
             const img = ep.info?.movie_image || 'images/login-logo.png';
             const title = `S${ep.season_number} E${ep.episode_num} - ${ep.title}`;
