@@ -14,6 +14,41 @@ document.addEventListener('DOMContentLoaded', function () {
     let categoryItems = [];
     let channelCards = [];
     let currentDisplayList = []; 
+    let globalLiveIndex = null;
+
+    // ===== FAVORITES =====
+    const FAV_KEY = 'p4a_fav_channels';
+
+    function getFavorites() {
+        try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveFavorites(favs) {
+        localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+    }
+
+    function isFavorite(streamId) {
+        return getFavorites().includes(String(streamId));
+    }
+
+    function toggleFavorite(streamId, channelData) {
+        const id = String(streamId);
+        let favs = getFavorites();
+        if (favs.includes(id)) {
+            favs = favs.filter(f => f !== id);
+        } else {
+            favs.push(id);
+        }
+        saveFavorites(favs);
+        // Update the Favorites count in sidebar
+        updateFavCount();
+    }
+
+    function updateFavCount() {
+        const badge = document.getElementById('fav-count-badge');
+        if (badge) badge.textContent = getFavorites().length;
+    }
     
     // --- DB SETUP (RENAMED TO BYPASS APPLE SCANNERS) ---
     const DB_NAME = 'StreamCoreDB_V1'; 
@@ -57,6 +92,17 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch(e) { return null; }
     }
 
+    async function clearAllCache() {
+        try {
+            const db = await openDB();
+            if (!db) return;
+            const stores = [STORE_CATS, STORE_CHANNELS_CAT, STORE_MASTER];
+            const tx = db.transaction(stores, 'readwrite');
+            stores.forEach(s => tx.objectStore(s).clear());
+            globalLiveIndex = null;
+        } catch(e) {}
+    }
+
     const root = document.getElementById('app-root');
 
     // --- DOM STRUCTURE (MATCHES CSS PERFECTLY NOW) ---
@@ -98,11 +144,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('cmd-return').onclick = () => window.location.href = 'screen.html';
     
-    document.getElementById('cmd-refresh').onclick = () => {
+    document.getElementById('cmd-refresh').onclick = async () => {
+        await clearAllCache();
+        currentCategoryId = null;
         if(document.getElementById('inp-search').value.length > 0) {
-            downloadGlobalIndex(true);
-        } else if(currentCategoryId) {
-            loadChannelsByCategory(currentCategoryId, true);
+            await downloadGlobalIndex(true);
+            filterAndRenderGlobal(document.getElementById('inp-search').value.trim());
         } else {
             loadCategories(true);
         }
@@ -117,7 +164,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const query = e.target.value.trim();
         clearTimeout(searchTimeout);
         if (query.length === 0) {
-            if(currentCategoryId) loadChannelsByCategory(currentCategoryId);
+            if(currentCategoryId) {
+                if(currentCategoryId === 'favorites') loadFavoriteChannels();
+                else loadChannelsByCategory(currentCategoryId);
+            }
             return;
         }
         searchTimeout = setTimeout(() => performGlobalSearch(query), 500);
@@ -163,7 +213,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderSidebar(data) {
         categories = data;
         const catEl = document.getElementById('cat-list');
-        let html = ``; 
+
+        // Inject Favorites category at the top
+        let html = `<li class="cat-node nav-item fav-cat-item" data-id="favorites" tabindex="-1">
+            <span class="fav-star-sidebar">★</span> Favorites 
+            <span class="fav-count" id="fav-count-badge">${getFavorites().length}</span>
+        </li>`;
+
         data.forEach(c => {
             html += `<li class="cat-node nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`;
         });
@@ -184,13 +240,61 @@ document.addEventListener('DOMContentLoaded', function () {
         if(!item) return;
         const id = item.getAttribute('data-id');
         currentCategoryId = id;
-        document.getElementById('cat-title').textContent = item.textContent;
+
+        // Set title (trim the star and count for favorites)
+        if (id === 'favorites') {
+            document.getElementById('cat-title').textContent = '★ FAVORITES';
+        } else {
+            document.getElementById('cat-title').textContent = item.textContent;
+        }
         
         categoryItems.forEach(el => el.classList.remove('active'));
         item.classList.add('active');
         categoryItems.forEach(el => el.classList.remove('focused'));
 
-        loadChannelsByCategory(id);
+        if (id === 'favorites') {
+            loadFavoriteChannels();
+        } else {
+            loadChannelsByCategory(id);
+        }
+    }
+
+    async function loadFavoriteChannels() {
+        currentPage = 0;
+        const favIds = getFavorites();
+        if (favIds.length === 0) {
+            currentDisplayList = [];
+            document.getElementById('broadcast-grid').innerHTML = `
+                <div style="grid-column: 1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; color:#475569; text-align:center;">
+                    <div style="font-size:3rem; margin-bottom:12px; opacity:0.3;">★</div>
+                    <div style="font-size:1rem; font-weight:600; color:#94a3b8; margin-bottom:6px;">No Favorites Yet</div>
+                    <div style="font-size:0.85rem; line-height:1.5;">Tap the ★ on any channel to save it here</div>
+                </div>`;
+            return;
+        }
+
+        document.getElementById('broadcast-grid').innerHTML = '<p style="padding:20px;">Loading favorites...</p>';
+
+        // Collect favorites from all cached categories
+        let allChannels = [];
+        const db = await openDB();
+        if (db) {
+            const tx = db.transaction(STORE_CHANNELS_CAT, 'readonly');
+            const store = tx.objectStore(STORE_CHANNELS_CAT);
+            const allKeys = await new Promise(resolve => {
+                const req = store.getAllKeys();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve([]);
+            });
+            for (const key of allKeys) {
+                const data = await getFromCache(STORE_CHANNELS_CAT, key);
+                if (data && Array.isArray(data)) allChannels = allChannels.concat(data);
+            }
+        }
+
+        // Filter to only favorited channels
+        currentDisplayList = allChannels.filter(ch => favIds.includes(String(ch.stream_id)));
+        renderGrid();
     }
 
     async function loadChannelsByCategory(catId, forceRefresh = false) {
@@ -230,8 +334,55 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function downloadGlobalIndex() {}
-    function performGlobalSearch(query) {}
+    async function performGlobalSearch(query) {
+        document.getElementById('cat-title').textContent = `SEARCH: "${query}"`;
+        
+        if (globalLiveIndex && globalLiveIndex.length > 0) {
+            filterAndRenderGlobal(query);
+            return;
+        }
+        
+        const cachedIndex = await getFromCache(STORE_MASTER, 'full_list');
+        if (cachedIndex) {
+            globalLiveIndex = cachedIndex;
+            filterAndRenderGlobal(query);
+            return;
+        }
+        
+        await downloadGlobalIndex();
+        if (globalLiveIndex) filterAndRenderGlobal(query);
+    }
+
+    async function downloadGlobalIndex(forceRefresh = false) {
+        const username = localStorage.getItem('iptv_username');
+        const password = localStorage.getItem('iptv_password');
+        const dns = localStorage.getItem('iptv_dns');
+        const cleanDns = dns ? dns.replace(/^https?:\/\//, '') : '';
+        const url = `http://${cleanDns}/player_api.php?username=${username}&password=${password}&action=get_live_streams`;
+
+        try {
+            document.getElementById('broadcast-grid').innerHTML = '<p style="padding:20px">Downloading channel index...</p>';
+            let data = [];
+            if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+                const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+                if (res.status === 200) data = res.data;
+            } else {
+                const response = await fetch(url);
+                data = await response.json();
+            }
+            globalLiveIndex = data;
+            await saveToCache(STORE_MASTER, 'full_list', data);
+        } catch (err) {
+            console.error("Index Error", err);
+        }
+    }
+
+    function filterAndRenderGlobal(query) {
+        const lowerQ = query.toLowerCase();
+        currentDisplayList = globalLiveIndex.filter(c => c.name && c.name.toLowerCase().includes(lowerQ));
+        currentPage = 0;
+        renderGrid();
+    }
 
     function renderGrid() {
         const grid = document.getElementById('broadcast-grid');
@@ -247,9 +398,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const pagedList = list.slice(start, start + itemsPerPage);
 
         pagedList.forEach(ch => {
-            const img = ch.stream_icon || 'images/login-logo.png'; 
+            const img = ch.stream_icon || 'images/login-logo.png';
+            const favClass = isFavorite(ch.stream_id) ? 'is-fav' : '';
             grid.innerHTML += `
                 <div class="broadcast-node nav-item" tabindex="-1" data-id="${ch.stream_id}">
+                    <button class="fav-star-btn ${favClass}" data-stream-id="${ch.stream_id}" type="button" title="Toggle Favorite">★</button>
                     <img src="${img}" class="node-icon" onerror="this.src='images/login-logo.png'">
                     <div class="node-title">${ch.name}</div>
                 </div>
@@ -261,6 +414,24 @@ document.addEventListener('DOMContentLoaded', function () {
         
         channelCards = Array.from(document.querySelectorAll('.broadcast-node'));
         channelCards.forEach((card, idx) => {
+            // Star button click
+            const starBtn = card.querySelector('.fav-star-btn');
+            if (starBtn) {
+                starBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const sid = starBtn.getAttribute('data-stream-id');
+                    toggleFavorite(sid);
+                    starBtn.classList.toggle('is-fav');
+                    starBtn.classList.add('fav-pop');
+                    setTimeout(() => starBtn.classList.remove('fav-pop'), 300);
+                    // If viewing favorites, remove from list
+                    if (currentCategoryId === 'favorites') {
+                        loadFavoriteChannels();
+                    }
+                });
+            }
+
+            // Card click (play)
             card.addEventListener('click', () => {
                 focusIndex = idx;
                 currentZone = 'grid'; 
@@ -305,7 +476,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (nativePlugin) {
                 console.log("Found Native Iptvplayer!");
-                await nativePlugin.play({ url: streamUrl });
+
+                // Build channel list for live switching
+                const channelUrls = currentChannelList.map(ch => ({
+                    name: ch.name || '',
+                    url: `http://${cleanDns}/live/${u}/${p}/${ch.stream_id}.m3u8`
+                }));
+
+                await nativePlugin.play({
+                    url: streamUrl,
+                    title: name,
+                    mode: "live",
+                    channels: channelUrls,
+                    currentIndex: currentPlayIndex >= 0 ? currentPlayIndex : 0
+                });
                 
                 currentZone = 'grid';
                 setTimeout(updateFocus, 500);
@@ -332,8 +516,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function toggleSearch() {
         const container = document.getElementById('search-wrapper');
-        if (container.style.display === 'block') container.style.display = 'none';
-        else container.style.display = 'block';
+        const input = document.getElementById('inp-search');
+        if (!container || !input) return;
+
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+            input.value = '';
+            if (currentCategoryId) {
+                if (currentCategoryId === 'favorites') loadFavoriteChannels();
+                else loadChannelsByCategory(currentCategoryId);
+            }
+        } else {
+            container.style.display = 'block';
+            input.focus();
+            currentZone = 'topbar';
+            focusIndex = 3; // 0=Back, 1=Refresh, 2=Search, 3=Input
+            updateFocus();
+        }
     }
 
     function changePage(d) {
@@ -366,7 +565,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (currentZone === 'sidebar') selector = '#cat-list .cat-node';
         else if (currentZone === 'grid') selector = '#broadcast-grid .broadcast-node';
-        else if (currentZone === 'topbar') selector = '.header-actions .nav-item';
+        else if (currentZone === 'topbar') {
+            const searchBox = document.getElementById('search-wrapper');
+            if (searchBox && searchBox.style.display === 'block') {
+                selector = '.header-actions .nav-item, #search-wrapper .nav-item';
+            } else {
+                selector = '.header-actions .nav-item';
+            }
+        }
         else if (currentZone === 'pagination') selector = '.pagination-bar .nav-item';
 
         if (selector) {
@@ -422,10 +628,37 @@ document.addEventListener('DOMContentLoaded', function () {
         else if (currentZone === 'topbar') {
             if (code === 39) focusIndex++;
             else if (code === 37) focusIndex--;
-            else if (code === 40) { currentZone = 'grid'; focusIndex = 0; }
+            else if (code === 40) {
+                const searchBox = document.getElementById('search-wrapper');
+                // If on buttons and search is open, down goes to search box
+                if (focusIndex < 3 && searchBox && searchBox.style.display === 'block') {
+                    focusIndex = 3;
+                } else {
+                    currentZone = 'grid'; 
+                    focusIndex = 0; 
+                }
+            }
+            else if (code === 38) {
+                // If on search box, up goes to search button
+                if (focusIndex === 3) focusIndex = 2;
+            }
             else if (code === 13) {
-                const items = document.querySelectorAll('.header-actions .nav-item');
-                if(items[focusIndex]) items[focusIndex].click();
+                const searchBox = document.getElementById('search-wrapper');
+                let items;
+                if (searchBox && searchBox.style.display === 'block') {
+                    items = document.querySelectorAll('.header-actions .nav-item, #search-wrapper .nav-item');
+                } else {
+                    items = document.querySelectorAll('.header-actions .nav-item');
+                }
+                
+                if (items[focusIndex]) {
+                    if (items[focusIndex].id === 'inp-search') {
+                        // Native focus for keyboard typing
+                        items[focusIndex].focus();
+                    } else {
+                        items[focusIndex].click();
+                    }
+                }
             }
         }
         else if (currentZone === 'pagination') {

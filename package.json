@@ -1,6 +1,6 @@
 {
   "name": "elitetvplay-ios",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "dependencies": {
     "@capacitor/core": "^6.0.0",
     "@capacitor/ios": "^6.0.0",

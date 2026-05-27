@@ -18,6 +18,39 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentEpisodes = [];
     let globalSeriesIndex = null;
 
+    // ===== FAVORITES =====
+    const FAV_KEY = 'p4a_fav_series';
+
+    function getFavorites() {
+        try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveFavorites(favs) {
+        localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+    }
+
+    function isFavorite(seriesId) {
+        return getFavorites().includes(String(seriesId));
+    }
+
+    function toggleFavorite(seriesId) {
+        const id = String(seriesId);
+        let favs = getFavorites();
+        if (favs.includes(id)) {
+            favs = favs.filter(f => f !== id);
+        } else {
+            favs.push(id);
+        }
+        saveFavorites(favs);
+        updateFavCount();
+    }
+
+    function updateFavCount() {
+        const badge = document.getElementById('fav-count-badge');
+        if (badge) badge.textContent = getFavorites().length;
+    }
+
     const root = document.getElementById('series-vault-root');
 
     // --- DB SETUP ---
@@ -62,6 +95,17 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (e) { return null; }
     }
 
+    async function clearAllCache() {
+        try {
+            const db = await openDB();
+            if (!db) return;
+            const stores = [STORE_CATS, STORE_SERIES_CAT, STORE_MASTER];
+            const tx = db.transaction(stores, 'readwrite');
+            stores.forEach(s => tx.objectStore(s).clear());
+            globalSeriesIndex = null;
+        } catch(e) {}
+    }
+
     // --- DOM STRUCTURE ---
     root.innerHTML = `
       <div class="vault-layout">
@@ -100,10 +144,16 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
 
     document.getElementById('cmd-return').onclick = () => handleBack();
-    document.getElementById('cmd-refresh').onclick = () => {
+    document.getElementById('cmd-refresh').onclick = async () => {
+        await clearAllCache();
+        currentCategoryId = null;
         const searchInput = document.getElementById('inp-search');
-        if (searchInput && searchInput.value.length > 0) downloadGlobalIndex(true);
-        else if (currentCategoryId) loadSeriesByCategory(currentCategoryId, true);
+        if (searchInput && searchInput.value.length > 0) {
+            await downloadGlobalIndex(true);
+            filterAndRenderGlobal(searchInput.value.trim());
+        } else {
+            loadCategories(true);
+        }
     };
     document.getElementById('cmd-search').onclick = toggleSearch;
     document.getElementById('cmd-prev').onclick = () => changePage(-1);
@@ -159,7 +209,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderSidebar(data) {
         const catEl = document.getElementById('folder-list');
         categories = data;
-        let html = '';
+
+        // Inject Favorites category at the top
+        let html = `<li class="folder-node nav-item fav-cat-item" data-id="favorites" tabindex="-1">
+            <span class="fav-star-sidebar">★</span> Favorites 
+            <span class="fav-count" id="fav-count-badge">${getFavorites().length}</span>
+        </li>
+        <li class="folder-node nav-item fav-cat-item" data-id="recently_added" tabindex="-1" style="border-bottom-color: rgba(96, 165, 250, 0.1);">
+            <span style="color: #60a5fa; font-size: 1.1rem; text-shadow: 0 0 8px rgba(96, 165, 250, 0.4); margin-right: 4px;">🕒</span> Recently Added
+        </li>`;
         data.forEach(c => html += `<li class="folder-node nav-item" data-id="${c.category_id}" tabindex="-1">${c.category_name}</li>`);
         catEl.innerHTML = html;
         categoryItems = Array.from(document.querySelectorAll('.folder-node'));
@@ -178,11 +236,103 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!item) return;
         const id = item.getAttribute('data-id');
         currentCategoryId = id;
-        document.getElementById('folder-title').textContent = item.textContent;
+        
+        if (id === 'favorites') {
+            document.getElementById('folder-title').textContent = '★ Favorites';
+        } else if (id === 'recently_added') {
+            document.getElementById('folder-title').textContent = '🕒 Recently Added';
+        } else {
+            document.getElementById('folder-title').textContent = item.textContent;
+        }
+
         categoryItems.forEach(el => el.classList.remove('active'));
         item.classList.add('active');
         if (!isAutoLoad) { currentZone = 'sidebar'; updateFocus(); }
-        loadSeriesByCategory(id);
+
+        if (id === 'favorites') {
+            loadFavoriteSeries();
+        } else if (id === 'recently_added') {
+            loadRecentlyAddedSeries();
+        } else {
+            loadSeriesByCategory(id);
+        }
+    }
+
+    async function loadFavoriteSeries() {
+        inEpisodeView = false;
+        currentPage = 0;
+        const favIds = getFavorites();
+        const grid = document.getElementById('vod-grid');
+
+        if (favIds.length === 0) {
+            currentSeriesList = [];
+            if (grid) grid.innerHTML = `
+                <div style="grid-column: 1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; color:#475569; text-align:center;">
+                    <div style="font-size:3rem; margin-bottom:12px; opacity:0.3;">★</div>
+                    <div style="font-size:1rem; font-weight:600; color:#94a3b8; margin-bottom:6px;">No Favorite Series Yet</div>
+                    <div style="font-size:0.85rem; line-height:1.5;">Tap the ★ on any series to save it here</div>
+                </div>`;
+            return;
+        }
+
+        if (grid) grid.innerHTML = '<p style="padding:20px;">Loading favorites...</p>';
+
+        let allSeries = [];
+        const db = await openDB();
+        if (db) {
+            const tx = db.transaction(STORE_SERIES_CAT, 'readonly');
+            const store = tx.objectStore(STORE_SERIES_CAT);
+            const allKeys = await new Promise(resolve => {
+                const req = store.getAllKeys();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve([]);
+            });
+            for (const key of allKeys) {
+                const data = await getFromCache(STORE_SERIES_CAT, key);
+                if (data && Array.isArray(data)) allSeries = allSeries.concat(data);
+            }
+        }
+
+        currentSeriesList = allSeries.filter(s => favIds.includes(String(s.series_id)));
+        renderSeriesGrid();
+    }
+
+    async function loadRecentlyAddedSeries() {
+        inEpisodeView = false;
+        currentPage = 0;
+        const grid = document.getElementById('vod-grid');
+        if (grid) grid.innerHTML = '<p style="padding:20px;">Loading latest series...</p>';
+
+        let allSeries = [];
+        if (globalSeriesIndex && globalSeriesIndex.length > 0) {
+            allSeries = globalSeriesIndex;
+        } else {
+            const cached = await getFromCache(STORE_MASTER, 'full_list');
+            if (cached) {
+                globalSeriesIndex = cached;
+                allSeries = cached;
+            } else {
+                await downloadGlobalIndex();
+                allSeries = globalSeriesIndex || [];
+            }
+        }
+
+        if (!allSeries || allSeries.length === 0) {
+            if (grid) grid.innerHTML = '<p style="padding:20px;">No series found to sort.</p>';
+            return;
+        }
+
+        // Fast extraction of top 150 items without heavy client-side sorting.
+        // Xtream APIs naturally append new items to the end of the array.
+        // Sorting 10,000+ items with JS Math freezes devices.
+        const topItems = [];
+        const len = allSeries.length;
+        for (let i = len - 1; i >= Math.max(0, len - 150); i--) {
+            if (allSeries[i]) topItems.push(allSeries[i]);
+        }
+
+        currentSeriesList = topItems;
+        renderSeriesGrid();
     }
 
     async function loadSeriesByCategory(catId, forceRefresh = false) {
@@ -261,13 +411,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
         pagedList.forEach(s => {
             const img = s.cover || s.stream_icon || 'images/login-logo.png';
-            grid.innerHTML += `<div class="movie-node nav-item" tabindex="-1" data-id="${s.series_id}"><img src="${img}" onerror="this.src='images/login-logo.png'"><div class="movie-title">${s.name}</div></div>`;
+            const favClass = isFavorite(s.series_id) ? 'is-fav' : '';
+            grid.innerHTML += `
+                <div class="movie-node nav-item" tabindex="-1" data-id="${s.series_id}">
+                    <button class="fav-star-btn ${favClass}" data-series-id="${s.series_id}" type="button" title="Toggle Favorite">★</button>
+                    <img src="${img}" onerror="this.src='images/login-logo.png'">
+                    <div class="movie-title">${s.name}</div>
+                </div>`;
         });
 
         document.getElementById('page-label').textContent = `Page ${currentPage + 1} / ${Math.max(1, Math.ceil(currentSeriesList.length / itemsPerPage))}`;
 
         cardItems = Array.from(document.querySelectorAll('.movie-node'));
         cardItems.forEach((card, idx) => {
+            const starBtn = card.querySelector('.fav-star-btn');
+            if (starBtn) {
+                starBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const sid = starBtn.getAttribute('data-series-id');
+                    toggleFavorite(sid);
+                    starBtn.classList.toggle('is-fav');
+                    starBtn.classList.add('fav-pop');
+                    setTimeout(() => starBtn.classList.remove('fav-pop'), 300);
+                    if (currentCategoryId === 'favorites') {
+                        loadFavoriteSeries();
+                    }
+                });
+            }
+
             card.addEventListener('click', () => { focusIndex = idx; currentZone = 'grid'; loadEpisodes(card.getAttribute('data-id')); });
         });
         if (currentZone === 'grid') updateFocus();
@@ -357,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const nativePlugin = Capacitor.Plugins.Iptvplayer;
 
             if (nativePlugin) {
-                await nativePlugin.play({ url: streamUrl });
+                await nativePlugin.play({ url: streamUrl, title: name, mode: "vod" });
                 currentZone = 'grid';
                 setTimeout(updateFocus, 500);
             } else {
@@ -380,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function toggleSearch() {
         const con = document.getElementById('finder-box');
         if (con.style.display === 'block') { con.style.display = 'none'; if (currentCategoryId) loadSeriesByCategory(currentCategoryId); }
-        else { con.style.display = 'block'; document.getElementById('inp-search').focus(); currentZone = 'topbar'; }
+        else { con.style.display = 'block'; document.getElementById('inp-search').focus(); currentZone = 'topbar'; focusIndex = 3; }
     }
 
     function changePage(d) {
@@ -407,7 +578,11 @@ document.addEventListener('DOMContentLoaded', function () {
         let sel;
         if (currentZone === 'sidebar') sel = '#folder-list .folder-node';
         else if (currentZone === 'grid') sel = '#vod-grid .movie-node';
-        else if (currentZone === 'topbar') sel = '.action-cluster .nav-item';
+        else if (currentZone === 'topbar') {
+            const searchBox = document.getElementById('finder-box');
+            if (searchBox && searchBox.style.display === 'block') sel = '.action-cluster .nav-item, #finder-box .nav-item';
+            else sel = '.action-cluster .nav-item';
+        }
         else sel = '.page-stepper .nav-item';
         const items = document.querySelectorAll(sel);
         if (items.length) {
@@ -428,7 +603,25 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (code === 38) { if (focusIndex < cols) { currentZone = 'topbar'; focusIndex = 0; } else focusIndex -= cols; } else if (code === 40) { if (focusIndex + cols >= document.querySelectorAll('#vod-grid .movie-node').length) { currentZone = 'pagination'; focusIndex = 2; } else focusIndex += cols; }
             else if (code === 13) document.querySelectorAll('#vod-grid .movie-node')[focusIndex]?.click();
         } else if (currentZone === 'topbar') {
-            if (code === 39) focusIndex++; else if (code === 37) focusIndex--; else if (code === 40) { currentZone = 'grid'; focusIndex = 0; } else if (code === 13) document.querySelectorAll('.action-cluster .nav-item')[focusIndex]?.click();
+            if (code === 39) focusIndex++; 
+            else if (code === 37) focusIndex--; 
+            else if (code === 40) { 
+                const searchBox = document.getElementById('finder-box');
+                if (focusIndex < 3 && searchBox && searchBox.style.display === 'block') focusIndex = 3;
+                else { currentZone = 'grid'; focusIndex = 0; } 
+            }
+            else if (code === 38) {
+                if (focusIndex === 3) focusIndex = 2;
+            }
+            else if (code === 13) {
+                const searchBox = document.getElementById('finder-box');
+                const sel = (searchBox && searchBox.style.display === 'block') ? '.action-cluster .nav-item, #finder-box .nav-item' : '.action-cluster .nav-item';
+                const items = document.querySelectorAll(sel);
+                if (items[focusIndex]) {
+                    if (items[focusIndex].id === 'inp-search') items[focusIndex].focus();
+                    else items[focusIndex].click();
+                }
+            }
         } else if (currentZone === 'pagination') {
             if (code === 39) focusIndex += 2; else if (code === 37) focusIndex -= 2; else if (code === 38) { currentZone = 'grid'; focusIndex = 0; } else if (code === 13) document.querySelectorAll('.page-stepper .nav-item')[focusIndex]?.click();
         }

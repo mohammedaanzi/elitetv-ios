@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const DashboardManager = {
         activeNodeId: 0,
-        interactiveNodes: Array.from(document.querySelectorAll('.interactive-node')),
+        interactiveNodes: Array.from(document.querySelectorAll('#dashboard-grid .interactive-node')),
         overlayActive: false,
         dialogCursor: 1,
 
@@ -140,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 'series': window.location.href = 'svods.html'; break;
                 case 'reload': window.location.reload(); break;
                 case 'account': window.location.href = 'account.html'; break;
+                case 'epg': window.location.href = 'epg.html'; break;
                 case 'exit': this.showDialog(); break;
             }
         },
@@ -167,19 +168,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
-                // Grid Math (3 items per row)
+                // Grid Math (3 top items, 4 bottom items)
                 if (key === 37) { // Left
                     if (this.activeNodeId === 0) this.activeNodeId = 2;
-                    else if (this.activeNodeId === 3) this.activeNodeId = 5;
+                    else if (this.activeNodeId === 3) this.activeNodeId = 6;
                     else this.activeNodeId--;
                 } else if (key === 39) { // Right
                     if (this.activeNodeId === 2) this.activeNodeId = 0;
-                    else if (this.activeNodeId === 5) this.activeNodeId = 3;
+                    else if (this.activeNodeId === 6) this.activeNodeId = 3;
                     else this.activeNodeId++;
                 } else if (key === 40) { // Down
                     if (this.activeNodeId < 3) this.activeNodeId += 3;
                 } else if (key === 38) { // Up
-                    if (this.activeNodeId >= 3) this.activeNodeId -= 3;
+                    if (this.activeNodeId >= 3 && this.activeNodeId <= 5) this.activeNodeId -= 3;
+                    else if (this.activeNodeId === 6) this.activeNodeId = 2;
                 } else if (key === 13 || key === 23 || key === 66) { // Enter
                     this.executeRoute();
                 } else if (key === 10009 || key === 8) { // Back

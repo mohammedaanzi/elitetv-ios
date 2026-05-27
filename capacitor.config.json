@@ -3,6 +3,7 @@
   "appName": "elitetvplay",
   "webDir": "www/public",
   "bundledWebRuntime": false,
+  "orientation": "landscape",
   "server": {
     "androidScheme": "http",
     "cleartext": true,

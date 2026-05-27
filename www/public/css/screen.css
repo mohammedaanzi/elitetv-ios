@@ -45,8 +45,11 @@ body {
   overflow-y: auto;
   background-color: var(--surface-bg);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(220, 38, 38, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(252, 165, 165, 0.1) 0%, transparent 55%);
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)),
+    url('../images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
   overscroll-behavior-y: none;
   /* iOS bounce disable */
@@ -117,6 +120,10 @@ body.overlay-active #portal-wrapper {
   justify-content: center;
   gap: 18px;
   flex-wrap: wrap;
+}
+
+.tile-group-secondary {
+  flex-wrap: nowrap;
 }
 
 /* --- TILE STYLES --- */
@@ -383,12 +390,13 @@ body.overlay-active #portal-wrapper {
 
   .utility-tile {
     height: 50px;
-    min-width: 90px;
+    min-width: 72px;
     border-radius: 12px;
+    gap: 8px;
   }
 
   .utility-label {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
   }
 
   .footer-badge {

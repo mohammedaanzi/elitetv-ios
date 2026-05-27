@@ -46,17 +46,19 @@ body {
   width: 100vw;
   min-height: 100vh;
   min-height: 100dvh;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  color: var(--text-primary);
-  overflow-x: hidden;
-  overflow-y: auto;
   background-color: var(--surface-bg);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(127, 29, 29, 0.35) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(153, 27, 27, 0.2) 0%, transparent 55%);
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)),
+    url('../images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior-y: none;
-  /* Prevents webview bounce on iOS */
 }
 
 /* --- Decorative Backdrop (CSS-only, no image) --- */
