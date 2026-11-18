@@ -1,0 +1,408 @@
+/* ============================================
+   Ozzie Player — Dark Red Theme Account Info
+   ============================================ */
+
+/* --- Design Tokens --- */
+:root {
+  --red-900: #7f1d1d;
+  --red-800: #991b1b;
+  --red-700: #b91c1c;
+  --red-600: #dc2626;
+  --red-500: #ef4444;
+  --red-400: #f87171;
+  --red-300: #fca5a5;
+  --red-200: #fecaca;
+
+  --surface-bg: #0a0a0a;
+  --card-bg: rgba(30, 10, 10, 0.65);
+  --card-border: rgba(220, 38, 38, 0.15);
+  --text-primary: #fff;
+  --text-secondary: #c4a0a0;
+}
+
+/* --- Global Reset & Base --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--surface-bg);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)),
+    url('../images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+/* Main Container */
+#account-viewport {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: calc(30px + env(safe-area-inset-top)) max(40px, env(safe-area-inset-right)) calc(30px + env(safe-area-inset-bottom)) max(40px, env(safe-area-inset-left));
+}
+
+/* --- Header --- */
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+  padding-bottom: 20px;
+  animation: fadeSlideDown 0.5s ease-out both;
+}
+
+.view-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 1.5px;
+  color: var(--red-400);
+  font-weight: 800;
+  text-shadow: 0 2px 12px rgba(220, 38, 38, 0.3);
+}
+
+#view-clock {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(30, 10, 10, 0.6);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  padding: 8px 18px;
+  border-radius: 12px;
+}
+
+/* --- Main Layout --- */
+.details-grid {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+  align-items: stretch;
+  animation: fadeSlideUp 0.6s 0.1s ease-out both;
+}
+
+/* Glass Panels */
+.module-glass {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Left Panel */
+.identity-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.identity-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--red-500);
+  padding: 6px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.25);
+  object-fit: cover;
+  background: rgba(20, 8, 8, 0.8);
+  /* The original cyan ic-user is tinted dark red using CSS filters */
+  filter: saturate(0.8) sepia(0.6) hue-rotate(-30deg) drop-shadow(0 2px 4px rgba(220, 38, 38, 0.5));
+}
+
+.identity-text-zone {
+  text-align: center;
+}
+
+#val-username {
+  font-size: 1.7rem;
+  margin-bottom: 14px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.badge-pill {
+  display: inline-block;
+  padding: 8px 25px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Right Panel */
+.metrics-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(220, 38, 38, 0.12);
+  padding: 18px 0;
+  font-size: 1.1rem;
+}
+
+.metric-item:last-child {
+  border-bottom: none;
+}
+
+.metric-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.metric-val {
+  font-weight: 700;
+  color: #fff;
+}
+
+.contact-info {
+  margin-top: 22px;
+  color: var(--red-300);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-align: right;
+}
+
+/* --- Buttons --- */
+.command-bar {
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  animation: fadeSlideUp 0.6s 0.2s ease-out both;
+}
+
+.glass-button {
+  background: rgba(30, 10, 10, 0.8);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  padding: 16px 40px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  transition: all 0.25s ease;
+  min-width: 200px;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-critical {
+  color: var(--red-400);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+/* Active & TV Remote Highlight State */
+.action-node:active,
+.action-node.highlighted {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, var(--red-800) 0%, var(--red-600) 100%);
+  border-color: var(--red-500);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(220, 38, 38, 0.4);
+}
+
+/* --- Auto Color Updates for Active/Inactive badge --- */
+.status-active {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  border-color: #10b981 !important;
+  color: #10b981 !important;
+}
+
+.status-inactive {
+  background-color: rgba(220, 38, 38, 0.2) !important;
+  border-color: var(--red-500) !important;
+  color: var(--red-400) !important;
+}
+
+/* --- Animations --- */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (Media Queries)
+   ========================================= */
+
+/* Mobile Phones */
+@media (max-width: 768px) {
+  #account-viewport {
+    padding: calc(20px + env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  }
+
+  .view-title {
+    font-size: 1.3rem;
+  }
+
+  .details-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .module-glass {
+    padding: 25px;
+    border-radius: 20px;
+  }
+
+  .identity-panel {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+
+  .identity-avatar {
+    width: 75px;
+    height: 75px;
+    margin-bottom: 0;
+    padding: 4px;
+    border-width: 2px;
+  }
+
+  .identity-text-zone {
+    text-align: left;
+  }
+
+  #val-username {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+  }
+
+  .badge-pill {
+    padding: 6px 16px;
+    font-size: 0.85rem;
+  }
+
+  .metric-item {
+    padding: 14px 0;
+    font-size: 0.95rem;
+  }
+
+  .contact-info {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  .command-bar {
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 25px;
+  }
+
+  .glass-button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+  }
+}
+
+/* iPads & Big Screens */
+@media (min-width: 1024px) {
+  #account-viewport {
+    padding: calc(50px + env(safe-area-inset-top)) max(70px, env(safe-area-inset-right)) calc(50px + env(safe-area-inset-bottom)) max(70px, env(safe-area-inset-left));
+  }
+
+  .view-title {
+    font-size: 2.2rem;
+  }
+
+  #view-clock {
+    font-size: 1.15rem;
+    padding: 12px 24px;
+  }
+
+  .details-grid {
+    gap: 40px;
+  }
+
+  .module-glass {
+    padding: 50px;
+    border-radius: 28px;
+  }
+
+  .identity-avatar {
+    width: 160px;
+    height: 160px;
+    border-width: 4px;
+  }
+
+  #val-username {
+    font-size: 2.2rem;
+    margin-bottom: 18px;
+  }
+
+  .badge-pill {
+    padding: 12px 32px;
+    font-size: 1.1rem;
+  }
+
+  .metric-item {
+    padding: 22px 0;
+    font-size: 1.25rem;
+  }
+
+  .command-bar {
+    margin-top: 50px;
+    gap: 35px;
+  }
+
+  .glass-button {
+    padding: 20px 55px;
+    font-size: 1.25rem;
+    border-radius: 20px;
+  }
+}

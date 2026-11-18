@@ -1,23 +1,23 @@
 /* ============================================
-   EliteTV Play — Dark Red Theme Account Info
+   Ozzie Player — Dark Blue Theme Account Info
    ============================================ */
 
 /* --- Design Tokens --- */
 :root {
-  --red-900: #7f1d1d;
-  --red-800: #991b1b;
-  --red-700: #b91c1c;
-  --red-600: #dc2626;
-  --red-500: #ef4444;
-  --red-400: #f87171;
-  --red-300: #fca5a5;
-  --red-200: #fecaca;
+  --blue-900: #1d417f;
+  --blue-800: #1e51aa;
+  --blue-700: #1f5ecb;
+  --blue-600: #3875df;
+  --blue-500: #578ff1;
+  --blue-400: #84aff9;
+  --blue-300: #b9d2fd;
+  --blue-200: #deeafe;
 
   --surface-bg: #0a0a0a;
-  --card-bg: rgba(30, 10, 10, 0.65);
-  --card-border: rgba(220, 38, 38, 0.15);
+  --card-bg: rgba(10, 17, 30, 0.65);
+  --card-border: rgba(56, 117, 223, 0.15);
   --text-primary: #fff;
-  --text-secondary: #c4a0a0;
+  --text-secondary: #adb8cc;
 }
 
 /* --- Global Reset & Base --- */
@@ -66,7 +66,7 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+  border-bottom: 1px solid rgba(56, 117, 223, 0.2);
   padding-bottom: 20px;
   animation: fadeSlideDown 0.5s ease-out both;
 }
@@ -75,17 +75,17 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 1.6rem;
   letter-spacing: 1.5px;
-  color: var(--red-400);
+  color: var(--blue-400);
   font-weight: 800;
-  text-shadow: 0 2px 12px rgba(220, 38, 38, 0.3);
+  text-shadow: 0 2px 12px rgba(56, 117, 223, 0.3);
 }
 
 #view-clock {
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-secondary);
-  background: rgba(30, 10, 10, 0.6);
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: rgba(10, 17, 30, 0.6);
+  border: 1px solid rgba(56, 117, 223, 0.2);
   padding: 8px 18px;
   border-radius: 12px;
 }
@@ -123,14 +123,14 @@ body {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid var(--red-500);
+  border: 3px solid var(--blue-500);
   padding: 6px;
   margin-bottom: 24px;
-  box-shadow: 0 0 30px rgba(220, 38, 38, 0.25);
+  box-shadow: 0 0 30px rgba(56, 117, 223, 0.25);
   object-fit: cover;
-  background: rgba(20, 8, 8, 0.8);
-  /* The original cyan ic-user is tinted dark red using CSS filters */
-  filter: saturate(0.8) sepia(0.6) hue-rotate(-30deg) drop-shadow(0 2px 4px rgba(220, 38, 38, 0.5));
+  background: rgba(8, 12, 20, 0.8);
+  /* The original cyan ic-user is tinted dark blue using CSS filters */
+  filter: hue-rotate(25deg) saturate(1.1) drop-shadow(0 2px 4px rgba(56, 117, 223, 0.5));
 }
 
 .identity-text-zone {
@@ -154,7 +154,7 @@ body {
   letter-spacing: 1px;
   color: #fff;
   background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(56, 117, 223, 0.2);
 }
 
 /* Right Panel */
@@ -169,7 +169,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(220, 38, 38, 0.12);
+  border-bottom: 1px solid rgba(56, 117, 223, 0.12);
   padding: 18px 0;
   font-size: 1.1rem;
 }
@@ -190,7 +190,7 @@ body {
 
 .contact-info {
   margin-top: 22px;
-  color: var(--red-300);
+  color: var(--blue-300);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -207,8 +207,8 @@ body {
 }
 
 .glass-button {
-  background: rgba(30, 10, 10, 0.8);
-  border: 1px solid rgba(220, 38, 38, 0.25);
+  background: rgba(10, 17, 30, 0.8);
+  border: 1px solid rgba(56, 117, 223, 0.25);
   color: var(--text-primary);
   font-size: 1.05rem;
   padding: 16px 40px;
@@ -222,18 +222,18 @@ body {
 }
 
 .btn-critical {
-  color: var(--red-400);
-  border-color: rgba(248, 113, 113, 0.3);
+  color: var(--blue-400);
+  border-color: rgba(132, 175, 249, 0.3);
 }
 
 /* Active & TV Remote Highlight State */
 .action-node:active,
 .action-node.highlighted {
   transform: scale(1.05);
-  background: linear-gradient(135deg, var(--red-800) 0%, var(--red-600) 100%);
-  border-color: var(--red-500);
+  background: linear-gradient(135deg, var(--blue-800) 0%, var(--blue-600) 100%);
+  border-color: var(--blue-500);
   color: #fff;
-  box-shadow: 0 8px 28px rgba(220, 38, 38, 0.4);
+  box-shadow: 0 8px 28px rgba(56, 117, 223, 0.4);
 }
 
 /* --- Auto Color Updates for Active/Inactive badge --- */
@@ -244,9 +244,9 @@ body {
 }
 
 .status-inactive {
-  background-color: rgba(220, 38, 38, 0.2) !important;
-  border-color: var(--red-500) !important;
-  color: var(--red-400) !important;
+  background-color: rgba(56, 117, 223, 0.2) !important;
+  border-color: var(--blue-500) !important;
+  color: var(--blue-400) !important;
 }
 
 /* --- Animations --- */

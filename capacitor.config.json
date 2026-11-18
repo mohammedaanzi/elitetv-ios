@@ -1,6 +1,6 @@
 {
   "appId": "com.azzmedia.elitetvplay",
-  "appName": "elitetvplay",
+  "appName": "Ozzie-Player",
   "webDir": "www/public",
   "bundledWebRuntime": false,
   "orientation": "landscape",

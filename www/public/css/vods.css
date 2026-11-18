@@ -1,32 +1,32 @@
 /* ============================================
    DIP Player — Premium VOD & Series
-   Brand: #FD3130 (Crimson) · #2A0808 (Dark Red)
+   Brand: #4488FD (Crimson) · #08142A (Dark Red)
    Shared by mvods.html and svods.html
    ============================================ */
 
 /* --- Design Tokens --- */
 :root {
-  --crimson-500: #FD3130;
-  --crimson-600: #E42B2A;
-  --crimson-400: #FF5A59;
-  --crimson-300: #FF8585;
-  --crimson-glow: rgba(253, 49, 48, 0.3);
+  --crimson-500: #4488FD;
+  --crimson-600: #3C7AE6;
+  --crimson-400: #6DA2FF;
+  --crimson-300: #99BFFF;
+  --crimson-glow: rgba(68, 136, 253, 0.3);
 
-  --navy-900: #0f0303;
-  --navy-800: #1a0505;
-  --navy-700: #2a0808;
-  --navy-600: #3f0b0b;
-  --navy-500: #5c1111;
-  --navy-400: #7f1d1d;
-  --navy-300: #991b1b;
+  --navy-900: #03070f;
+  --navy-800: #050d1a;
+  --navy-700: #08142a;
+  --navy-600: #0b1e3f;
+  --navy-500: #112c5c;
+  --navy-400: #1d417f;
+  --navy-300: #1e51aa;
 
-  --bg-deep: #080202;
-  --surface-bg: #080202;
-  --card-bg: rgba(45, 8, 8, 0.28);
-  --card-border: rgba(153, 27, 27, 0.16);
+  --bg-deep: #020408;
+  --surface-bg: #020408;
+  --card-bg: rgba(8, 22, 45, 0.28);
+  --card-border: rgba(30, 81, 170, 0.16);
   --text-primary: #F1F5F9;
-  --text-secondary: #c9a0a0;
-  --text-muted: #7d5555;
+  --text-secondary: #adbad0;
+  --text-muted: #5d6d89;
 }
 
 /* --- Reset --- */
@@ -68,8 +68,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 20% 40%, rgba(45, 8, 8, 0.15) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(253, 49, 48, 0.03) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 50% at 20% 40%, rgba(8, 22, 45, 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(68, 136, 253, 0.03) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -89,7 +89,7 @@ body::before {
   width: 260px;
   display: flex;
   flex-direction: column;
-  background: rgba(10, 2, 2, 0.92);
+  background: rgba(2, 5, 10, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-right: 1px solid var(--card-border);
@@ -135,7 +135,7 @@ body::before {
 .folder-node.active,
 .folder-node:active,
 .folder-node.highlighted {
-  background: linear-gradient(90deg, rgba(253, 49, 48, 0.06), rgba(45, 8, 8, 0.12));
+  background: linear-gradient(90deg, rgba(68, 136, 253, 0.06), rgba(8, 22, 45, 0.12));
   color: #fff;
   font-weight: 600;
   border-left: 4px solid var(--crimson-500);
@@ -168,8 +168,8 @@ body::before {
 }
 
 .pill-btn {
-  background: rgba(30, 6, 6, 0.5);
-  border: 1px solid rgba(153, 27, 27, 0.12);
+  background: rgba(6, 15, 30, 0.5);
+  border: 1px solid rgba(30, 81, 170, 0.12);
   color: var(--text-secondary);
   padding: 8px 18px;
   border-radius: 10px;
@@ -182,17 +182,17 @@ body::before {
 }
 
 .pill-btn:hover {
-  background: rgba(253, 49, 48, 0.05);
-  border-color: rgba(253, 49, 48, 0.12);
+  background: rgba(68, 136, 253, 0.05);
+  border-color: rgba(68, 136, 253, 0.12);
   color: var(--text-primary);
 }
 
 .pill-btn:active,
 .pill-btn.highlighted {
-  background: linear-gradient(135deg, rgba(45, 8, 8, 0.5), rgba(253, 49, 48, 0.12));
+  background: linear-gradient(135deg, rgba(8, 22, 45, 0.5), rgba(68, 136, 253, 0.12));
   color: #fff;
-  border-color: rgba(253, 49, 48, 0.3);
-  box-shadow: 0 4px 16px rgba(253, 49, 48, 0.12);
+  border-color: rgba(68, 136, 253, 0.3);
+  box-shadow: 0 4px 16px rgba(68, 136, 253, 0.12);
   transform: scale(1.02);
 }
 
@@ -222,8 +222,8 @@ body::before {
   padding: 12px 20px;
   font-size: 0.95rem;
   border-radius: 12px;
-  border: 1px solid rgba(153, 27, 27, 0.12);
-  background: rgba(10, 2, 2, 0.8);
+  border: 1px solid rgba(30, 81, 170, 0.12);
+  background: rgba(2, 5, 10, 0.8);
   color: #fff;
   outline: none;
   font-family: 'Inter', -apple-system, sans-serif;
@@ -233,7 +233,7 @@ body::before {
 .pill-search:focus,
 .pill-search.focused {
   border-color: var(--crimson-500);
-  box-shadow: 0 0 14px rgba(253, 49, 48, 0.12);
+  box-shadow: 0 0 14px rgba(68, 136, 253, 0.12);
 }
 
 .pill-search::placeholder {
@@ -283,7 +283,7 @@ body::before {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(10, 2, 2, 0.98), rgba(10, 2, 2, 0.65), transparent);
+  background: linear-gradient(to top, rgba(2, 5, 10, 0.98), rgba(2, 5, 10, 0.65), transparent);
   color: #fff;
   font-size: 0.78rem;
   font-weight: 600;
@@ -300,7 +300,7 @@ body::before {
   transform: scale(1.04);
   border: 2px solid var(--crimson-500);
   z-index: 5;
-  box-shadow: 0 8px 28px rgba(253, 49, 48, 0.18);
+  box-shadow: 0 8px 28px rgba(68, 136, 253, 0.18);
 }
 
 .movie-node:active img,
@@ -323,29 +323,29 @@ body::before {
   display: flex;
   align-items: center;
   gap: 4px;
-  border-bottom: 1px solid rgba(253, 49, 48, 0.06);
+  border-bottom: 1px solid rgba(68, 136, 253, 0.06);
   padding-bottom: 12px !important;
   margin-bottom: 4px;
 }
 
 .fav-star-sidebar {
-  color: #f87171;
+  color: #84aff9;
   font-size: 0.95rem;
-  text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+  text-shadow: 0 0 8px rgba(132, 175, 249, 0.4);
 }
 
 .fav-cat-item.active,
 .fav-cat-item.focused,
 .fav-cat-item:hover {
-  background: linear-gradient(90deg, rgba(248, 113, 113, 0.08), transparent);
-  border-left-color: #f87171;
+  background: linear-gradient(90deg, rgba(132, 175, 249, 0.08), transparent);
+  border-left-color: #84aff9;
 }
 
 .fav-count {
   font-size: 0.6rem;
   color: var(--text-muted);
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.15);
+  background: rgba(132, 175, 249, 0.08);
+  border: 1px solid rgba(132, 175, 249, 0.15);
   padding: 1px 7px;
   border-radius: 8px;
   font-weight: 700;
@@ -376,13 +376,13 @@ body::before {
 }
 
 .fav-star-btn:hover {
-  color: rgba(248, 113, 113, 0.7);
+  color: rgba(132, 175, 249, 0.7);
   background: rgba(0, 0, 0, 0.65);
 }
 
 .fav-star-btn.is-fav {
-  color: #f87171;
-  text-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+  color: #84aff9;
+  text-shadow: 0 0 8px rgba(132, 175, 249, 0.5);
   background: rgba(0, 0, 0, 0.55);
 }
 
@@ -438,8 +438,8 @@ body::before {
 }
 
 .orb-btn {
-  background: rgba(30, 6, 6, 0.6);
-  border: 1px solid rgba(153, 27, 27, 0.2);
+  background: rgba(6, 15, 30, 0.6);
+  border: 1px solid rgba(30, 81, 170, 0.2);
   color: #fff;
   width: 44px;
   height: 44px;
@@ -459,7 +459,7 @@ body::before {
   background: var(--crimson-500);
   border-color: var(--crimson-400);
   transform: scale(1.1);
-  box-shadow: 0 0 16px rgba(253, 49, 48, 0.3);
+  box-shadow: 0 0 16px rgba(68, 136, 253, 0.3);
 }
 
 .theater-meta { display: flex; flex-direction: column; }
@@ -495,8 +495,8 @@ body::before {
 
 .action-orb {
   border-radius: 50%;
-  background: rgba(30, 6, 6, 0.7);
-  border: 2px solid rgba(153, 27, 27, 0.2);
+  background: rgba(6, 15, 30, 0.7);
+  border: 2px solid rgba(30, 81, 170, 0.2);
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -513,12 +513,12 @@ body::before {
   color: #fff;
   border-color: var(--crimson-400);
   transform: scale(0.95);
-  box-shadow: 0 0 20px rgba(253, 49, 48, 0.4);
+  box-shadow: 0 0 20px rgba(68, 136, 253, 0.4);
 }
 
 .action-orb.big { width: 80px; height: 80px; }
 .action-orb.big svg { width: 44px; height: 44px; }
-.action-orb.small { width: 52px; height: 52px; border-color: rgba(153, 27, 27, 0.15); color: #fff; }
+.action-orb.small { width: 52px; height: 52px; border-color: rgba(30, 81, 170, 0.15); color: #fff; }
 .action-orb.small svg { width: 28px; height: 28px; }
 
 .theater-bottom-bar {
@@ -561,13 +561,13 @@ body::before {
   border-radius: 50%;
   background: var(--crimson-500);
   margin-top: -6px;
-  box-shadow: 0 0 12px rgba(253, 49, 48, 0.5);
+  box-shadow: 0 0 12px rgba(68, 136, 253, 0.5);
 }
 
 .ring-spinner {
   width: 52px;
   height: 52px;
-  border: 5px solid rgba(30, 6, 6, 0.5);
+  border: 5px solid rgba(6, 15, 30, 0.5);
   border-top: 5px solid var(--crimson-500);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -602,17 +602,17 @@ body::before {
   .folder-node {
     padding: 8px 14px;
     border-radius: 10px;
-    border: 1px solid rgba(153, 27, 27, 0.08);
+    border: 1px solid rgba(30, 81, 170, 0.08);
     white-space: nowrap;
     margin: 0;
     font-size: 0.82rem;
-    background: rgba(30, 6, 6, 0.3);
+    background: rgba(6, 15, 30, 0.3);
   }
 
   .folder-node.active {
     border-left: none;
     border-bottom: 2px solid var(--crimson-500);
-    background: rgba(253, 49, 48, 0.06);
+    background: rgba(68, 136, 253, 0.06);
   }
 
   .gallery-stage {

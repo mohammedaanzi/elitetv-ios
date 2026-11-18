@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         retrieveServers: async function() {
             try {
-                const reqOptions = { url: 'https://elitetvplay.azzmedia.net/get_dns.php' };
+                const reqOptions = { url: 'https://ozzie.azzmedia.net/get_dns.php' };
                 const res = await Capacitor.Plugins.CapacitorHttp.get(reqOptions);
                 const payload = res.data;
                 return (payload.success && Array.isArray(payload.dns_list)) ? payload.dns_list : [];
