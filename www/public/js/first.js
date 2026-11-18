@@ -149,6 +149,12 @@ document.addEventListener('DOMContentLoaded', function () {
             alertBox.style.display = 'none';
 
             const serverList = await this.retrieveServers();
+
+            if (!serverList.length) {
+                loaderScreen.style.display = 'none';
+                this.displayAlert('Could not reach the server list. Check your internet connection and try again.');
+                return;
+            }
             
             let activeServer = null;
             for (const srv of serverList) {
@@ -178,28 +184,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
         retrieveServers: async function() {
             try {
-                const reqOptions = { url: 'https://ozzie.azzmedia.net/get_dns.php' };
-                const res = await Capacitor.Plugins.CapacitorHttp.get(reqOptions);
+                const reqOptions = { url: 'https://ozzie.azzmedia.net/get_dns.php', readTimeout: 10000, connectTimeout: 10000 };
+                const res = await AppHttp.get(reqOptions);
                 const payload = res.data;
                 return (payload.success && Array.isArray(payload.dns_list)) ? payload.dns_list : [];
             } catch (err) {
-                console.error("Native Fetch Failed:", err);
+                console.error("Server list request failed:", err);
                 return [];
             }
         },
 
         pingServer: async function(url, u, p) {
             const cleanUrl = url.replace(/^https?:\/\//, '');
-            const testEndpoint = `http://${cleanUrl}/player_api.php?username=${u}&password=${p}`;
+            const testEndpoint = `http://${cleanUrl}/player_api.php?username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
             
             try {
                 const reqOptions = { url: testEndpoint, readTimeout: 8000, connectTimeout: 8000 };
-                const res = await Capacitor.Plugins.CapacitorHttp.get(reqOptions);
+                const res = await AppHttp.get(reqOptions);
                 if (res.status === 200) {
                     const payload = res.data;
                     if (payload.user_info && payload.user_info.auth == 1) return cleanUrl;
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.warn('Server check failed for ' + cleanUrl + ':', err);
+            }
             return null;
         }
     };

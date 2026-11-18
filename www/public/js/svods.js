@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!data) {
             try {
                 if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                    const res = await Capacitor.Plugins.CapacitorHttp.get({ url: urlCats });
+                    const res = await AppHttp.get({ url: urlCats });
                     if (res.status === 200) data = res.data;
                 } else {
                     const res = await fetch(urlCats);
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let data;
             if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+                const res = await AppHttp.get({ url: url });
                 data = res.data;
             } else {
                 const res = await fetch(url);
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const cleanDns = localStorage.getItem('iptv_dns').replace(/^https?:\/\//, '');
         const url = `http://${cleanDns}/player_api.php?username=${username}&password=${password}&action=get_series`;
         try {
-            const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+            const res = await AppHttp.get({ url: url });
             if (res.status === 200) {
                 globalSeriesIndex = res.data;
                 await saveToCache(STORE_MASTER, 'full_list', res.data);

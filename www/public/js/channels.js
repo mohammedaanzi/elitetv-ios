@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!data) {
             try {
                 if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                    const catRes = await Capacitor.Plugins.CapacitorHttp.get({ url: urlCats });
+                    const catRes = await AppHttp.get({ url: urlCats });
                     if (catRes.status === 200) data = catRes.data;
                 } else {
                     const response = await fetch(urlCats);
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let data = [];
             if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+                const res = await AppHttp.get({ url: url });
                 if(res.status === 200) data = res.data;
             } else {
                 const response = await fetch(url);
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('broadcast-grid').innerHTML = '<p style="padding:20px">Downloading channel index...</p>';
             let data = [];
             if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+                const res = await AppHttp.get({ url: url });
                 if (res.status === 200) data = res.data;
             } else {
                 const response = await fetch(url);

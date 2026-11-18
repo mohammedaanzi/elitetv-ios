@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function apiFetch(url) {
         if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-            const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+            const res = await AppHttp.get({ url: url });
             if (res.status === 200) return res.data;
             return null;
         } else {

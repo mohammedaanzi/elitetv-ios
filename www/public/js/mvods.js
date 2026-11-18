@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!data) {
             try {
                 if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                    const res = await Capacitor.Plugins.CapacitorHttp.get({ url: urlCats });
+                    const res = await AppHttp.get({ url: urlCats });
                     if (res.status === 200) data = res.data;
                 } else {
                     const response = await fetch(urlCats);
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let data = [];
             if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+                const res = await AppHttp.get({ url: url });
                 if (res.status === 200) data = res.data;
             } else {
                 const response = await fetch(url);
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let data = [];
             if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                const res = await Capacitor.Plugins.CapacitorHttp.get({ url: url });
+                const res = await AppHttp.get({ url: url });
                 if (res.status === 200) data = res.data;
             } else {
                 const response = await fetch(url);

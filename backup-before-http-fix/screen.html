@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ozzie Player — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/screen.css" />
+
+  <script>
+    (function () {
+      // TV Handshake Logic (Untouched)
+      var isTV = navigator.userAgent.indexOf("Diptv-App-TV-Mode") > -1;
+      if (isTV) {
+        console.log("Engaging TV Mode UI");
+        document.documentElement.classList.add("tv-mode");
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "css/tv-overrides.css";
+        document.head.appendChild(link);
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <div id="portal-wrapper">
+
+    <!-- Top Navigation -->
+    <header class="portal-header">
+      <div class="brand-zone">
+        <img src="images/login-logo.png" class="brand-logo" alt="Ozzie Player" onerror="this.style.display='none'" />
+      </div>
+      <div class="status-zone">
+        <div id="system-clock">00:00</div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main id="dashboard-grid">
+
+      <!-- TOP ROW (Primary Media) -->
+      <div class="tile-group-primary">
+        <div class="portal-tile hero-tile interactive-node" id="node-live" data-route="live">
+          <img src="images/ic-live-tv.png" alt="Live Media" onerror="this.style.display='none'">
+          <span class="tile-label">Live Streams</span>
+        </div>
+
+        <div class="portal-tile hero-tile interactive-node" id="node-movies" data-route="movies">
+          <img src="images/ic-movies.png" alt="VODs" onerror="this.style.display='none'">
+          <span class="tile-label">VODs</span>
+        </div>
+
+        <div class="portal-tile hero-tile interactive-node" id="node-series" data-route="series">
+          <img src="images/ic-series.png" alt="Shows" onerror="this.style.display='none'">
+          <span class="tile-label">Collections</span>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW (Secondary Actions) -->
+      <div class="tile-group-secondary">
+        <div class="portal-tile utility-tile interactive-node" id="node-reload" data-route="reload">
+          <img src="images/ic-refresh.png" class="utility-icon" alt="Reload" onerror="this.style.display='none'">
+          <span class="utility-label">REFRESH</span>
+        </div>
+
+        <div class="portal-tile utility-tile interactive-node" id="node-account" data-route="account">
+          <img src="images/ic-user.png" class="utility-icon" alt="Account" onerror="this.style.display='none'">
+          <span class="utility-label">PLAYLIST DETAILS </span>
+        </div>
+
+        <div class="portal-tile utility-tile interactive-node" id="node-epg" data-route="epg">
+          <img src="images/ic-epg.png" class="utility-icon" alt="EPG" onerror="this.style.display='none'">
+          <span class="utility-label">EPG</span>
+        </div>
+
+        <div class="portal-tile utility-tile interactive-node" id="node-exit" data-route="exit">
+          <img src="images/ic-exit.png" class="utility-icon" alt="Exit" onerror="this.style.display='none'">
+          <span class="utility-label">EXIT</span>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Status Bar -->
+    <footer class="portal-footer">
+      <div id="sub-status" class="footer-badge">Validating...</div>
+      <div id="profile-status" class="footer-badge">Profile: ...</div>
+    </footer>
+
+  </div>
+
+  <!-- EXIT CONFIRMATION MODAL -->
+  <div id="quit-overlay" class="hidden-layer">
+    <div class="dialog-box">
+      <h2 class="dialog-title">LEAVING SO SOON?</h2>
+      <p class="dialog-desc">Confirm if you want to close the application.</p>
+      <div class="dialog-actions">
+        <button id="action-yes" class="dialog-btn interactive-node">CONFIRM</button>
+        <button id="action-no" class="dialog-btn interactive-node">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/screen.js"></script>
+</body>
+
+</html>
