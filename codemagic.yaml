@@ -22,15 +22,14 @@ workflows:
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
       - name: Increment build number
-        script: | 
-          # 1. Get the latest number from Apple
-          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID")
-          NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
-          echo "Updating project to Build Number: $NEW_BUILD_NUMBER"
-          
-          # 2. Use Apple's tool to update the project files on the Mac
+        script: |
+          # Timestamp build number (yymmddHHMM): always higher than any previous upload,
+          # so App Store Connect never rejects it as a duplicate.
+          NEW_BUILD_NUMBER=$(date -u +%y%m%d%H%M)
+          echo "Setting build number to: $NEW_BUILD_NUMBER"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $NEW_BUILD_NUMBER" ios/App/App/Info.plist
           cd ios/App
-          agvtool new-version -all $NEW_BUILD_NUMBER
+          agvtool new-version -all $NEW_BUILD_NUMBER || true
       - name: Build IPA
         script: |
           # Build without the extra flag (the project is now updated)
